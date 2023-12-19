@@ -13,6 +13,7 @@ snes:
       bsnes:       { requireAnyOf: [BR2_PACKAGE_LIBRETRO_BSNES]       }
       bsnes_hd:    { requireAnyOf: [BR2_PACKAGE_LIBRETRO_BSNES_HD]    }
       mesen-s:     { requireAnyOf: [BR2_PACKAGE_LIBRETRO_MESENS]      }
+      supafaust:   { requireAnyOf: [BR2_PACKAGE_LIBRETRO_SUPAFAUST]   }
   comment_en: |
     For more info: https://wiki.batocera.org/systems:snes
   comment_fr: |
@@ -202,6 +203,7 @@ nes:
       fceumm:   { requireAnyOf: [BR2_PACKAGE_LIBRETRO_FCEUMM] }
       nestopia: { requireAnyOf: [BR2_PACKAGE_LIBRETRO_NESTOPIA] }
       mesen:    { requireAnyOf: [BR2_PACKAGE_LIBRETRO_MESEN] }
+      quicknes: { requireAnyOf: [BR2_PACKAGE_LIBRETRO_QUICKNES] }
   comment_en: |
     For more info: https://wiki.batocera.org/systems:nes
   comment_fr: |
@@ -258,6 +260,7 @@ gba:
       mgba:   { requireAnyOf: [BR2_PACKAGE_LIBRETRO_MGBA] }
       vba-m:  { requireAnyOf: [BR2_PACKAGE_LIBRETRO_VBA_M] }
       gpsp:   { requireAnyOf: [BR2_PACKAGE_LIBRETRO_GPSP] }
+      meteor:   { requireAnyOf: [BR2_PACKAGE_LIBRETRO_METEOR] }
   comment_en: |
     For more info: https://wiki.batocera.org/systems:gba
   comment_fr: |
@@ -277,6 +280,7 @@ gbc:
       mgba:     { requireAnyOf: [BR2_PACKAGE_LIBRETRO_MGBA] }
       vba-m:    { requireAnyOf: [BR2_PACKAGE_LIBRETRO_VBA_M] }
       mesen-s:  { requireAnyOf: [BR2_PACKAGE_LIBRETRO_MESENS] }
+      gearboy:  { requireAnyOf: [BR2_PACKAGE_LIBRETRO_GEARBOY] }
   comment_en: |
     For more info: https://wiki.batocera.org/systems:gbc
   comment_fr: |
@@ -296,6 +300,7 @@ gb:
       mgba:     { requireAnyOf: [BR2_PACKAGE_LIBRETRO_MGBA] }
       vba-m:    { requireAnyOf: [BR2_PACKAGE_LIBRETRO_VBA_M] }
       mesen-s:  { requireAnyOf: [BR2_PACKAGE_LIBRETRO_MESENS] }
+      gearboy:  { requireAnyOf: [BR2_PACKAGE_LIBRETRO_GEARBOY] }
   comment_en: |
     For more info: https://wiki.batocera.org/systems:gb
   comment_fr: |
@@ -886,6 +891,7 @@ mame:
       mame078plus:  { requireAnyOf: [BR2_PACKAGE_LIBRETRO_MAME2003_PLUS]  }
       mame0139:     { requireAnyOf: [BR2_PACKAGE_LIBRETRO_MAME2010]       }
       mame:         { requireAnyOf: [BR2_PACKAGE_LIBRETRO_MAME]           }
+      mame078xtreme: { requireAnyOf: [BR2_PACKAGE_LIBRETRO_MAME2003_XTREME]}
     mame:
       mame:         { requireAnyOf: [BR2_PACKAGE_MAME]                    }
 
@@ -1118,6 +1124,7 @@ ngp:
   emulators:
     libretro:
       mednafen_ngp: { requireAnyOf: [BR2_PACKAGE_LIBRETRO_BEETLE_NGP] }
+      race:         { requireAnyOf: [BR2_PACKAGE_LIBRETRO_RACE] }
 
 ngpc:
   name:       Neo-Geo Pocket Color
@@ -1445,6 +1452,7 @@ amstradcpc:
   emulators:
     libretro:
       cap32: { requireAnyOf: [BR2_PACKAGE_LIBRETRO_CAP32] }
+      crocods: { requireAnyOf: [BR2_PACKAGE_LIBRETRO_CROCODS] }
   comment_en: |
     To enable gamepad support, go in RetroArch menu with "Hotkey + B", then switch this option:
     "Quick Menu/Core Input Options/User 1 Device type: Retropad" with "Amstrad Joystick"

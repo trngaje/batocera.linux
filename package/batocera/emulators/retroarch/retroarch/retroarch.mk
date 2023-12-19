@@ -13,7 +13,7 @@ RETROARCH_INSTALL_STAGING = YES
 
 RETROARCH_CONF_OPTS = --disable-oss --enable-zlib --disable-qt --enable-threads --enable-ozone \
     --enable-xmb --disable-discord --enable-flac --enable-lua --enable-networking \
-	--enable-translate --enable-rgui --disable-cdrom
+	--enable-translate --enable-rgui --disable-cdrom --enable-mali_fbdev
 
 ifeq ($(BR2_ENABLE_DEBUG),y)
     RETROARCH_CONF_OPTS += --enable-debug
@@ -45,9 +45,9 @@ else
     RETROARCH_CONF_OPTS += --disable-videocore
 endif
 
-ifeq ($(BR2_PACKAGE_LIBDRM),y)
-    RETROARCH_CONF_OPTS += --enable-kms
-endif
+#ifeq ($(BR2_PACKAGE_LIBDRM),y)
+#    RETROARCH_CONF_OPTS += --enable-kms
+#endif
 
 ifeq ($(BR2_ARM_FPU_NEON_VFPV4)$(BR2_ARM_FPU_NEON)$(BR2_ARM_FPU_NEON_FP_ARMV8),y)
     RETROARCH_CONF_OPTS += --enable-neon

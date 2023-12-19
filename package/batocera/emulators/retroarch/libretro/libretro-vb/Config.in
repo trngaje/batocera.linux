@@ -1,0 +1,5 @@
+menuconfig BR2_PACKAGE_LIBRETRO_VB
+	bool "libretro-vb"
+	depends on BR2_PACKAGE_RETROARCH
+	help
+	  libretro implementation of vb
