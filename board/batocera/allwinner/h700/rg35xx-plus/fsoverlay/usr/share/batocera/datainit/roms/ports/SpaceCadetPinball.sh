@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export SDL_GAMECONTROLLERCONFIG=$(grep "RG35XX" "${HOME}/.config/gamecontrollerdb.txt")
+export SDL_GAMECONTROLLERCONFIG=$(grep "Deeplay" "${HOME}/.config/gamecontrollerdb.txt")
 
 SDL_FULLSCREEN=1 SpaceCadetPinball
 

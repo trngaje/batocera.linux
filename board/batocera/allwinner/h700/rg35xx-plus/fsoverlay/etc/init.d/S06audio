@@ -5,10 +5,17 @@
 
 case "$1" in
     start)
-	value="$(batocera-settings-get audio.volume)"
+#	value="$(batocera-settings-get audio.volume)"
         alsactl init # init cards with alsa files
-        amixer sset 'SPK' 'on'
-	amixer sset 'lineout volume' $value
+        alsactl restore 0 -f /userdata/system/.asound.state
+
+#        amixer sset 'SPK' 'on'
+#        amixer sset 'LINEOUT' 'on'
+#	amixer sset 'Master' $value
+#	amixer sset 'OutputL Mixer DACL' 'on'
+#	amixer sset 'OutputL Mixer DACR' 'on'
+#	amixer sset 'OutputR Mixer DACL' 'on'
+#	amixer sset 'OutputR Mixer DACR' 'on'
     ;;
     stop)
     ;;

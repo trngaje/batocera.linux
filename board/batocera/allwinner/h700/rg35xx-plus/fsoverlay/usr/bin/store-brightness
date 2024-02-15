@@ -1,7 +1,6 @@
 #!/bin/sh
 
+VAL=`brightness get`
 
-VAL=`cat /sys/class/backlight/backlight.2/brightness`
-
-echo $VAL > /boot/boot/brightness
+echo $VAL > /userdata/system/.brightness
 

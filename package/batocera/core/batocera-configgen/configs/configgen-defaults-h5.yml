@@ -1,7 +1,7 @@
 default:
   options:
     video_threaded: true
-    retroarch.menu_driver: xmb
+    retroarch.menu_driver: rgui
     retroarch.audio_driver: alsathread
 
 amiga500:
@@ -23,34 +23,34 @@ snes:
   emulator: libretro
   core:     snes9x
 c64:
-  emulator: vice
-  core:     x64
+  emulator: libretro
+  core:     vice
 c128:
-  emulator: vice
-  core:     x128
+  emulator: libretro
+  core:     vice
 c20:
-  emulator: vice
-  core:     xvic
+  emulator: libretro
+  core:     vice
 pet:
-  emulator: vice
-  core:     xpet
+  emulator: libretro
+  core:     vice
 cplus4:
-  emulator: vice
-  core:     xplus4
+  emulator: libretro
+  core:     vice
 fmtowns:
   emulator: libretro
   core:     mame
 atomiswave:
-  emulator: flycast
+  emulator: libretro
   core:     flycast
 dreamcast:
-  emulator: flycast
+  emulator: libretro
   core:     flycast
 naomi:
-  emulator: flycast
+  emulator: libreto
   core:     flycast
 naomi2:
-  emulator: flycast
+  emulator: libreto
   core:     flycast
 fmtowns:
   emulator: libretro

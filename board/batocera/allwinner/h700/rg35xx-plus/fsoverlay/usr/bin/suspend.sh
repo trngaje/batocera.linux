@@ -3,7 +3,7 @@
 SUSPEND_FLAG="/var/run/suspend-flag"
 
 # Define the lowest CPU frequency (this value is an example)
-LOWEST_FREQ=240000
+LOWEST_FREQ=480000
 
 # Define the input device for the power button
 INPUT_DEVICE=/dev/input/event0
@@ -18,7 +18,7 @@ CPUFREQ_PATH=/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
 BACKLIGHT_PATH=/sys/class/backlight/backlight.2/bl_power
 
 # Global list of process names to suspend/resume
-PROCESSES_TO_MANAGE="retroarch drastic flycast mupen64plus PPSSPP" #SDLPoP OpenBOR4432 OpenBOR6510 VVVVVV"
+PROCESSES_TO_MANAGE="emulationstation retroarch drastic flycast mupen64plus PPSSPP" #SDLPoP OpenBOR4432 OpenBOR6510 VVVVVV"
 
 # Function to save current CPU frequency and set to lowest
 save_and_reduce_cpu_freq() {
@@ -35,7 +35,7 @@ suspend_processes() {
         local pids=$(pidof $proc)
         for pid in $pids; do
 	    echo $proc "-" $pid
-            kill -SIGSTOP $pid
+            kill -n STOP $pid
         done
     done
 }
@@ -45,7 +45,7 @@ new_suspend_processes() {
         local pids=$(ps aux | awk -v pname="$proc" '$11==pname {print $2}')
 	echo $proc $pid
         for pid in $pids; do
-            kill -SIGSTOP $pid
+            kill -n STOP $pid
         done
     done
 }
@@ -56,7 +56,7 @@ resume_processes() {
     for proc in $PROCESSES_TO_MANAGE; do
         local pids=$(pidof $proc)
         for pid in $pids; do
-            kill -SIGCONT $pid
+            kill -n CONT $pid
         done
     done
 }
@@ -64,13 +64,15 @@ resume_processes() {
 # Function to turn off the screen
 turn_off_screen() {
     # Turn off the backlight
-    echo 4 > $BACKLIGHT_PATH
+    store-brightness
+    brightness set 0
 }
 
 # Function to restore the screen
 restore_screen() {
     # Turn on the backlight
-    echo 0 > $BACKLIGHT_PATH
+    VAL=`cat /userdata/system/.brightness`
+    brightness set $VAL
 }
 
 # Function to enter soft suspend

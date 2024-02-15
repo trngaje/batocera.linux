@@ -388,8 +388,8 @@ naomi2:
   emulator: libretro
   core:     flycast
 nds:
-  emulator: libretro
-  core:     desmume
+  emulator: drastic
+  core:     drastic
 neogeo:
   emulator: libretro
   core:     fbneo

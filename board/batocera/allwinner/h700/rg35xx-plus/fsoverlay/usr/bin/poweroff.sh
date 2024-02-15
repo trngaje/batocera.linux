@@ -1,11 +1,8 @@
 #!/bin/sh
 
-killall joyaudio
+alsactl store 0 /userdata/system/.asound.state
 
-amixer -q set "speaker on off switch" "off"
-
-rm /boot/boot/reboot
-
+/etc/init.d/rcK
 sync
 
 shutdown -Ph -t 3 now

@@ -25,9 +25,8 @@ export BOX86_DYNAREC=1
 export BOX86_FORCE_ES=20
 export BOX86_ALLOWMISSINGLIBS=1
 export BOX86_DLSYM_ERROR=1
-#export SDL_GAMECONTROLLERCONFIG='19000000010000000100000000010000,RG35XX Gamepad,a:b1,b:b0,back:b7,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,leftshoulder:b5,lefttrigger:+a2,rightshoulder:b6,righttrigger:+a5,guide:b9,start:b8,x:b3,y:b2,platform:Linux,'
 
-export SDL_GAMECONTROLLERCONFIG=$(grep "RG35XX" "${HOME}/.config/gamecontrollerdb.txt")
+export SDL_GAMECONTROLLERCONFIG=$(grep "Deeplay" "${HOME}/.config/gamecontrollerdb.txt")
 
 # Load the Shovel Knight specific hacks (no steam nag, use $SHOVELKNIGHT_SAVE_PATH, ...)
 export BOX86_LD_PRELOAD="$GAMEDIR/libShovelKnight.so"

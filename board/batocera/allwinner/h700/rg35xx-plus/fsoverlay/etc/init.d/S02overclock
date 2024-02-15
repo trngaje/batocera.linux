@@ -36,7 +36,7 @@ then
 		    ;;
 		*)
 		    # default
-		    do_overclock_rg35xx 1296000
+		    do_overclock_rg35xx 1512000
 		    ;;
 	    esac
 fi

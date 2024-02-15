@@ -1,1 +1,3 @@
-SUBSYSTEM=="switch", ACTION=="add|change", ENV{SWITCH_NAME}=="hdmi", RUN+="/usr/bin/hdmi_audio_switch.sh"
+ACTION=="add|change",SUBSYSTEM=="extcon",ENV{DEVPATH}=="/devices/platform/soc/6000000.hdmi/extcon/hdmi",RUN+="/usr/bin/hdmi_audio_switch.sh"
+
+

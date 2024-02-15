@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# FIXME: Just to temporary disable S27audioconfig from batocera when compiling as buildroot with BR2_EXTERNAL
+#        We are not using pipewire, so batocera-audio gets confused for now
+#        For batocera builds this should be removed

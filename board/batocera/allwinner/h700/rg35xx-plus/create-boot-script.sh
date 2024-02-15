@@ -16,11 +16,11 @@ BATOCERA_BINARIES_DIR=$6
 
 mkdir -p "${BATOCERA_BINARIES_DIR}/boot/boot"     || exit 1
 
-cp "${BINARIES_DIR}/uImage"             "${BATOCERA_BINARIES_DIR}/boot/uImage"               || exit 1
-cp "${BINARIES_DIR}/uInitrd"            "${BATOCERA_BINARIES_DIR}/boot/uInitrd"          || exit 1
+cp "${BOARD_DIR}/uImage"             "${BATOCERA_BINARIES_DIR}/boot/uImage"               || exit 1
+cp "${BOARD_DIR}/uInitrd"            "${BATOCERA_BINARIES_DIR}/boot/uInitrd"          || exit 1
 cp "${BINARIES_DIR}/rootfs.ext2"        "${BATOCERA_BINARIES_DIR}/boot/boot/batocera.update" || exit 1
-cp "${BINARIES_DIR}/batocera-boot.conf" "${BATOCERA_BINARIES_DIR}/boot/batocera-boot.conf"   || exit 1
-cp "${BOARD_DIR}/boot/bootlogo.bmp"                   "${BATOCERA_BINARIES_DIR}/boot/bootlogo.bmp" || exit 1
+cp "${BOARD_DIR}/batocera-boot.conf" "${BATOCERA_BINARIES_DIR}/boot/batocera-boot.conf"   || exit 1
+cp "${BOARD_DIR}/bootlogo.bmp"                   "${BATOCERA_BINARIES_DIR}/boot/bootlogo.bmp" || exit 1
 
 touch "${BATOCERA_BINARIES_DIR}/boot/boot/autoresize"
 

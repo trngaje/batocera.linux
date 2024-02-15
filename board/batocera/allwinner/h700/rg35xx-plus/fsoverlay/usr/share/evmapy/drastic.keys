@@ -1,22 +1,22 @@
 {
     "actions": [
 	{
-	    "trigger": ["BTN_TR2", "BTN_DPAD_UP" ],
+	    "trigger": ["BTN_START", "KEY_UP" ],
 	    "type": "key",
 	    "target": "KEY_I" 
 	},
         {
-            "trigger": ["BTN_TR2", "BTN_DPAD_DOWN" ],  
+            "trigger": ["BTN_START", "KEY_DOWN" ],  
             "type": "key",                         
             "target": [ "KEY_K" ] 
         },  
         {
-            "trigger": ["BTN_TR2", "BTN_DPAD_LEFT" ],  
+            "trigger": ["BTN_START", "KEY_LEFT" ],  
             "type": "key",                         
             "target": [ "KEY_J" ]
         },  
         {
-            "trigger": ["BTN_TR2", "BTN_DPAD_RIGHT" ],  
+            "trigger": ["BTN_START", "KEY_RIGHT" ],  
             "type": "key",                         
             "target": [ "KEY_L" ]
         },  
@@ -41,17 +41,17 @@
             "target": [ "KEY_F7" ] 
     },                                     
     {                                      
-            "trigger": ["BTN_SELECT", "BTN_DPAD_DOWN"], 
+            "trigger": ["BTN_TR", "KEY_DOWN"], 
             "type": "key",                 
             "target": [ "KEY_F2" ]        
     },                                     
     {                                      
-            "trigger": ["BTN_SELECT", "BTN_B"],    
+            "trigger": ["BTN_TR", "BTN_B"],    
             "type": "key",                 
             "target": [ "KEY_F1" ] 
     },                                     
     {                                      
-            "trigger": ["BTN_SELECT", "BTN_DPAD_RIGHT"],
+            "trigger": ["BTN_TR", "KEY_RIGHT"],
             "type": "key",                 
             "target": [ "KEY_TAB" ] 
     }          
@@ -149,20 +149,20 @@
             "code": 318
         },
         {
-            "name": "BTN_DPAD_UP",
-            "code": 544
+            "name": "KEY_UP",
+            "code": 103
         },
         {
-            "name": "BTN_DPAD_DOWN",
-            "code": 545
+            "name": "KEY_DOWN",
+            "code": 108
         },
         {
-            "name": "BTN_DPAD_LEFT",
-            "code": 546
+            "name": "KEY_LEFT",
+            "code": 105
         },
         {
-            "name": "BTN_DPAD_RIGHT",
-            "code": 547
+            "name": "KEY_RIGHT",
+            "code": 106
         }
     ]
 }

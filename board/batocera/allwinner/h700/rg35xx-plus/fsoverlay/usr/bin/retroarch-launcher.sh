@@ -37,11 +37,15 @@ while test -e "${REBOOT_FLAG}"
 do
     if test "$LAUNCHER" = "retroarch"
     then
-        cd $HOME
+        cd "$HOME"
         retroarch --verbose
+    elif test "$LAUNCHER" = "emulationstation"
+    then
+        cd "$HOME"
+        emulationstation-standalone
     else
-        cd $HOME
-        $LAUNCHER
+        cd "$HOME"
+        "$LAUNCHER"
     fi
     GAMELAUNCH=0
 done

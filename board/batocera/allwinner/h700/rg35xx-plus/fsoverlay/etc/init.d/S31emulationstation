@@ -9,7 +9,8 @@ case "$1" in
             enabled="$(/usr/bin/batocera-settings-get system.es.atstartup)"
             if [ "$enabled" != "0" ]; then
 #                emulationstation-standalone &
-		retroarch-launcher.sh & 
+		retroarch-launcher.sh &
+		/sbin/getty   -n -L -l /usr/bin/batocera-autologin /dev/ttyS0   115200 vt220 &
             fi
 	    ;;
 
@@ -17,6 +18,7 @@ case "$1" in
         emulationstation-standalone --stop-rebooting
 		killall sway      2>/dev/null # for wayland
 		killall emulationstation 2>/dev/null
+		killall retroarch-launcher.sh 2>/dev/null
 		killall touchegg 2>/dev/null
 		if [ $? -eq 0 ]; then
 			sleep 20 &
