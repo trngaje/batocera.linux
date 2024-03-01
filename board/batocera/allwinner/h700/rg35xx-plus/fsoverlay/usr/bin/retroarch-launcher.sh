@@ -1,11 +1,11 @@
 #!/bin/sh
 
 #export LD_LIBRARY_PATH=/usr/lib:/usr/local/XSGX/lib:/lib
-#export DISPLAY=:0
 export HOME=/userdata/system
-export SDL_RENDER_DRIVER=opengles2
 cd $HOME
 
+# paclt sinks fix
+/etc/init.d/S06audio restart
 
 BOOTCONF="/boot/batocera-boot.conf"
 REBOOT_FLAG=/var/run/retroarch-launcher
@@ -19,9 +19,6 @@ fi
 # flag to reboot at each stop
 # es is stopped : in case of crash, in case of some options are changed (language, video mode)
 touch "${REBOOT_FLAG}" || exit 1
-
-# environment
-export HOME=/userdata/system
 
 CUSTOM_LAUNCHER_FILE="/userdata/system/customlauncher"
 
