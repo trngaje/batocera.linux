@@ -22,13 +22,11 @@ LIBRETRO_UAE4ARM_PLATFORM = rpi3-aarch64
 else ifeq ($(BR2_PACKAGE_BATOCERA_TARGET_BCM2711),y)
 LIBRETRO_UAE4ARM_PLATFORM = rpi4-aarch64
 
-<<<<<<< HEAD
-#else ifeq ($(BR2_PACKAGE_BATOCERA_TARGET_H5),y)
+else ifeq ($(BR2_PACKAGE_BATOCERA_TARGET_H5),y)
 LIBRETRO_UAE4ARM_PLATFORM = classic_armv7_a7
-=======
+
 else ifeq ($(BR2_PACKAGE_BATOCERA_TARGET_BCM2712),y)
 LIBRETRO_UAE4ARM_PLATFORM = rpi5
->>>>>>> master
 
 else ifeq ($(BR2_aarch64),y)
         LIBRETRO_UAE4ARM_PLATFORM = unix aarch64
