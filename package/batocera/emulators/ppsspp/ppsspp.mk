@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PPSSPP_VERSION = v1.16.6
+PPSSPP_VERSION = v1.17.1
 PPSSPP_SITE = https://github.com/hrydgard/ppsspp.git
 PPSSPP_SITE_METHOD=git
 PPSSPP_GIT_SUBMODULES=YES
@@ -17,7 +17,6 @@ PPSSPP_CONF_OPTS += -DCMAKE_SYSTEM_NAME=Linux
 PPSSPP_CONF_OPTS += -DUSE_SYSTEM_FFMPEG=OFF
 PPSSPP_CONF_OPTS += -DUSE_FFMPEG=ON
 PPSSPP_CONF_OPTS += -DUSING_FBDEV=ON
-PPSSPP_CONF_OPTS += -DUSE_WAYLAND_WSI=OFF
 PPSSPP_CONF_OPTS += -DUSE_DISCORD=OFF
 PPSSPP_CONF_OPTS += -DANDROID=OFF
 PPSSPP_CONF_OPTS += -DWIN32=OFF
@@ -45,7 +44,7 @@ else
     PPSSPP_CONF_OPTS += -DVULKAN=OFF
 endif
 # enable x11/vulkan interface only if xorg
-ifeq ($(BR2_PACKAGE_XSERVER_XORG_SERVER),y)
+ifeq ($(BR2_PACKAGE_XORG7),y)
     PPSSPP_CONF_OPTS += -DUSING_X11_VULKAN=ON
 else
     PPSSPP_CONF_OPTS += -DUSING_X11_VULKAN=OFF
@@ -84,20 +83,28 @@ ifeq ($(BR2_PACKAGE_BATOCERA_TARGET_X86_64_ANY),y)
     PPSSPP_CONF_OPTS += -DX86_64=ON
 endif
 
-# rpi4 vulkan support
+# rpi4/5 vulkan support
 ifeq ($(BR2_PACKAGE_BATOCERA_TARGET_BCM2711),y)
     PPSSPP_CONF_OPTS += -DARM_NO_VULKAN=OFF
 else ifeq ($(BR2_PACKAGE_BATOCERA_TARGET_BCM2712),y)
-    PPSSPP_CONF_OPTS += -DARM_NO_VULKAN=ON
+    PPSSPP_CONF_OPTS += -DARM_NO_VULKAN=OFF
 else ifeq ($(BR2_arm)$(BR2_aarch64),y)
     PPSSPP_CONF_OPTS += -DARM_NO_VULKAN=ON
 endif
 
-ifeq ($(BR2_PACKAGE_HAS_LIBMALI),y)
-    PPSSPP_CONF_OPTS += -DCMAKE_EXE_LINKER_FLAGS=-lmali -DCMAKE_SHARED_LINKER_FLAGS=-lmali
+ifeq ($(BR2_PACKAGE_WAYLAND),y)
+    PPSSPP_CONF_OPTS += -DUSE_WAYLAND_WSI=ON
+else
+    PPSSPP_CONF_OPTS += -DUSE_WAYLAND_WSI=OFF
 endif
 
-PPSSPP_CONF_OPTS += -DCMAKE_C_FLAGS="$(PPSSPP_TARGET_CFLAGS)" -DCMAKE_CXX_FLAGS="$(PPSSPP_TARGET_CFLAGS)"
+ifeq ($(BR2_PACKAGE_HAS_LIBMALI),y)
+    PPSSPP_CONF_OPTS += -DCMAKE_EXE_LINKER_FLAGS=-lmali
+    PPSSPP_CONF_OPTS += -DCMAKE_SHARED_LINKER_FLAGS=-lmali
+endif
+
+PPSSPP_CONF_OPTS += -DCMAKE_C_FLAGS="$(PPSSPP_TARGET_CFLAGS)"
+PPSSPP_CONF_OPTS += -DCMAKE_CXX_FLAGS="$(PPSSPP_TARGET_CFLAGS)"
 
 define PPSSPP_UPDATE_INCLUDES
 	sed -i 's/unknown/"$(shell echo $(PPSSPP_VERSION) | cut -c 1-7)"/g' $(@D)/git-version.cmake
@@ -106,12 +113,14 @@ endef
 
 define PPSSPP_INSTALL_TARGET_CMDS
     mkdir -p $(TARGET_DIR)/usr/bin
-    $(INSTALL) -D -m 0755 $(@D)/$(PPSSPP_TARGET_BINARY) $(TARGET_DIR)/usr/bin/PPSSPP
+    $(INSTALL) -D -m 0755 $(@D)/$(PPSSPP_TARGET_BINARY) \
+        $(TARGET_DIR)/usr/bin/PPSSPP
     mkdir -p $(TARGET_DIR)/usr/share/ppsspp
     cp -R $(@D)/assets $(TARGET_DIR)/usr/share/ppsspp/PPSSPP
     # Fix PSP font for languages like Japanese
     # (font from https://github.com/minoryorg/Noto-Sans-CJK-JP/blob/master/fonts/)
-    cp -f $(BR2_EXTERNAL_BATOCERA_PATH)/package/batocera/emulators/ppsspp/NotoSansCJKjp-DemiLight.ttf $(TARGET_DIR)/usr/share/ppsspp/PPSSPP/Roboto-Condensed.ttf
+    cp -f $(BR2_EXTERNAL_BATOCERA_PATH)/package/batocera/emulators/ppsspp/NotoSansCJKjp-DemiLight.ttf \
+        $(TARGET_DIR)/usr/share/ppsspp/PPSSPP/Roboto-Condensed.ttf
 endef
 
 define PPSSPP_POST_PROCESS

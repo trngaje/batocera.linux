@@ -9,10 +9,14 @@ import configparser
 from . import dolphinControllers
 from . import dolphinSYSCONF
 import controllersConfig
+import subprocess
+
+from utils.logger import get_logger
+eslog = get_logger(__name__)
 
 class DolphinGenerator(Generator):
 
-    def generate(self, system, rom, playersControllers, guns, wheels, gameResolution):
+    def generate(self, system, rom, playersControllers, metadata, guns, wheels, gameResolution):
         if not os.path.exists(os.path.dirname(batoceraFiles.dolphinIni)):
             os.makedirs(os.path.dirname(batoceraFiles.dolphinIni))
 
@@ -21,7 +25,7 @@ class DolphinGenerator(Generator):
             os.makedirs(batoceraFiles.dolphinData + "/StateSaves")
         
         # Generate the controller config(s)
-        dolphinControllers.generateControllerConfig(system, playersControllers, rom, guns)
+        dolphinControllers.generateControllerConfig(system, playersControllers, metadata, wheels, rom, guns)
 
         ## [ dolphin.ini ] ##
         dolphinSettings = configparser.ConfigParser(interpolation=None)
@@ -64,7 +68,7 @@ class DolphinGenerator(Generator):
         dolphinSettings.set("Analytics", "PermissionAsked", "True")
 
         # PanicHandlers displaymessages
-        dolphinSettings.set("Interface", "UsePanicHandlers",        "False")
+        dolphinSettings.set("Interface", "UsePanicHandlers", "False")
         
         # Display message in game (Memory card save and many more...)
         if system.isOptSet("ShowDpMsg") and system.getOptBoolean("ShowDpMsg") == False:
@@ -103,9 +107,11 @@ class DolphinGenerator(Generator):
         else:
             dolphinSettings.set("Core", "SyncGPU", "False")
 
-        # Language
-        dolphinSettings.set("Core", "SelectedLanguage", str(getGameCubeLangFromEnvironment())) # Wii
-        dolphinSettings.set("Core", "GameCubeLanguage", str(getGameCubeLangFromEnvironment())) # GC
+        # Gamecube Language
+        if system.isOptSet("gamecube_language"):
+            dolphinSettings.set("Core", "SelectedLanguage", system.config["gamecube_language"])
+        else:
+            dolphinSettings.set("Core", "SelectedLanguage", str(getGameCubeLangFromEnvironment()))
 
         # Enable MMU
         if system.isOptSet("enable_mmu") and system.getOptBoolean("enable_mmu"):
@@ -114,11 +120,19 @@ class DolphinGenerator(Generator):
             dolphinSettings.set("Core", "MMU", "False")
 
         # Backend - Default OpenGL
-        if system.isOptSet("gfxbackend") and system.config["gfxbackend"] == 'Vulkan':
+        if system.isOptSet("gfxbackend") and system.config["gfxbackend"] == "Vulkan":
             dolphinSettings.set("Core", "GFXBackend", "Vulkan")
+            # Check Vulkan
+            try:
+                have_vulkan = subprocess.check_output(["/usr/bin/batocera-vulkan", "hasVulkan"], text=True).strip()
+                if have_vulkan != "true":
+                    eslog.debug("Vulkan driver is not available on the system. Using OpenGL instead.")
+                    dolphinSettings.set("Core", "GFXBackend", "OGL")
+            except subprocess.CalledProcessError:
+                eslog.debug("Error checking for discrete GPU.")
         else:
             dolphinSettings.set("Core", "GFXBackend", "OGL")
-
+        
         # Wiimote scanning
         dolphinSettings.set("Core", "WiimoteContinuousScanning", "True")
 
@@ -133,7 +147,11 @@ class DolphinGenerator(Generator):
                 # Sub in the appropriate values from es_features, accounting for the 1 integer difference.
                 dolphinSettings.set("Core", "SIDevice" + str(i - 1), value)
             else:
-                dolphinSettings.set("Core", "SIDevice" + str(i - 1), "6")
+                # if the pad is a wheel and on gamecube, use it
+                if system.name == "gamecube" and system.isOptSet('use_wheels') and system.getOptBoolean('use_wheels') and len(wheels) > 0 and str(i) in playersControllers and playersControllers[str(i)].dev in wheels:
+                    dolphinSettings.set("Core", "SIDevice" + str(i - 1), "8")
+                else:
+                    dolphinSettings.set("Core", "SIDevice" + str(i - 1), "6")
 
         # HiResTextures for guns part 1/2 (see below the part 2)
         if system.isOptSet('use_guns') and system.getOptBoolean('use_guns') and len(guns) > 0 and ((system.isOptSet('dolphin-lightgun-hide-crosshair') == False and controllersConfig.gunsNeedCrosses(guns) == False) or system.getOptBoolean('dolphin-lightgun-hide-crosshair' == True)):
@@ -188,7 +206,32 @@ class DolphinGenerator(Generator):
             dolphinGFXSettings.add_section("Enhancements")
         if not dolphinGFXSettings.has_section("Hardware"):
             dolphinGFXSettings.add_section("Hardware")
-
+        
+        # Set Vulkan adapter
+        try:
+            have_vulkan = subprocess.check_output(["/usr/bin/batocera-vulkan", "hasVulkan"], text=True).strip()
+            if have_vulkan == "true":
+                eslog.debug("Vulkan driver is available on the system.")
+                try:
+                    have_discrete = subprocess.check_output(["/usr/bin/batocera-vulkan", "hasDiscrete"], text=True).strip()
+                    if have_discrete == "true":
+                        eslog.debug("A discrete GPU is available on the system. We will use that for performance")
+                        try:
+                            discrete_index = subprocess.check_output(["/usr/bin/batocera-vulkan", "discreteIndex"], text=True).strip()
+                            if discrete_index != "":
+                                eslog.debug("Using Discrete GPU Index: {} for Dolphin".format(discrete_index))
+                                dolphinGFXSettings.set("Hardware", "Adapter", discrete_index)
+                            else:
+                                eslog.debug("Couldn't get discrete GPU index")
+                        except subprocess.CalledProcessError:
+                            eslog.debug("Error getting discrete GPU index")
+                    else:
+                        eslog.debug("Discrete GPU is not available on the system. Using default.")
+                except subprocess.CalledProcessError:
+                    eslog.debug("Error checking for discrete GPU.")
+        except subprocess.CalledProcessError:
+            eslog.debug("Error executing batocera-vulkan script.")
+        
         # Graphics setting Aspect Ratio
         if system.isOptSet('dolphin_aspect_ratio'):
             dolphinGFXSettings.set("Settings", "AspectRatio", system.config["dolphin_aspect_ratio"])
@@ -228,12 +271,7 @@ class DolphinGenerator(Generator):
 
         # Ubershaders (synchronous_ubershader by default)
         if system.isOptSet('ubershaders') and system.config["ubershaders"] != "no_ubershader":
-            if system.config["ubershaders"] == "exclusive_ubershader":
-                dolphinGFXSettings.set("Settings", "ShaderCompilationMode", "1")
-            elif system.config["ubershaders"] == "hybrid_ubershader":
-                dolphinGFXSettings.set("Settings", "ShaderCompilationMode", "2")
-            elif system.config["ubershaders"] == "skip_draw":
-                dolphinGFXSettings.set("Settings", "ShaderCompilationMode", "3")
+            dolphinGFXSettings.set("Settings", "ShaderCompilationMode", system.config["ubershaders"])
         else:
             dolphinGFXSettings.set("Settings", "ShaderCompilationMode", "0")
 
@@ -436,6 +474,7 @@ class DolphinGenerator(Generator):
 
         return 4/3
 
+# Get the language from the environment if user didn't set it in ES.
 # Seem to be only for the gamecube. However, while this is not in a gamecube section
 # It may be used for something else, so set it anyway
 def getGameCubeLangFromEnvironment():

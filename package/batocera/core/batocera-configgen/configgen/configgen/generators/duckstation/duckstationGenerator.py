@@ -14,7 +14,7 @@ from os import environ
 eslog = get_logger(__name__)
 
 class DuckstationGenerator(Generator):
-    def generate(self, system, rom, playersControllers, guns, wheels, gameResolution):
+    def generate(self, system, rom, playersControllers, metadata, guns, wheels, gameResolution):
         # Test if it's a m3u file
         if os.path.splitext(rom)[1] == ".m3u":
             rom = rewriteM3uFullPath(rom)
@@ -291,7 +291,7 @@ class DuckstationGenerator(Generator):
             settings.add_section("Cheevos")
         # RetroAchievements
         if system.isOptSet('retroachievements') and system.getOptBoolean('retroachievements') == True:
-            headers   = {"Content-type": "text/plain"}
+            headers   = {"Content-type": "text/plain", "User-Agent": "Batocera.linux"}
             login_url = "https://retroachievements.org/"
             username  = system.config.get('retroachievements.username', "")
             password  = system.config.get('retroachievements.password', "")
@@ -478,16 +478,17 @@ class DuckstationGenerator(Generator):
         # Force defaults to be aligned with evmapy
         settings.set("Hotkeys", "FastForward",                 "Keyboard/Tab")
         settings.set("Hotkeys", "Reset",                       "Keyboard/F6")
-        settings.set("Hotkeys", "OpenPauseMenu",               "SDL-0/Guide")
         settings.set("Hotkeys", "LoadSelectedSaveState",       "Keyboard/F1")
         settings.set("Hotkeys", "SaveSelectedSaveState",       "Keyboard/F2")
         settings.set("Hotkeys", "SelectPreviousSaveStateSlot", "Keyboard/F3")
         settings.set("Hotkeys", "SelectNextSaveStateSlot",     "Keyboard/F4")
         settings.set("Hotkeys", "Screenshot",                  "Keyboard/F10")
         settings.set("Hotkeys", "Rewind",                      "Keyboard/F5")
-        settings.set("Hotkeys", "OpenQuickMenu",               "Keyboard/F7")
+        settings.set("Hotkeys", "OpenPauseMenu",               "Keyboard/F7")
         settings.set("Hotkeys", "ChangeDisc",                  "Keyboard/F8")
-
+        if settings.has_option('Hotkeys', 'OpenQuickMenu'):
+            settings.remove_option('Hotkeys', 'OpenQuickMenu')
+        
         ## [CDROM]
         if not settings.has_section("CDROM"):
             settings.add_section("CDROM")

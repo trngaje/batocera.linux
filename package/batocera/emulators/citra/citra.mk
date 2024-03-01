@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-CITRA_VERSION = nightly-2009
+CITRA_VERSION = nightly-2054
 CITRA_SITE = https://github.com/citra-emu/citra-nightly.git
 CITRA_SITE_METHOD=git
 CITRA_GIT_SUBMODULES=YES
@@ -31,7 +31,7 @@ CITRA_CONF_OPTS += -DCITRA_ENABLE_BUNDLE_TARGET=ON
 CITRA_CONF_OPTS += -DENABLE_LTO=OFF
 
 # future support for arm using SDL2 gui?
-ifeq ($(BR2_PACKAGE_BATOCERA_TARGET_X86_ANY),y)
+ifeq ($(BR2_PACKAGE_QT6),y)
     CITRA_DEPENDENCIES += qt6base qt6tools qt6multimedia
     CITRA_CONF_OPTS += -DENABLE_QT=ON
     CITRA_CONF_OPTS += -DENABLE_QT_TRANSLATION=ON

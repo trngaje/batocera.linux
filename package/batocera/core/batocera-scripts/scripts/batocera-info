@@ -61,7 +61,7 @@ fi
 ###
 
 V_BOARD=$(cat /boot/boot/batocera.board)
-V_CPUNB=$(lscpu | grep 'Core(s) per socket' | awk '{print $4}')
+V_CPUNB=$(lscpu | grep 'Core(s) per socket' | awk '{print $4}' | head -n 1)
 V_CPUMAXNB=$(lscpu | grep '^CPU(s):' | awk '{print $2}')
 V_CPUMODEL1=$(grep -E $'^model name\t:' /proc/cpuinfo | head -1 | sed -e s+'^model name\t: '++)
 V_SYSTEM=$(uname -rs)
@@ -87,7 +87,11 @@ then
     echo "Model: ${V_BOARD_MODEL}"
 fi
 echo "System: ${V_SYSTEM}"
-echo "Architecture: $(uname -m)"
+V_ARCH=$(uname -m)
+echo "Architecture: ${V_ARCH}"
+if [ "$V_BOARD" != "$V_ARCH" ]; then
+    echo "Board: ${V_BOARD}"
+fi
 
 if echo "${V_BOARD}" | grep -qE "^rpi[0-9]$"
 then
@@ -124,6 +128,13 @@ then
     echo "CPU Features: ${cpu_features[@]}"
 fi
 
+# TDP
+CPU_TDP=$(/usr/bin/batocera-settings-get system.cpu.tdp)
+if ! [ -z "$CPU_TDP" ]; then
+    MAX_TDP=$(ryzenadj -i | grep 'PPT LIMIT FAST' | awk '{printf "%.0f\n", $6}')
+    echo "Ryzen Mobile TDP: ${MAX_TDP}W"
+fi
+
 # temperature
 # Unit: millidegree Celsius
 TEMPE=$(cat /sys/devices/virtual/thermal/thermal_zone*/temp /sys/class/hwmon/hwmon*/temp*_input 2>/dev/null | sort -rn | head -1 | sed -e s+"[0-9][0-9][0-9]$"++)
@@ -137,6 +148,19 @@ MEM_AVAILABLE_KB=$(head /proc/meminfo | grep -E "^MemAvailable:" | sed -e s+"^Me
 MEM_TOTAL_MB=$(expr "${MEM_TOTAL_KB}" / 1024)
 MEM_AVAILABLE_MB=$(expr "${MEM_AVAILABLE_KB}" / 1024)
 echo "Available Memory: ${MEM_AVAILABLE_MB}/${MEM_TOTAL_MB} MB"
+
+# Current Resolution
+if test -z "${DISPLAY}"; then
+    export DISPLAY=:0.0
+fi
+DISPLAYRES=$(batocera-resolution currentResolution)
+if [ ! -z "$WAYLAND_DISPLAY" ]; then
+    DISPLAYRATE=$(batocera-resolution currentMode | awk -F'[x.]' '{printf "%.3f", $3 / 1000}')
+else
+    DISPLAYRATE=$(batocera-resolution currentMode | awk -F'\\.' '{print $2"."$3}')
+fi
+echo "Display Resolution: ${DISPLAYRES}"
+echo "Display Refresh Rate: ${DISPLAYRATE}Hz"
 
 if [[ "${FULL_DISPLAY}" != 0 ]]; then
 	# OPENGL
@@ -161,16 +185,6 @@ if [[ "${FULL_DISPLAY}" != 0 ]]; then
 		    echo "Vulkan Driver Version: none"
 	    fi
 	fi
-
-	# Boot information
-	if [ -d /sys/firmware/efi ]; then
-		echo "UEFI Boot: Yes"
-		if [ -x /usr/bin/mokutil ]; then
-			echo "Secure Boot: $(mokutil --sb-state 2>&1)"
-		fi
-	else
-		echo "UEFI Boot: No"
-	fi
 fi
 
 # userdata type
@@ -181,6 +195,18 @@ echo "Data Partition Available Space: $(df -h ${INTERNALDEVICE} | awk '/\/userda
 
 PREFSRC=$(ip -j route get 8.8.8.8 2>/dev/null | jq -r '.[].prefsrc')
 test -n "${PREFSRC}" && echo "Network IP Address: ${PREFSRC}"
+
+# Boot information
+if [[ "${FULL_DISPLAY}" != 0 ]]; then
+	if [ -d /sys/firmware/efi ]; then
+		echo "UEFI Boot: Yes"
+		if [ -x /usr/bin/mokutil ]; then
+			echo "Secure Boot: $(mokutil --sb-state 2>&1 | sed 's/^SecureBoot validation is//' | paste -sd ';')"
+		fi
+	else
+		echo "UEFI Boot: No"
+	fi
+fi
 
 # battery
 if test -n "${BATT}"

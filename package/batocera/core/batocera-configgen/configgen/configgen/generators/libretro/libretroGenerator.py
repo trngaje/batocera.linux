@@ -24,7 +24,7 @@ class LibretroGenerator(Generator):
 
     # Main entry of the module
     # Configure retroarch and return a command
-    def generate(self, system, rom, playersControllers, guns, wheels, gameResolution):
+    def generate(self, system, rom, playersControllers, metadata, guns, wheels, gameResolution):
         # Fix for the removed MESS/MAMEVirtual cores
         if system.config['core'] in [ 'mess', 'mamevirtual' ]:
             system.config['core'] = 'mame'
@@ -91,7 +91,7 @@ class LibretroGenerator(Generator):
             if system.isOptSet('forceNoBezel') and system.getOptBoolean('forceNoBezel'):
                 bezel = None
 
-            libretroConfig.writeLibretroConfig(self, retroconfig, system, playersControllers, guns, rom, bezel, shaderBezel, gameResolution, gfxBackend)
+            libretroConfig.writeLibretroConfig(self, retroconfig, system, playersControllers, metadata, guns, wheels, rom, bezel, shaderBezel, gameResolution, gfxBackend)
             retroconfig.write()
 
             # duplicate config to mapping files while ra now split in 2 parts
@@ -220,12 +220,7 @@ class LibretroGenerator(Generator):
                 elif os.path.exists(os.path.join(rom, "dosbox.bat")) and not os.path.exists(os.path.join(rom, romDOSName + ".bat")):
                     exe = os.path.join(rom, "dosbox.bat")
                 else:
-                    exe = '/tmp/'+ romDOSName # Ugly workaround for dosbox-pure not supporting extensions for dos game folders
-                    try:
-                        os.remove(exe)
-                    except OSError:
-                        pass
-                    os.symlink(rom, exe)
+                    exe = rom
                 commandArray = [batoceraFiles.batoceraBins[system.config['emulator']], "-L", retroarchCore, "--config", system.config['configfile'], exe]
                 dontAppendROM = True
             else:

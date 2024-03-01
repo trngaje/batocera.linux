@@ -3,8 +3,8 @@
 # libretro-cap32
 #
 ################################################################################
-# Version: Commits on Jul 12, 2023
-LIBRETRO_CAP32_VERSION = 4a071f2c004273abf0f9fa0640b36f6664d8381a
+# Version: Commits on Feb 4, 2024
+LIBRETRO_CAP32_VERSION = 1569dac2674512fa503dbb95eb32bccbe2908063
 LIBRETRO_CAP32_SITE = $(call github,libretro,libretro-cap32,$(LIBRETRO_CAP32_VERSION))
 LIBRETRO_CAP32_LICENSE = GPLv2
 
@@ -20,10 +20,10 @@ else ifeq ($(BR2_PACKAGE_BATOCERA_TARGET_BCM2837),y)
 LIBRETRO_CAP32_PLATFORM = rpi3_64
 
 else ifeq ($(BR2_PACKAGE_BATOCERA_TARGET_BCM2711),y)
-LIBRETRO_CAP32_PLATFORM = rpi4_64
+LIBRETRO_CAP32_PLATFORM = rpi4
 
-#else ifeq ($(BR2_PACKAGE_BATOCERA_TARGET_BCM2712),y)
-#LIBRETRO_CAP32_PLATFORM = rpi5_64
+else ifeq ($(BR2_PACKAGE_BATOCERA_TARGET_BCM2712),y)
+LIBRETRO_CAP32_PLATFORM = rpi5
 
 else ifeq ($(BR2_cortex_a35)$(BR2_cortex_a53)$(BR2_arm),yy)
 LIBRETRO_CAP32_PLATFORM = armv neon

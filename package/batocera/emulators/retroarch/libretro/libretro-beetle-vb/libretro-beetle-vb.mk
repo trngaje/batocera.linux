@@ -3,8 +3,8 @@
 # libretro-beetle-vb
 #
 ################################################################################
-# Version: Commits on Feb 23, 2023
-LIBRETRO_BEETLE_VB_VERSION = dd6393f76ff781df0f4e8c953f5b053b1e61b313
+# Version: Commits on Nov 1, 2023
+LIBRETRO_BEETLE_VB_VERSION = 9d1bd03f21dac7897f65269e1095496331efce8b
 LIBRETRO_BEETLE_VB_SITE = $(call github,libretro,beetle-vb-libretro,$(LIBRETRO_BEETLE_VB_VERSION))
 LIBRETRO_BEETLE_VB_LICENSE = GPLv2
 
@@ -22,8 +22,8 @@ LIBRETRO_BEETLE_VB_PLATFORM = rpi3_64
 else ifeq ($(BR2_PACKAGE_BATOCERA_TARGET_BCM2711),y)
 LIBRETRO_BEETLE_VB_PLATFORM = rpi4_64
 
-#else ifeq ($(BR2_PACKAGE_BATOCERA_TARGET_BCM2712),y)
-#LIBRETRO_BEETLE_VB_PLATFORM = rpi5_64
+else ifeq ($(BR2_PACKAGE_BATOCERA_TARGET_BCM2712),y)
+LIBRETRO_BEETLE_VB_PLATFORM = rpi5_64
 
 else ifeq ($(BR2_aarch64),y)
 LIBRETRO_BEETLE_VB_PLATFORM = unix

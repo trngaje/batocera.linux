@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BATOCERA_NVIDIA_DRIVER_VERSION = 545.29.06
+BATOCERA_NVIDIA_DRIVER_VERSION = 550.54.14
 BATOCERA_NVIDIA_DRIVER_SUFFIX = $(if $(BR2_x86_64),_64)
 BATOCERA_NVIDIA_DRIVER_SITE = http://download.nvidia.com/XFree86/Linux-x86$(BATOCERA_NVIDIA_DRIVER_SUFFIX)/$(BATOCERA_NVIDIA_DRIVER_VERSION)
 BATOCERA_NVIDIA_DRIVER_SOURCE = NVIDIA-Linux-x86$(BATOCERA_NVIDIA_DRIVER_SUFFIX)-$(BATOCERA_NVIDIA_DRIVER_VERSION).run
@@ -50,8 +50,8 @@ BATOCERA_NVIDIA_DRIVER_LIBS_MISC = \
 	libnvidia-api.so.1 \
 	libnvidia-cfg.so.$(BATOCERA_NVIDIA_DRIVER_VERSION) \
 	libnvidia-eglcore.so.$(BATOCERA_NVIDIA_DRIVER_VERSION) \
-	libnvidia-egl-gbm.so.1.1.0 \
-	libnvidia-egl-wayland.so.1.1.12 \
+	libnvidia-egl-gbm.so.1.1.1 \
+	libnvidia-egl-wayland.so.1.1.13 \
 	libnvidia-glcore.so.$(BATOCERA_NVIDIA_DRIVER_VERSION) \
 	libnvidia-glsi.so.$(BATOCERA_NVIDIA_DRIVER_VERSION) \
 	libnvidia-glvkspirv.so.$(BATOCERA_NVIDIA_DRIVER_VERSION) \
@@ -100,7 +100,6 @@ endef
 # wants to run a third-party program developped under such an agreement).
 ifeq ($(BR2_PACKAGE_BATOCERA_NVIDIA_DRIVER_PRIVATE_LIBS),y)
 BATOCERA_NVIDIA_DRIVER_LIBS += \
-	libnvidia-ifr.so.$(BATOCERA_NVIDIA_DRIVER_VERSION) \
 	libnvidia-fbc.so.$(BATOCERA_NVIDIA_DRIVER_VERSION)
 endif
 
@@ -111,13 +110,18 @@ BATOCERA_NVIDIA_DRIVER_X_MODS = \
 #	libnvidia-wfb.so.$(BATOCERA_NVIDIA_DRIVER_VERSION)
 endif # X drivers
 
+# cuda required for vkd3d
+# don't install large unessesary cuda libs however
 ifeq ($(BR2_PACKAGE_BATOCERA_NVIDIA_DRIVER_CUDA),y)
 BATOCERA_NVIDIA_DRIVER_LIBS += \
 	libcuda.so.$(BATOCERA_NVIDIA_DRIVER_VERSION) \
 	libnvcuvid.so.$(BATOCERA_NVIDIA_DRIVER_VERSION) \
-	libnvidia-fatbinaryloader.so.$(BATOCERA_NVIDIA_DRIVER_VERSION) \
-	libnvidia-ptxjitcompiler.so.$(BATOCERA_NVIDIA_DRIVER_VERSION) \
-	libnvidia-encode.so.$(BATOCERA_NVIDIA_DRIVER_VERSION)
+	# libnvidia-ptxjitcompiler.so.$(BATOCERA_NVIDIA_DRIVER_VERSION) \
+	#libnvidia-encode.so.$(BATOCERA_NVIDIA_DRIVER_VERSION) \
+	#libnvidia-nvvm.so.$(BATOCERA_NVIDIA_DRIVER_VERSION)
+BATOCERA_NVIDIA_DRIVER_32 += \
+	libcuda.so.$(BATOCERA_NVIDIA_DRIVER_VERSION) \
+	libnvcuvid.so.$(BATOCERA_NVIDIA_DRIVER_VERSION)
 ifeq ($(BR2_PACKAGE_BATOCERA_NVIDIA_DRIVER_CUDA_PROGS),y)
 BATOCERA_NVIDIA_DRIVER_PROGS = nvidia-cuda-mps-control nvidia-cuda-mps-server
 endif

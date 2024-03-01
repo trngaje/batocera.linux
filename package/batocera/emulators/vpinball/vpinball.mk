@@ -3,13 +3,13 @@
 # vpinball
 #
 ################################################################################
-# Version: Commits on Nov 23, 2023
+# Version: Commits on Jan 28, 2024
 # uses standalone tree for now
-VPINBALL_VERSION = 57947cc67d4a99572a161003f26907503e2e32e9
+VPINBALL_VERSION = 0d0dcff884f71eecab96111b63db6b5586ae4b2c
 VPINBALL_SITE = $(call github,vpinball,vpinball,$(VPINBALL_VERSION))
 VPINBALL_LICENSE = GPLv3+
 VPINBALL_LICENSE_FILES = LICENSE
-VPINBALL_DEPENDENCIES = libfreeimage libpinmame libserum libzedmd sdl2 sdl2_image sdl2_ttf 
+VPINBALL_DEPENDENCIES = host-libcurl libfreeimage libpinmame libaltsound libserialport libzedmd libserum libdmdutil sdl2 sdl2_image sdl2_ttf
 VPINBALL_SUPPORTS_IN_SOURCE_BUILD = NO
 
 # handle supported target platforms
@@ -19,7 +19,7 @@ ifeq ($(BR2_PACKAGE_BATOCERA_TARGET_RK3588),y)
     ARCH = aarch64
 endif
 
-ifeq ($(BR2_PACKAGE_BATOCERA_TARGET_BCM2711),y)
+ifeq ($(BR2_PACKAGE_BATOCERA_TARGET_BCM2711)$(BR2_PACKAGE_BATOCERA_TARGET_BCM2712),y)
     SOURCE = CMakeLists_gl-rpi-aarch64.txt
     SOURCE_DIR = rpi
     ARCH = aarch64
@@ -49,6 +49,7 @@ endef
 
 VPINBALL_CONF_OPTS += -DCMAKE_BUILD_TYPE=Release
 VPINBALL_CONF_OPTS += -DBUILD_SHARED_LIBS=OFF
+VPINBALL_CONF_OPTS += -DPOST_BUILD_COPY_EXT_LIBS=OFF
 
 define VPINBALL_INSTALL_TARGET_CMDS
     mkdir -p $(TARGET_DIR)/usr/bin/vpinball
@@ -59,7 +60,7 @@ define VPINBALL_INSTALL_TARGET_CMDS
     cp -R $(@D)/buildroot-build/flexdmd $(TARGET_DIR)/usr/bin/vpinball/
     cp -R $(@D)/buildroot-build/assets $(TARGET_DIR)/usr/bin/vpinball/
     cp -R $(@D)/buildroot-build/scripts $(TARGET_DIR)/usr/bin/vpinball/
-    cp -R $(@D)/buildroot-build/shader $(TARGET_DIR)/usr/bin/vpinball/
+    cp -R $(@D)/buildroot-build/shader10.8.0 $(TARGET_DIR)/usr/bin/vpinball/
 endef
 
 define VPINBALL_EVMAPY

@@ -16,7 +16,7 @@ from . import rpcs3Controllers
 
 class Rpcs3Generator(Generator):
 
-    def generate(self, system, rom, playersControllers, guns, wheels, gameResolution):
+    def generate(self, system, rom, playersControllers, metadata, guns, wheels, gameResolution):
 
         rpcs3Controllers.generateControllerConfig(system, playersControllers, rom)
 
@@ -101,7 +101,8 @@ class Rpcs3Generator(Generator):
                 rpcs3ymlconfig["Core"]["Accurate xfloat"] = False
                 rpcs3ymlconfig["Core"]["Approximate xfloat"] = False
         # Set the Default Core Values we need
-        rpcs3ymlconfig["Core"]["SPU Cache"] = False # When SPU Cache is True, game performance decreases signficantly. Force it to off.
+        # Force to True for now to account for updates where exiting config file present. (True results in less stutter when a SPU module is in cache)
+        rpcs3ymlconfig["Core"]["SPU Cache"] = True # When SPU Cache is True, game performance decreases signficantly. Force it to off. (Depreciated)
         # Preferred SPU Threads
         if system.isOptSet("rpcs3_sputhreads"):
             rpcs3ymlconfig["Core"]["Preferred SPU Threads"] = system.config["rpcs3_sputhreads"]
@@ -153,9 +154,15 @@ class Rpcs3Generator(Generator):
             rpcs3ymlconfig["Video"]["Stretch To Display Area"] = False
         # Frame Limit
         if system.isOptSet("rpcs3_framelimit"):
-            rpcs3ymlconfig["Video"]["Frame limit"] = system.config["rpcs3_framelimit"]
+            if system.config["rpcs3_framelimit"] in ["30", "50", "59.94", "60"]:
+                rpcs3ymlconfig["Video"]["Frame limit"] = system.config["rpcs3_framelimit"]
+                rpcs3ymlconfig["Video"]["Second Frame Limit"] = False
+            else:
+                rpcs3ymlconfig["Video"]["Second Frame Limit"] = system.config["rpcs3_framelimit"]
+                rpcs3ymlconfig["Video"]["Frame limit"] = False
         else:
             rpcs3ymlconfig["Video"]["Frame limit"] = "Auto"
+            rpcs3ymlconfig["Video"]["Second Frame Limit"] = False
         # Write Color Buffers
         if system.isOptSet("rpcs3_colorbuffers"):
             rpcs3ymlconfig["Video"]["Write Color Buffers"] = system.config["rpcs3_colorbuffers"]
@@ -191,11 +198,13 @@ class Rpcs3Generator(Generator):
             rpcs3ymlconfig["Video"]["Shader Precision"] = system.config["rpcs3_shader"]
         else:
             rpcs3ymlconfig["Video"]["Shader Precision"] = "High"
-        # Resolution
-        if system.isOptSet("rpcs3_resolution"):
-            rpcs3ymlconfig["Video"]["Resolution"] = system.config["rpcs3_resolution"]
+        # Internal resolution (CHANGE AT YOUR OWN RISK)
+            rpcs3ymlconfig["Video"]["Resolution"] = "1280x720"        
+        # Resolution scaling
+        if system.isOptSet("rpcs3_resolution_scale"):
+            rpcs3ymlconfig["Video"]["Resolution Scale"] = system.config["rpcs3_resolution_scale"]
         else:
-            rpcs3ymlconfig["Video"]["Resolution"] = "1280x720"
+            rpcs3ymlconfig["Video"]["Resolution Scale"] = "100"
         # Output Scaling
         if system.isOptSet("rpcs3_scaling"):
             rpcs3ymlconfig["Video"]["Output Scaling Mode"] = system.config["rpcs3_scaling"]
@@ -211,6 +220,11 @@ class Rpcs3Generator(Generator):
             rpcs3ymlconfig["Video"]["Multithreaded RSX"] = system.config["rpcs3_rsx"]
         else:
             rpcs3ymlconfig["Video"]["Multithreaded RSX"] = False
+        # Async Texture Streaming
+        if system.isOptSet("rpcs3_async_texture"):
+            rpcs3ymlconfig["Video"]["Asynchronous Texture Streaming 2"] = system.config["rpcs3_async_texture"]
+        else:
+            rpcs3ymlconfig["Video"]["Asynchronous Texture Streaming 2"] = False
         
         # -= [Audio] =-
         # defaults

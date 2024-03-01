@@ -166,7 +166,11 @@ def getGenerator(emulator):
     if emulator == 'duckstation':
         from generators.duckstation.duckstationGenerator import DuckstationGenerator
         return DuckstationGenerator()
-
+    
+    if emulator == 'duckstation-legacy':
+        from generators.duckstation_legacy.duckstationLegacyGenerator import DuckstationLegacyGenerator
+        return DuckstationLegacyGenerator()
+    
     if emulator == 'drastic':
         from generators.drastic.drasticGenerator import DrasticGenerator
         return DrasticGenerator()
@@ -350,6 +354,10 @@ def getGenerator(emulator):
     if emulator == "sonic3-air":
         from generators.sonic3_air.sonic3_airGenerator import Sonic3AIRGenerator
         return Sonic3AIRGenerator()
+
+    if emulator == "sonic-mania":
+        from generators.sonic_mania.sonic_maniaGenerator import SonicManiaGenerator
+        return SonicManiaGenerator()
 
     if emulator == 'sh':
         from generators.sh.shGenerator import ShGenerator

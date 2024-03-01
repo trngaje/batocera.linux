@@ -365,7 +365,7 @@ msxturbor:
   core:     bluemsx
 mugen:
   emulator: mugen
-  core:     proton
+  core:     ge-custom
 fpinball:
   emulator: fpinball
   core:     fpinball
@@ -422,6 +422,7 @@ openbor:
   options:
     # none because some games fails by default with textures (street of rage 2x)
     bezel: none
+    hud_support: false
 openjazz:
   emulator: openjazz
   core:     openjazz
@@ -550,6 +551,9 @@ solarus:
 sonic3-air:
   emulator: sonic3-air
   core:     sonic3-air
+sonic-mania:
+  emulator: sonic-mania
+  core:     sonic-mania
 sonicretro:
   emulator: sonic2013
   core:     sonic2013
@@ -657,12 +661,12 @@ wiiu:
   core:     cemu
 windows:
   emulator: wine
-  core:     proton
+  core:     ge-custom
   options:
     hud_support: false
 windows_installers:
   emulator: wine
-  core:     proton
+  core:     ge-custom
   options:
     hud_support: false
 wswan:
@@ -692,8 +696,8 @@ xbox:
   emulator: xemu
   core:     xemu
 xbox360:
-  emulator: xenia
-  core:     xenia
+  emulator: xenia-canary
+  core:     xenia-canary
   options:
     hud_support: false
 zc210:

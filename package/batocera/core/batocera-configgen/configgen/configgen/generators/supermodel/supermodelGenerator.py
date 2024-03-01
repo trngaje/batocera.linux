@@ -12,7 +12,7 @@ from shutil import copyfile
 
 class SupermodelGenerator(Generator):
 
-    def generate(self, system, rom, playersControllers, guns, wheels, gameResolution):
+    def generate(self, system, rom, playersControllers, metadata, guns, wheels, gameResolution):
         commandArray = ["supermodel", "-fullscreen", "-channels=2"]
         
         # legacy3d
@@ -241,11 +241,23 @@ def configPadsIni(system, rom, playersControllers, guns, altControl):
                         elif key == "InputOffscreen2" or key == "InputAnalogTriggerRight2":
                             targetConfig.set(section, key, "MOUSE2_RIGHT_BUTTON")
                         elif key == "InputStart2":
-                            targetConfig.set(section, key, "MOUSE2_BUTTONX1," + transformElement("JOY2_BUTTON9", playersControllers, mapping, mapping_fallback))
+                            valstr  = "MOUSE2_BUTTONX1"
+                            valstr2 = transformElement("JOY2_BUTTON9", playersControllers, mapping, mapping_fallback)
+                            if valstr2 is not None:
+                                valstr += "," + valstr2
+                            targetConfig.set(section, key, valstr)
                         elif key == "InputCoin1":
-                            targetConfig.set(section, key, "MOUSE2_BUTTONX2," + transformElement("JOY2_BUTTON10", playersControllers, mapping, mapping_fallback))
+                            valstr = "MOUSE2_BUTTONX2"
+                            valstr2 = transformElement("JOY2_BUTTON10", playersControllers, mapping, mapping_fallback)
+                            if valstr2 is not None:
+                                valstr += "," + valstr2
+                            targetConfig.set(section, key,  valstr)
                         elif key == "InputAnalogJoyEvent2":
-                            targetConfig.set(section, key, "MOUSE2_MIDDLE_BUTTON," + transformElement("JOY2_BUTTON2", playersControllers, mapping, mapping_fallback))
+                            valstr = "MOUSE2_MIDDLE_BUTTON"
+                            valstr2 = transformElement("JOY2_BUTTON2", playersControllers, mapping, mapping_fallback)
+                            if valstr2 is not None:
+                                valstr += "," + valstr2
+                            targetConfig.set(section, key, valstr)
                 else:
                     if key == "InputSystem":
                         targetConfig.set(section, key, "sdl")

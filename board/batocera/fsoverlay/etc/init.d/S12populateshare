@@ -52,6 +52,24 @@ do
     fi
 done
 
+# sometimes we update _info.txt files.
+# add a loop to update newer files if necessary
+for DIR in roms roms/mame/mame2003
+do
+    find "$IN""/""$DIR" -mindepth 1 -maxdepth 2 -type f -name "_info.txt" |
+        while read FILE
+        do
+            RELATIVE_PATH="${FILE#$IN/}"
+            DEST_FILE="$OUT/$RELATIVE_PATH"
+            
+            # Check if the source file is newer than the destination file
+            if [ "$FILE" -nt "$DEST_FILE" ]; then
+                echo "Updating $DEST_FILE"
+                cp -f "$FILE" "$DEST_FILE"
+            fi
+        done
+done
+
 # directories / files to copy when initializing the user data
 #
 # NO UPDATE IS POSSIBLE ON THESE DIRECTORIES WHEN batocera.linux IS UPDATED
@@ -65,6 +83,8 @@ for FILE in music bios extractions kodi library saves screenshots splash \
             system/configs/emulationstation/es_settings.cfg \
             system/.kodi \
             system/configs/amiberry \
+            system/configs/amiberry/whdboot \
+            system/configs/amiberry/data \
             system/configs/cannonball \
             system/configs/dosbox \
             system/configs/mupen64 \
@@ -78,10 +98,26 @@ for FILE in music bios extractions kodi library saves screenshots splash \
             system/pacman/hooks/batocera-uninstall.hook \
             system/pacman/pacman.conf \
             bios/mame2003 \
-            roms/iortcw/main
+            bios/dolphin-emu \
+            roms/iortcw/main \
+            bios/ps2
 do
-    # not wanted for kodi
-    test -e "${IN}/${FILE}" && test ! -e "${OUT}/${FILE}" && mkdir -p $(dirname "${OUT}/${FILE}") && cp -r "${IN}/${FILE}" "${OUT}/${FILE}"
+    # Skip updating specific files
+    if [ "$FILE" = "system/configs/emulationstation/es_settings.cfg" ] || [ "$FILE" = "system/configs/emulationstation/es_input.cfg" ] || [ "$FILE" = "system/batocera.conf" ]; then
+        # Check if the file doesn't exist, then create it
+        if [ ! -e "${OUT}/${FILE}" ]; then
+            mkdir -p "$(dirname "${OUT}/${FILE}")"
+            echo "Creating $OUT/$FILE"
+            cp -rf "${IN}/${FILE}" "$(dirname "${OUT}/${FILE}")"/
+        fi
+    else
+        # Update if newer
+        if [ -e "${IN}/${FILE}" ] && { [ ! -e "${OUT}/${FILE}" ] || [ "${IN}/${FILE}" -nt "${OUT}/${FILE}" ]; }; then
+            mkdir -p "$(dirname "${OUT}/${FILE}")"
+            echo "Updating $OUT/$FILE"
+            cp -rf "${IN}/${FILE}" "$(dirname "${OUT}/${FILE}")"/
+        fi
+    fi
 done
 
 ### specific directories

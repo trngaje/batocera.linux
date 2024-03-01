@@ -3,9 +3,8 @@
 # dolphin-emu
 #
 ################################################################################
-
-# Version: 5.0-20212 - Commits on Oct 11, 2023
-DOLPHIN_EMU_VERSION = 1c0605d1c41d5e99b6e13a90dca7bb7a126d355b
+# Version: 5.0-20840 - Commits on Dec 18, 2023
+DOLPHIN_EMU_VERSION = 57327be7f379757a192fa788f5875ed1a77970c4
 DOLPHIN_EMU_SITE = https://github.com/dolphin-emu/dolphin
 DOLPHIN_EMU_SITE_METHOD = git
 DOLPHIN_EMU_LICENSE = GPLv2+
@@ -37,8 +36,7 @@ endif
 DOLPHIN_EMU_MAKE_ENV += LDFLAGS="-Wl,--copy-dt-needed-entries"
 DOLPHIN_EMU_CONF_ENV += LDFLAGS="-Wl,--copy-dt-needed-entries"
 
-ifeq ($(BR2_PACKAGE_XSERVER_XORG_SERVER),y)
-    DOLPHIN_EMU_DEPENDENCIES += xserver_xorg-server
+ifeq ($(BR2_PACKAGE_XORG7),y)
     DOLPHIN_EMU_CONF_OPTS += -DENABLE_X11=ON
 else
     DOLPHIN_EMU_CONF_OPTS += -DENABLE_X11=OFF

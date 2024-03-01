@@ -3,8 +3,8 @@
 # libretro-atari800
 #
 ################################################################################
-# Version: Commits on Aug 1, 2023
-LIBRETRO_ATARI800_VERSION = 20d59afb3f19065749549732f20845c3be82e68c
+# Version: Commits on Nov 14, 2023
+LIBRETRO_ATARI800_VERSION = 410d7bf0c215f3444793a9cec51c129e7b67c400
 LIBRETRO_ATARI800_SITE = $(call github,libretro,libretro-atari800,$(LIBRETRO_ATARI800_VERSION))
 LIBRETRO_ATARI800_LICENSE = GPL
 
@@ -22,8 +22,8 @@ LIBRETRO_ATARI800_PLATFORM = rpi3_64
 else ifeq ($(BR2_PACKAGE_BATOCERA_TARGET_BCM2711),y)
 LIBRETRO_ATARI800_PLATFORM = rpi4
 
-#else ifeq ($(BR2_PACKAGE_BATOCERA_TARGET_BCM2712),y)
-#LIBRETRO_ATARI800_PLATFORM = rpi5
+else ifeq ($(BR2_PACKAGE_BATOCERA_TARGET_BCM2712),y)
+LIBRETRO_ATARI800_PLATFORM = rpi5
 
 endif
 
