@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Check if debugfs is mounted
 if grep -qs 'debugfs' /proc/mounts; then
@@ -24,27 +24,35 @@ display="/sys/kernel/debug/dispdbg"
 
 echo "$(date) - HDMI event triggered - ${state}" >> /var/log/hdmi-event.log
 
-if [ "$state" == "HDMI=1" ]; then
-        sed -i "s/audiocodec/ahubhdmi/g" /etc/asound.conf
+es_state=$(batocera-es-swissknife --espid)
 
+if [ "$state" == "HDMI=1" ]; then
+	batocera-audio set alsa_output.platform-soc_03000000_ahub1_mach.unknown
+	
 	echo disp0 > $display/name
 	echo switch1 > $display/command
 	echo 4 10 0 0 0x4 0x101 0 0 0 8 > $display/param
 	echo 1 > $display/start
 
-	killall emulationstation
+	if [ "$es_state" != 0 ]; then
+		batocera-es-swissknife --restart
+	fi
+
 	fbset -g 1280 720 1280 1440 32
 
 	echo "CONNECTED!"
 else
-        sed -i "s/ahubhdmi/audiocodec/g" /etc/asound.conf
-        
+	batocera-audio set alsa_output.platform-soc_03000000_codec_mach.unknown
+	
 	echo disp0 > $display/name
         echo switch > $display/command
         echo 1 0 > $display/param
         echo 1 > $display/start
 
-	killall emulationstation
+        if [ "$es_state" != 0 ]; then
+		batocera-es-swissknife --restart
+	fi
+
 	fbset -g 640 480 640 960 32
 
 	echo "HDMI DISCONNECTED!"

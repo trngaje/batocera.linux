@@ -255,19 +255,19 @@ config BR2_PACKAGE_BATOCERA_SYSTEM
     select BR2_PACKAGE_MOKUTIL                              if BR2_PACKAGE_BATOCERA_TARGET_X86_64_ANY # mokutil machine owner key utility
 
     # Controllers
-    select BR2_PACKAGE_XONE                                 if !BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_4_4 # xbox receiver (require linux >= 4.15)
-    select BR2_PACKAGE_XPAD_NOONE                           if !BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_4_4 # xbox receiver (require linux >= 4.15)
-    select BR2_PACKAGE_XPADNEO                              if !BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_4_4 # xbox receiver (require linux >= 4.18)
-    select BR2_PACKAGE_WII_U_GC_ADAPTER                     if !BR2_PACKAGE_BATOCERA_TARGET_BCM2835 && !BR2_PACKAGE_BATOCERA_TARGET_RK3326 # wii-u-gc-adapter
-    select BR2_PACKAGE_WIIMOTES_RULES                       if !BR2_PACKAGE_BATOCERA_TARGET_BCM2835 && !BR2_PACKAGE_BATOCERA_TARGET_RK3326 # wiimotes
-    select BR2_PACKAGE_WIIMOTE_3RDPARTY                     if !BR2_PACKAGE_BATOCERA_TARGET_BCM2835 && !BR2_PACKAGE_BATOCERA_TARGET_RK3326 # some non official wiimotes
-    select BR2_PACKAGE_XWIIMOTE                             if !BR2_PACKAGE_BATOCERA_TARGET_BCM2835 && !BR2_PACKAGE_BATOCERA_TARGET_RK3326 # a tool to analye wiimote events (mainly to debug, but helps and is funny)
-    select BR2_PACKAGE_BATOCERA_GUNS                        if !BR2_PACKAGE_BATOCERA_TARGET_BCM2835 && !BR2_PACKAGE_BATOCERA_TARGET_RK3326
-    select BR2_PACKAGE_BATOCERA_WHEEL_CALIBRATOR
-    select BR2_PACKAGE_NEW_LG4FF                            if !BR2_PACKAGE_BATOCERA_TARGET_RK3326 && !BR2_PACKAGE_BATOCERA_TARGET_XU4 && !BR2_PACKAGE_BATOCERA_TARGET_BCM2835 && !BR2_PACKAGE_BATOCERA_TARGET_RK3326 # Improved Linux module driver for Logitech driving wheels (the lg4ff is disabled in kernels)
-    select BR2_PACKAGE_HID_NX                               if !BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_4_4 && !BR2_PACKAGE_BATOCERA_TARGET_BCM2835 && !BR2_PACKAGE_BATOCERA_TARGET_RK3326 # updated nintendo switch controller driver, requires kernel > 4.4
-    select BR2_PACKAGE_JOYCOND                              if BR2_PACKAGE_HID_NX # nintendo switch joycon daemon (requires hid-nx)
-    select BR2_PACKAGE_JAMMASD
+#    select BR2_PACKAGE_XONE                                 if !BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_4_4 # xbox receiver (require linux >= 4.15)
+#    select BR2_PACKAGE_XPAD_NOONE                           if !BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_4_4 # xbox receiver (require linux >= 4.15)
+#    select BR2_PACKAGE_XPADNEO                              if !BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_4_4 # xbox receiver (require linux >= 4.18)
+#    select BR2_PACKAGE_WII_U_GC_ADAPTER                     if !BR2_PACKAGE_BATOCERA_TARGET_BCM2835 && !BR2_PACKAGE_BATOCERA_TARGET_RK3326 # wii-u-gc-adapter
+#    select BR2_PACKAGE_WIIMOTES_RULES                       if !BR2_PACKAGE_BATOCERA_TARGET_BCM2835 && !BR2_PACKAGE_BATOCERA_TARGET_RK3326 # wiimotes
+#    select BR2_PACKAGE_WIIMOTE_3RDPARTY                     if !BR2_PACKAGE_BATOCERA_TARGET_BCM2835 && !BR2_PACKAGE_BATOCERA_TARGET_RK3326 # some non official wiimotes
+#    select BR2_PACKAGE_XWIIMOTE                             if !BR2_PACKAGE_BATOCERA_TARGET_BCM2835 && !BR2_PACKAGE_BATOCERA_TARGET_RK3326 # a tool to analye wiimote events (mainly to debug, but helps and is funny)
+#    select BR2_PACKAGE_BATOCERA_GUNS                        if !BR2_PACKAGE_BATOCERA_TARGET_BCM2835 && !BR2_PACKAGE_BATOCERA_TARGET_RK3326
+#    select BR2_PACKAGE_BATOCERA_WHEEL_CALIBRATOR
+#    select BR2_PACKAGE_NEW_LG4FF                            if !BR2_PACKAGE_BATOCERA_TARGET_RK3326 && !BR2_PACKAGE_BATOCERA_TARGET_XU4 && !BR2_PACKAGE_BATOCERA_TARGET_BCM2835 && !BR2_PACKAGE_BATOCERA_TARGET_RK3326 # Improved Linux module driver for Logitech driving wheels (the lg4ff is disabled in kernels)
+#    select BR2_PACKAGE_HID_NX                               if !BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_4_4 && !BR2_PACKAGE_BATOCERA_TARGET_BCM2835 && !BR2_PACKAGE_BATOCERA_TARGET_RK3326 # updated nintendo switch controller driver, requires kernel > 4.4
+#    select BR2_PACKAGE_JOYCOND                              if BR2_PACKAGE_HID_NX # nintendo switch joycon daemon (requires hid-nx)
+#    select BR2_PACKAGE_JAMMASD
 
     # Case
     select BR2_PACKAGE_ELEMENT14_PI_DESKTOP    if BR2_PACKAGE_BATOCERA_TARGET_BCM2836 || BR2_PACKAGE_BATOCERA_TARGET_BCM2837 # rpi2/rpi3
@@ -331,7 +331,8 @@ config BR2_PACKAGE_BATOCERA_SYSTEM
     select BR2_PACKAGE_RTL8192EU		if  !BR2_PACKAGE_BATOCERA_TARGET_BCM2835    && \
                                             !BR2_PACKAGE_BATOCERA_TARGET_H3         && \
                                             !BR2_PACKAGE_BATOCERA_TARGET_RK3128     && \
-                                            !BR2_PACKAGE_BATOCERA_TARGET_RK3588
+                                            !BR2_PACKAGE_BATOCERA_TARGET_RK3588     && \
+					    !BR2_PACKAGE_BATOCERA_TARGET_H5
 
     select BR2_PACKAGE_RTW89_TEMP       if  BR2_PACKAGE_BATOCERA_TARGET_RK3588
 
@@ -603,7 +604,7 @@ config BR2_PACKAGE_BATOCERA_TOOLS
     select BR2_PACKAGE_HTOP             # multi-cpus usage
     select BR2_PACKAGE_NCDU             # Disk Usage
     select BR2_PACKAGE_FFMPEG_XCBGRAB   if BR2_PACKAGE_XORG7
-    select BR2_PACKAGE_SWITCHRES        if !BR2_PACKAGE_BATOCERA_TARGET_BCM2835 && !BR2_PACKAGE_BATOCERA_WAYLAND # switchres 15kHz
+#    select BR2_PACKAGE_SWITCHRES        if !BR2_PACKAGE_BATOCERA_TARGET_BCM2835 && !BR2_PACKAGE_BATOCERA_WAYLAND # switchres 15kHz
     select BR2_PACKAGE_LIBGPIOD_TOOLS   if BR2_PACKAGE_LIBGPIOD
 
     help
@@ -1095,9 +1096,9 @@ config BR2_PACKAGE_BATOCERA_CONSOLE_SYSTEMS
     select BR2_PACKAGE_BATOCERA_SEGADC
 
     # PSX
-    select BR2_PACKAGE_DUCKSTATION                  if  BR2_PACKAGE_BATOCERA_GLES3          && \
-                                                        !BR2_PACKAGE_BATOCERA_TARGET_RK3326 && \
-                                                        !BR2_PACKAGE_BATOCERA_TARGET_XU4 # newer versions of duckstation are stricter on OpenGL 3.1
+#    select BR2_PACKAGE_DUCKSTATION                  if  BR2_PACKAGE_BATOCERA_GLES3          && \
+#                                                        !BR2_PACKAGE_BATOCERA_TARGET_RK3326 && \
+#                                                        !BR2_PACKAGE_BATOCERA_TARGET_XU4 # newer versions of duckstation are stricter on OpenGL 3.1
 
     select BR2_PACKAGE_DUCKSTATION_LEGACY           if  !BR2_PACKAGE_BATOCERA_GLES3             && \
                                                         !BR2_riscv                              && \
@@ -1370,19 +1371,19 @@ config BR2_PACKAGE_BATOCERA_CORES_EXPERIMENTAL
 
 config BR2_PACKAGE_BATOCERA_GUNS
     bool "batocera guns support"
-    select BR2_PACKAGE_AIMTRAK_GUNS      # aimtrak guns
-    select BR2_PACKAGE_SAMCO_GUNS        # samco guns
-    select BR2_PACKAGE_FUSION_LIGHTGUNS  # fusion lightguns
-    select BR2_PACKAGE_DOLPHINBAR_GUNS   # dolphinbar guns
-    select BR2_PACKAGE_SINDEN_GUNS       # sinden guns
-    select BR2_PACKAGE_AELIGHTGUN        # ae light gun
-    select BR2_PACKAGE_GUN4IR_GUNS       # gun4ir guns
-    select BR2_PACKAGE_RETROSHOOTER_GUNS # retroshooter guns
-    select BR2_PACKAGE_GUNCON           if BR2_PACKAGE_BATOCERA_TARGET_X86_64 || BR2_PACKAGE_BATOCERA_TARGET_BCM2711 || BR2_PACKAGE_BATOCERA_TARGET_BCM2837 # guncon
-    select BR2_PACKAGE_GUNCON3          if !BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_4_4 # guncon3
-    select BR2_PACKAGE_LIGHTGUNS_GAMES_PRECALIBRATIONS
-    select BR2_PACKAGE_DOLPHINCROSSHAIRSPACK if BR2_PACKAGE_DOLPHIN_EMU
-    select BR2_PACKAGE_STEAMDECKGUN          if BR2_PACKAGE_BATOCERA_TARGET_X86_64_ANY
+#    select BR2_PACKAGE_AIMTRAK_GUNS      # aimtrak guns
+#    select BR2_PACKAGE_SAMCO_GUNS        # samco guns
+#    select BR2_PACKAGE_FUSION_LIGHTGUNS  # fusion lightguns
+#    select BR2_PACKAGE_DOLPHINBAR_GUNS   # dolphinbar guns
+#    select BR2_PACKAGE_SINDEN_GUNS       # sinden guns
+#    select BR2_PACKAGE_AELIGHTGUN        # ae light gun
+#    select BR2_PACKAGE_GUN4IR_GUNS       # gun4ir guns
+#    select BR2_PACKAGE_RETROSHOOTER_GUNS # retroshooter guns
+#    select BR2_PACKAGE_GUNCON           if BR2_PACKAGE_BATOCERA_TARGET_X86_64 || BR2_PACKAGE_BATOCERA_TARGET_BCM2711 || BR2_PACKAGE_BATOCERA_TARGET_BCM2837 # guncon
+#    select BR2_PACKAGE_GUNCON3          if !BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_4_4 # guncon3
+#    select BR2_PACKAGE_LIGHTGUNS_GAMES_PRECALIBRATIONS
+#    select BR2_PACKAGE_DOLPHINCROSSHAIRSPACK if BR2_PACKAGE_DOLPHIN_EMU
+#    select BR2_PACKAGE_STEAMDECKGUN          if BR2_PACKAGE_BATOCERA_TARGET_X86_64_ANY
 
 config BR2_PACKAGE_BATOCERA_KODI20
     bool "batocera.linux Kodi 20 packages selection"

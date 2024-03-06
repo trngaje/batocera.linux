@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 FILEMODES="/sys/class/graphics/fb0/modes"
 
@@ -26,12 +26,19 @@ case "${ACTION}" in
     "minTomaxResolution" | "minTomaxResolution-secure")
     ;;
     "currentMode"|"currentResolution")
-        # mode can be different from resolution (ie on rpi)
-        test -e "${FILEMODES}" && head -1 "${FILEMODES}" | sed -e s+'^[^:]:\([0-9]*\)x\([0-9]*\)[a-z]*.*$'+'\1x\2'+
-        ;;
-	*)
-		f_usage
-		>&2 echo "error: invalid command ${ACTION}"
-		exit 1
+	hdmi_state_file="/sys/devices/platform/soc/6000000.hdmi/extcon/hdmi/state"
+	#
+	# # Read the state
+	state=$(cat "$hdmi_state_file")
+	if [ "$state" == "HDMI=1" ]; then
+		echo 1280x720
+	else
+		echo 640x480
+	fi
+	;;
+    *)
+	f_usage
+	>&2 echo "error: invalid command ${ACTION}"
+	exit 1
 esac
 exit 0
