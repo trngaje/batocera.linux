@@ -2,7 +2,10 @@
 
 FILE=$1
 if [ -z ${FILE} ]; then
-    FILE=/userdata/screenshots/screenshot-$(date +%Y-%m-%d_%Hh%M%S).pbm
+    FILE=/userdata/screenshots/screenshot-$(date +%Y-%m-%d_%Hh%M%S)
 fi
 
-fbdump > "${FILE}" 2>/dev/null || exit 1
+fbdump > "${FILE}.pbm" 2>/dev/null || exit 1
+convert "${FILE}.pbm" "${FILE}.png"
+rm "${FILE}.pbm"
+
