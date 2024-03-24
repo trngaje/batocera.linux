@@ -100,8 +100,8 @@ SDLJoyAxisMap = {
     "5" : JOYSTICK_AXIS_RTRIGGER
 }
 
-ppssppMapping =  { 'a' :             {'button': 'Circle'},
-                   'b' :             {'button': 'Cross'},
+ppssppMapping =  { 'b' :             {'button': 'Circle'},
+                   'a' :             {'button': 'Cross'},
                    'x' :             {'button': 'Triangle'},
                    'y' :             {'button': 'Square'},
                    'start' :         {'button': 'Start'},

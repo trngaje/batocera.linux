@@ -6,6 +6,8 @@
 
 PPSSPP_VERSION = v1.17.1
 PPSSPP_SITE = https://github.com/hrydgard/ppsspp.git
+#PPSSPP_VERSION = ee06594c61addf4d68c905e2d4d21c7c1d1657dd
+#PPSSPP_SITE = $(call github,hrydgard,ppsspp,$(PPSSPP_VERSION))
 PPSSPP_SITE_METHOD=git
 PPSSPP_GIT_SUBMODULES=YES
 PPSSPP_LICENSE = GPLv2
@@ -112,15 +114,23 @@ define PPSSPP_UPDATE_INCLUDES
 endef
 
 define PPSSPP_INSTALL_TARGET_CMDS
+	rm $(@D)/assets/Roboto-Condensed.ttf
+	
     mkdir -p $(TARGET_DIR)/usr/bin
     $(INSTALL) -D -m 0755 $(@D)/$(PPSSPP_TARGET_BINARY) \
         $(TARGET_DIR)/usr/bin/PPSSPP
-    mkdir -p $(TARGET_DIR)/usr/share/ppsspp
-    cp -R $(@D)/assets $(TARGET_DIR)/usr/share/ppsspp/PPSSPP
+    mkdir -p $(TARGET_DIR)/usr/share/ppsspp/PPSSPP
+    #cp -R $(@D)/assets $(TARGET_DIR)/usr/share/ppsspp/PPSSPP
+	cp -R $(@D)/assets $(TARGET_DIR)/usr/bin/
     # Fix PSP font for languages like Japanese
     # (font from https://github.com/minoryorg/Noto-Sans-CJK-JP/blob/master/fonts/)
-    cp -f $(BR2_EXTERNAL_BATOCERA_PATH)/package/batocera/emulators/ppsspp/NotoSansCJKjp-DemiLight.ttf \
+    #cp -f $(BR2_EXTERNAL_BATOCERA_PATH)/package/batocera/emulators/ppsspp/NotoSansCJKjp-DemiLight.ttf \
+	cp -f $(BR2_EXTERNAL_BATOCERA_PATH)/package/batocera/emulators/ppsspp/BinggraeMelona.ttf \
         $(TARGET_DIR)/usr/share/ppsspp/PPSSPP/Roboto-Condensed.ttf
+	cp -f $(BR2_EXTERNAL_BATOCERA_PATH)/package/batocera/emulators/ppsspp/BinggraeMelona.ttf \
+        $(TARGET_DIR)/usr/bin/assets/Roboto-Condensed.ttf	
+
+		
 endef
 
 define PPSSPP_POST_PROCESS
