@@ -1,0 +1,5 @@
+config BR2_PACKAGE_UBOOT_ANBERNIC_RG35XXH
+	bool "U-Boot for Anbernic RG35XXH family"
+	select BR2_PACKAGE_HOST_DTC
+	help
+	  u-boot for Anbernic RG35XXH
