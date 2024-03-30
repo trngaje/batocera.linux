@@ -861,6 +861,8 @@ fbneo:
       fbneo:    { requireAnyOf: [BR2_PACKAGE_LIBRETRO_FBNEO]    }
     fba2x:
       fba2x:    { requireAnyOf: [BR2_PACKAGE_PIFBA] }
+    advmame:
+      advmame:         { requireAnyOf: [BR2_PACKAGE_ADVANCEMAME_BIN]    }
   comment_en: |
     ROMs must come from the FBNeo romset version 1.0.0.0
 
@@ -880,6 +882,17 @@ fbneo:
 
     Para mais informações: https://wiki.batocera.org/arcade
 
+mame-advmame:
+  name:       AdvancedMame
+  manufacturer: Arcade
+  release: 1997
+  hardware: arcade
+  extensions: [zip]
+  platform:   mame-advmame
+  emulators:
+    advmame:
+      advmame:         { requireAnyOf: []    }
+
 mame:
   name:       Mame
   manufacturer: Arcade
@@ -896,7 +909,9 @@ mame:
       mame078xtreme: { requireAnyOf: [BR2_PACKAGE_LIBRETRO_MAME2003_XTREME]}
     mame:
       mame:         { requireAnyOf: [BR2_PACKAGE_MAME]                    }
-
+    advmame:
+      advmame:         { requireAnyOf: [BR2_PACKAGE_ADVANCEMAME_BIN]    }
+      
   comment_en: |
     The system uses libretro mame2003+ as default core: compatible ROMs must come from set 0.78+
     Depending on your hardware, other mame cores are included:
@@ -950,7 +965,9 @@ neogeo:
       mame:         { requireAnyOf: [BR2_PACKAGE_MAME]                    }
     fba2x:
       fba2x:        { requireAnyOf: [BR2_PACKAGE_PIFBA]                   }
-
+    advmame:
+      advmame:         { requireAnyOf: [BR2_PACKAGE_ADVANCEMAME_BIN]    }
+      
 neogeocd:
   name:       Neo-Geo CD
   manufacturer: SNK

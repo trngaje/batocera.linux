@@ -43,6 +43,7 @@ batoceraBins = {'dosbox'         : '/usr/bin/dosbox'
               , 'gsplus'         : '/usr/bin/GSplus'
               , 'applewin'       : '/usr/bin/applewin'
               , 'fba2x'          : '/usr/bin/fba2x'
+              , 'mame-advmame'   : '/usr/bin/advmame'
 }
 
 

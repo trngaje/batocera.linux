@@ -712,3 +712,6 @@ zxspectrum:
 vpinball:
   emulator: vpinball
   core:     vpinball
+mame-advmame:
+  emulator: advmame
+  core:     advmame
