@@ -5,7 +5,6 @@ config BR2_PACKAGE_OD_COMMANDER
 	select BR2_PACKAGE_SDL2_IMAGE
 	select BR2_PACKAGE_SDL2_TTF
 	select BR2_PACKAGE_DEJAVU
-	select BR2_PACKAGE_NANUM_FONT
 	help
 	  Two-pane file manager in the style of Norton Commander.
 

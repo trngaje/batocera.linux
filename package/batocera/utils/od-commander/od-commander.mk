@@ -6,7 +6,7 @@
 
 OD_COMMANDER_VERSION = 079a84c
 OD_COMMANDER_SITE = $(call github,od-contrib,commander,$(OD_COMMANDER_VERSION))
-OD_COMMANDER_DEPENDENCIES = sdl2 sdl2_gfx sdl2_image sdl2_ttf dejavu nanum-font
+OD_COMMANDER_DEPENDENCIES = sdl2 sdl2_gfx sdl2_image sdl2_ttf dejavu
 OD_COMMANDER_RESOURCES_DIR = /usr/share/od-commander/
 
 OD_COMMANDER_CONF_OPTS += \
@@ -53,8 +53,8 @@ define OD_COMMANDER_INSTALL_TARGET_CMDS
 	mkdir -p $(TARGET_DIR)/usr/share/fonts/truetype/droid
 	$(INSTALL) -m 0644 $(@D)/res/Fiery_Turk.ttf \
 	  $(TARGET_DIR)$(OD_COMMANDER_RESOURCES_DIR)
-	$(INSTALL) -m 0644 $(@D)/res/DroidSansFallback.ttf \
-	  $(TARGET_DIR)/usr/share/fonts/truetype/droid/
+#	$(INSTALL) -m 0644 $(@D)/res/DroidSansFallback.ttf \
+#	  $(TARGET_DIR)/usr/share/fonts/truetype/droid/
 	$(INSTALL) -m 0644 $(@D)/res/*.png \
 	  $(TARGET_DIR)$(OD_COMMANDER_RESOURCES_DIR)
 	$(INSTALL) -m 0755 -D $(OD_COMMANDER_BUILDDIR)commander \

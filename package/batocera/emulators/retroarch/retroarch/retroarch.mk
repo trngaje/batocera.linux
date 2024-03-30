@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-RETROARCH_VERSION = v1.17.0
+RETROARCH_VERSION = v1.18.0
 RETROARCH_SITE = $(call github,libretro,RetroArch,$(RETROARCH_VERSION))
 RETROARCH_LICENSE = GPLv3+
 RETROARCH_DEPENDENCIES = host-pkgconf dejavu retroarch-assets flac noto-cjk-fonts
@@ -45,9 +45,9 @@ else
     RETROARCH_CONF_OPTS += --disable-videocore
 endif
 
-#ifeq ($(BR2_PACKAGE_LIBDRM),y)
-#    RETROARCH_CONF_OPTS += --enable-kms
-#endif
+ifeq ($(BR2_PACKAGE_LIBDRM),y)
+    RETROARCH_CONF_OPTS += --enable-kms
+endif
 
 ifeq ($(BR2_ARM_FPU_NEON_VFPV4)$(BR2_ARM_FPU_NEON)$(BR2_ARM_FPU_NEON_FP_ARMV8),y)
     RETROARCH_CONF_OPTS += --enable-neon
