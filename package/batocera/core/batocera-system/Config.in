@@ -80,7 +80,7 @@ endif
 if BR2_PACKAGE_BATOCERA_TARGET_X86_ANY || BR2_PACKAGE_BATOCERA_TARGET_BCM2711 || BR2_PACKAGE_BATOCERA_TARGET_BCM2712 || BR2_PACKAGE_BATOCERA_TARGET_RISCV \
     || BR2_PACKAGE_BATOCERA_TARGET_XU4 || BR2_PACKAGE_BATOCERA_TARGET_H616 \
     || BR2_PACKAGE_BATOCERA_TARGET_AMLOGIC_GLES3 || BR2_PACKAGE_BATOCERA_TARGET_ROCKCHIP_GLES3 \
-    || BR2_PACKAGE_BATOCERA_TARGET_ODIN || BR2_PACKAGE_BATOCERA_TARGET_H5
+    || BR2_PACKAGE_BATOCERA_TARGET_ODIN || BR2_PACKAGE_BATOCERA_TARGET_H5 || BR2_PACKAGE_BATOCERA_TARGET_RG35XXH
     config BR2_PACKAGE_BATOCERA_GLES3
     bool "target gles3 support"
     default y
@@ -221,7 +221,7 @@ config BR2_PACKAGE_BATOCERA_SYSTEM
     select BR2_PACKAGE_CA_CERTIFICATES                      # ssl certificates
     select BR2_PACKAGE_ROCKCHIP_RGA                         if BR2_PACKAGE_BATOCERA_TARGET_RK3128 # Used for screen rotation (SDL, Retroarch, Moonlight)
 
-    select BR2_PACKAGE_LIBDRM                               if !BR2_PACKAGE_BATOCERA_RPI_VCORE && !BR2_PACKAGE_BATOCERA_TARGET_H5
+    select BR2_PACKAGE_LIBDRM                               if !BR2_PACKAGE_BATOCERA_RPI_VCORE && !BR2_PACKAGE_BATOCERA_TARGET_H5 && !BR2_PACKAGE_BATOCERA_TARGET_RG35XXH
     select BR2_PACKAGE_BATOCERA_DRMINFO                     if BR2_PACKAGE_LIBDRM
     select BR2_PACKAGE_LIRC_TOOLS                           # lirc (remote control)
     select BR2_PACKAGE_LIBCEC                               # libcec
@@ -332,7 +332,8 @@ config BR2_PACKAGE_BATOCERA_SYSTEM
                                             !BR2_PACKAGE_BATOCERA_TARGET_H3         && \
                                             !BR2_PACKAGE_BATOCERA_TARGET_RK3128     && \
                                             !BR2_PACKAGE_BATOCERA_TARGET_RK3588     && \
-					    !BR2_PACKAGE_BATOCERA_TARGET_H5
+					    !BR2_PACKAGE_BATOCERA_TARGET_H5      && \
+						!BR2_PACKAGE_BATOCERA_TARGET_RG35XXH
 
     select BR2_PACKAGE_RTW89_TEMP       if  BR2_PACKAGE_BATOCERA_TARGET_RK3588
 
@@ -454,9 +455,10 @@ config BR2_TARGET_BATOCERA_IMAGES_DEFINITIONS
     default "rockchip/rk3568/odroid-m1 rockchip/rk3568/rock-3a rockchip/rk3568/anbernic-rgxx3 rockchip/rk3568/firefly-station-m2 rockchip/rk3568/firefly-station-p2"	if BR2_PACKAGE_BATOCERA_TARGET_RK3568
     default "rockchip/rk3128/ps5000 rockchip/rk3128/ps7000 rockchip/rk3128/powkiddy_a13"    if BR2_PACKAGE_BATOCERA_TARGET_RK3128
     default "allwinner/h3/orangepi-pc allwinner/h3/orangepi-one allwinner/h3/orangepi-plus2e allwinner/h3/bananapi-m2-zero allwinner/h3/cha" if BR2_PACKAGE_BATOCERA_TARGET_H3
-    default "allwinner/h5/tritium-h5 allwinner/h5/orangepi-pc2"                             if BR2_PACKAGE_BATOCERA_TARGET_H5
+    default "allwinner/h5/tritium-h5 allwinner/h5/orangepi-pc2"                             if BR2_PACKAGE_BATOCERA_TARGET_H5 
     default "allwinner/h6/orangepi-3-lts allwinner/h6/orangepi-3 allwinner/h6/orangepi-one-plus"       if BR2_PACKAGE_BATOCERA_TARGET_H6
     default "allwinner/h616/orangepi-zero2 allwinner/h616/x96-mate"                                    if BR2_PACKAGE_BATOCERA_TARGET_H616
+	default "allwinner/h700/rg35xx-plus"										if BR2_PACKAGE_BATOCERA_TARGET_RG35XXH
     default "amlogic/s812"																	if BR2_PACKAGE_BATOCERA_TARGET_S812
     default "samsung/exynos5422/odroidxu4"													if BR2_PACKAGE_BATOCERA_TARGET_XU4
     default "x86"																			if BR2_PACKAGE_BATOCERA_TARGET_X86
@@ -555,6 +557,9 @@ config BR2_PACKAGE_BATOCERA_TARGET_H616
 
 config BR2_PACKAGE_BATOCERA_TARGET_H6
     bool "h6"
+
+config BR2_PACKAGE_BATOCERA_TARGET_RG35XXH
+    bool "rg35xxh"
 
 # PC
 # ------------------------------------
@@ -730,7 +735,8 @@ config BR2_PACKAGE_BATOCERA_SEGADC
                                                 BR2_PACKAGE_BATOCERA_TARGET_BCM2712 || \
                                                 BR2_PACKAGE_BATOCERA_TARGET_RK3326  || \
                                                 BR2_PACKAGE_BATOCERA_TARGET_H3      || \
-                                                BR2_PACKAGE_BATOCERA_TARGET_H5
+                                                BR2_PACKAGE_BATOCERA_TARGET_H5      || \
+												BR2_PACKAGE_BATOCERA_TARGET_RG35XXH
 
 select BR2_PACKAGE_REDREAM              if BR2_PACKAGE_BATOCERA_TARGET_X86_64_ANY
                                         # Redream not working with Sway => || BR2_PACKAGE_BATOCERA_TARGET_BCM2711 || \
@@ -773,7 +779,9 @@ config BR2_PACKAGE_BATOCERA_ARCADE_SYSTEMS
     select BR2_PACKAGE_LIBRETRO_MAME2010        if !BR2_PACKAGE_BATOCERA_TARGET_BCM2835 # MAME2010
     select BR2_PACKAGE_LIBRETRO_MAME            if  !BR2_PACKAGE_BATOCERA_TARGET_BCM2835 && \
 						    !BR2_PACKAGE_BATOCERA_TARGET_H3      && \
-						    !BR2_PACKAGE_BATOCERA_TARGET_RK3128 && !BR2_PACKAGE_BATOCERA_TARGET_H5
+						    !BR2_PACKAGE_BATOCERA_TARGET_RK3128 && !BR2_PACKAGE_BATOCERA_TARGET_H5 && \
+							!BR2_PACKAGE_BATOCERA_TARGET_RG35XXH
+							
     select BR2_PACKAGE_LIBRETRO_SAME_CDI        if BR2_PACKAGE_BATOCERA_TARGET_X86_ANY
 
     # Standalone MAME
@@ -811,7 +819,8 @@ config BR2_PACKAGE_BATOCERA_HANDHELD_SYSTEMS
                                                     BR2_PACKAGE_BATOCERA_TARGET_XU4     || \
                                                     BR2_PACKAGE_BATOCERA_TARGET_H616    || \
                                                     BR2_PACKAGE_BATOCERA_TARGET_H6      || \
-						    BR2_PACKAGE_BATOCERA_TARGET_H5
+						    BR2_PACKAGE_BATOCERA_TARGET_H5 || \
+							BR2_PACKAGE_BATOCERA_TARGET_RG35XXH
 
     select BR2_PACKAGE_MELONDS                  if BR2_PACKAGE_BATOCERA_TARGET_X86_64_ANY || BR2_PACKAGE_BATOCERA_TARGET_BCM2712
 
@@ -1683,7 +1692,7 @@ config BR2_PACKAGE_BATOCERA_SDL2
     select BR2_PACKAGE_SDL2_OPENGLES
     select BR2_PACKAGE_SDL2_OPENGL      if BR2_PACKAGE_HAS_LIBGL
     select BR2_PACKAGE_SDL2_X11         if BR2_PACKAGE_XORG7
-    select BR2_PACKAGE_SDL2_KMSDRM      if !BR2_PACKAGE_BATOCERA_RPI_VCORE && !BR2_PACKAGE_BATOCERA_TARGET_H5
+    select BR2_PACKAGE_SDL2_KMSDRM      if !BR2_PACKAGE_BATOCERA_RPI_VCORE && !BR2_PACKAGE_BATOCERA_TARGET_H5 && !BR2_PACKAGE_BATOCERA_TARGET_RG35XXH
     select BR2_PACKAGE_SDL2_WAYLAND     if BR2_PACKAGE_BATOCERA_WAYLAND
     select BR2_PACKAGE_FLAC             # flac
     select BR2_PACKAGE_LIBMAD           # mp3

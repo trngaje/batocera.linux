@@ -1,0 +1,63 @@
+default:
+  options:
+    video_threaded: true
+    retroarch.menu_driver: rgui
+    retroarch.audio_driver: alsathread
+
+amiga500:
+  emulator: amiberry
+  core:     A500
+amiga1200:
+  emulator: amiberry
+  core:     A1200
+amigacd32:
+  emulator: amiberry
+  core:     CD32
+mastersystem:
+  emulator: libretro
+  core:     picodrive
+megadrive:
+  emulator: libretro
+  core:     picodrive
+snes:
+  emulator: libretro
+  core:     snes9x
+c64:
+  emulator: libretro
+  core:     vice
+c128:
+  emulator: libretro
+  core:     vice
+c20:
+  emulator: libretro
+  core:     vice
+pet:
+  emulator: libretro
+  core:     vice
+cplus4:
+  emulator: libretro
+  core:     vice
+fmtowns:
+  emulator: libretro
+  core:     mame
+atomiswave:
+  emulator: libretro
+  core:     flycast
+dreamcast:
+  emulator: libretro
+  core:     flycast
+naomi:
+  emulator: libreto
+  core:     flycast
+naomi2:
+  emulator: libreto
+  core:     flycast
+fmtowns:
+  emulator: libretro
+  core:     mame
+flash:
+  emulator: lightspark
+  core:     lightspark
+mame-advmame:
+  emulator: advmame
+  core:     advmame

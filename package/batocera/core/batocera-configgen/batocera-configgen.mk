@@ -72,11 +72,17 @@ else ifeq ($(BR2_PACKAGE_BATOCERA_TARGET_RISCV),y)
 	BATOCERA_CONFIGGEN_SYSTEM=riscv
 else ifeq ($(BR2_PACKAGE_BATOCERA_TARGET_RG35XX),y)
 	BATOCERA_CONFIGGEN_SYSTEM=rg35xx
+else ifeq ($(BR2_PACKAGE_BATOCERA_TARGET_RG35XXH),y)
+	BATOCERA_CONFIGGEN_SYSTEM=rg35xx-plus
 else ifeq ($(BR2_PACKAGE_BATOCERA_TARGET_RG35XX_PLUS),y)
 	BATOCERA_CONFIGGEN_SYSTEM=rg35xx-plus
 endif
 
+
+
 define BATOCERA_CONFIGGEN_INSTALL_STAGING_CMDS
+    $(info BATOCERA_CONFIGGEN_SYSTEM=$(BATOCERA_CONFIGGEN_SYSTEM))
+	
 	mkdir -p $(STAGING_DIR)/usr/share/batocera/configgen
 	cp $(CONFIGGEN_DIR)/configs/configgen-defaults.yml \
 	    $(STAGING_DIR)/usr/share/batocera/configgen/configgen-defaults.yml

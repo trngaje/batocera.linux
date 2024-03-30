@@ -1,4 +1,5 @@
-menu "batocera.linux"
+
+	menu "batocera.linux"
 
 menu "System"
   source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/core/batocera-system/Config.in"
@@ -19,6 +20,7 @@ menu "System"
   source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/core/batocera-controller-overlays/Config.in"
   source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/core/swapit/Config.in"
   source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/core/batocera-resolution/Config.in"
+  source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/boot/uboot-anbernic-rg35xxh/Config.in"
 
   menu "Boot"
     source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/boot/batocera-initramfs/Config.in"
@@ -50,6 +52,7 @@ menu "System"
     source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/boot/rk3128-blobs/Config.in"
     source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/boot/uboot-multiboard/Config.in"
     source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/boot/uboot-anbernic-rg351/Config.in"
+	
   endmenu
 
   menu "Toolchain"
@@ -384,6 +387,7 @@ menu "Emulators"
     source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/emulators/snes9x/Config.in"
     source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/emulators/duckstation-legacy/Config.in"
     source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/emulators/openbor/openbor7530/Config.in"
+    source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/emulators/advancemame-bin/Config.in"	
   endmenu
 
   menu "WINE"
