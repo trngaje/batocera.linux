@@ -70,8 +70,8 @@ DEVICE_ID_PAD_0 = 10
 # SDL2 input ids conversion table to NKCodes
 # See https://hg.libsdl.org/SDL/file/e12c38730512/include/SDL_gamecontroller.h#l262
 sdlNameToNKCode = {
-    "b" : NKCODE_BUTTON_2, # A
-    "a" : NKCODE_BUTTON_3, # B
+    "a" : NKCODE_BUTTON_2, # A
+    "b" : NKCODE_BUTTON_3, # B
     "y" : NKCODE_BUTTON_4, # X
     "x" : NKCODE_BUTTON_1, # Y
     "select" : NKCODE_BUTTON_9, # SELECT/BACK

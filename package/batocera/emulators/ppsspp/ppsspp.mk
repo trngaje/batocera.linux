@@ -11,7 +11,7 @@ PPSSPP_SITE = https://github.com/hrydgard/ppsspp.git
 PPSSPP_SITE_METHOD=git
 PPSSPP_GIT_SUBMODULES=YES
 PPSSPP_LICENSE = GPLv2
-PPSSPP_DEPENDENCIES = sdl2 sdl2_ttf libzip
+PPSSPP_DEPENDENCIES = sdl2 sdl2_ttf libzip ffmpeg
 
 PPSSPP_CONF_OPTS += -DCMAKE_BUILD_TYPE=Release
 PPSSPP_CONF_OPTS += -DBUILD_SHARED_LIBS=OFF
@@ -114,26 +114,29 @@ define PPSSPP_UPDATE_INCLUDES
 endef
 
 define PPSSPP_INSTALL_TARGET_CMDS
-	rm $(@D)/assets/Roboto-Condensed.ttf
+	rm -rf $(TARGET_DIR)/usr/share/ppsspp/PPSSPP
 	
-    mkdir -p $(TARGET_DIR)/usr/bin
-    $(INSTALL) -D -m 0755 $(@D)/$(PPSSPP_TARGET_BINARY) \
-        $(TARGET_DIR)/usr/bin/PPSSPP
-    mkdir -p $(TARGET_DIR)/usr/share/ppsspp/PPSSPP
-    #cp -R $(@D)/assets $(TARGET_DIR)/usr/share/ppsspp/PPSSPP
-	cp -R $(@D)/assets $(TARGET_DIR)/usr/bin/
-    # Fix PSP font for languages like Japanese
-    # (font from https://github.com/minoryorg/Noto-Sans-CJK-JP/blob/master/fonts/)
-    #cp -f $(BR2_EXTERNAL_BATOCERA_PATH)/package/batocera/emulators/ppsspp/NotoSansCJKjp-DemiLight.ttf \
-	cp -f $(BR2_EXTERNAL_BATOCERA_PATH)/package/batocera/emulators/ppsspp/BinggraeMelona.ttf \
-        $(TARGET_DIR)/usr/share/ppsspp/PPSSPP/Roboto-Condensed.ttf
-	cp -f $(BR2_EXTERNAL_BATOCERA_PATH)/package/batocera/emulators/ppsspp/BinggraeMelona.ttf \
-        $(TARGET_DIR)/usr/bin/assets/Roboto-Condensed.ttf	
+	mkdir -p $(TARGET_DIR)/usr/bin
+	$(INSTALL) -D -m 0755 $(@D)/$(PPSSPP_TARGET_BINARY) \
+	$(TARGET_DIR)/usr/bin/PPSSPP
+	mkdir -p $(TARGET_DIR)/usr/share/ppsspp/PPSSPP
+	cp -R $(@D)/assets $(TARGET_DIR)/usr/share/ppsspp/PPSSPP
+	#cp -R $(@D)/assets $(TARGET_DIR)/usr/bin/
+	# Fix PSP font for languages like Japanese
+	# (font from https://github.com/minoryorg/Noto-Sans-CJK-JP/blob/master/fonts/)
+	#cp -f $(BR2_EXTERNAL_BATOCERA_PATH)/package/batocera/emulators/ppsspp/NotoSansCJKjp-DemiLight.ttf \
+	#$(TARGET_DIR)/usr/bin/assets/Roboto-Condensed.ttf	
 
-		
+
+
 endef
 
 define PPSSPP_POST_PROCESS
+	mv $(TARGET_DIR)/usr/share/ppsspp/PPSSPP/assets/flash0 $(TARGET_DIR)/usr/share/ppsspp/PPSSPP/assets/_flash0
+	ln -sf /userdata/system/configs/ppsspp/PSP/flash0 $(TARGET_DIR)/usr/share/ppsspp/PPSSPP/assets/flash0
+	ln -sf /usr/share/ppsspp/PPSSPP/assets $(TARGET_DIR)/usr/bin/assets
+	cp -f $(BR2_EXTERNAL_BATOCERA_PATH)/package/batocera/emulators/ppsspp/BinggraeMelona.ttf $(TARGET_DIR)/usr/share/ppsspp/PPSSPP/assets/Roboto-Condensed.ttf
+
 	mkdir -p $(TARGET_DIR)/usr/share/evmapy
 	cp -f $(BR2_EXTERNAL_BATOCERA_PATH)/package/batocera/emulators/ppsspp/psp.ppsspp.keys \
         $(TARGET_DIR)/usr/share/evmapy

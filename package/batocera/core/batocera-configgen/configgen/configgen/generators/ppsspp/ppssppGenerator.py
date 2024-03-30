@@ -17,6 +17,11 @@ class PPSSPPGenerator(Generator):
     def generate(self, system, rom, playersControllers, metadata, guns, wheels, gameResolution):
         ppssppConfig.writePPSSPPConfig(system)
 
+        # Copy font
+        if not os.path.exists('/userdata/system/configs/ppsspp/PSP/flash0'):
+            os.system("mkdir -p /userdata/system/configs/ppsspp/PSP/flash0")
+            os.system("cp -rv /usr/share/ppsspp/PPSSPP/assets/_flash0/* /userdata/system/configs/ppsspp/PSP/flash0")
+            
         # Remove the old gamecontrollerdb.txt file
         dbpath = "/userdata/system/configs/ppsspp/gamecontrollerdb.txt"
         if os.path.exists(dbpath):
