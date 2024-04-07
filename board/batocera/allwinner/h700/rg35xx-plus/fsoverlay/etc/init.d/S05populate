@@ -6,10 +6,10 @@ DRIVE="internal"
 test "$1" != "start" && exit 0
 
 # Check for external partitions first, try to mount the last one from 4 to 1
-for i in 4 3 2 1; 
-do 
-	if [ -b "/dev/mmcblk1p$i" ]; 
-	then 
+for i in 4 3 2 1;
+do
+	if [ -b "/dev/mmcblk1p$i" ];
+	then
 		echo "External /dev/mmcblk1p$i partition exists, mounting..."
 		mount /dev/mmcblk1p$i /userdata
 		DRIVE="external"
@@ -25,24 +25,6 @@ fi
 
 # Create /userdata/system if it does not exist
 mkdir -p /userdata/system
-
-# Populate /userdata/system
-if [ ! -d "/userdata/system/.simplemenu" ]; then
-	dialog --backtitle "KORIKI RG35xx" --title " Copying content to /userdata " \
-           --infobox "Please wait..." 10 30 &>/dev/tty1
-	# Added -L to copy links as files in FAT32
-	cp -rL /usr/share/simplemenu/.simplemenu /userdata/system/
-fi
-
-# Populate Koriki Apps
-if [ ! -d "/userdata/system/App" ]; then
-	cp -r /usr/share/simplemenu/App /userdata/system/
-fi
-
-# Populate Koriki
-if [ ! -d "/userdata/system/Koriki" ]; then
-	cp -r /usr/share/simplemenu/Koriki /userdata/system/
-fi
 
 # Populate retroarch and flycast configs
 if [ ! -d "/userdata/system/.config" ]; then

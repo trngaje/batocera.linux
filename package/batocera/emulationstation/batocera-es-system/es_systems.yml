@@ -370,6 +370,7 @@ nds:
     drastic:
       drastic: { requireAnyOf: [BR2_PACKAGE_DRASTIC], incompatible_extensions: [7z] }
 
+
 fds:
   name:       Family Computer Disk System
   manufacturer: Nintendo
@@ -891,7 +892,7 @@ mame-advmame:
   platform:   mame-advmame
   emulators:
     advmame:
-      advmame:         { requireAnyOf: []    }
+      advmame:         { requireAnyOf: [BR2_PACKAGE_ADVANCEMAME_BIN]    }
 
 mame:
   name:       Mame

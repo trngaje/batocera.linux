@@ -12709,6 +12709,6 @@ sonic-mania:
 fba2x:
   shared: [videomode, use_wheels, wheel_rotation, wheel_deadzone, wheel_midzone]
 
-mame-advmame:
+advmame:
   shared: []
   

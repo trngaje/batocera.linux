@@ -15,6 +15,10 @@ TARGET_DIR=$5
 BATOCERA_BINARIES_DIR=$6
 
 mkdir -p "${BATOCERA_BINARIES_DIR}/boot/boot"     || exit 1
+echo "current directory="`pwd`
+echo "BATOCERA_BINARIES_DIR=${BATOCERA_BINARIES_DIR}"
+echo "BINARIES_DIR=${BINARIES_DIR}"
+echo "BOARD_DIR=${BOARD_DIR}"
 
 cp "${BOARD_DIR}/uImage"             "${BATOCERA_BINARIES_DIR}/boot/uImage"               || exit 1
 cp "${BOARD_DIR}/uInitrd"            "${BATOCERA_BINARIES_DIR}/boot/uInitrd"          || exit 1

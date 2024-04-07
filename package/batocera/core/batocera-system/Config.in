@@ -458,7 +458,7 @@ config BR2_TARGET_BATOCERA_IMAGES_DEFINITIONS
     default "allwinner/h5/tritium-h5 allwinner/h5/orangepi-pc2"                             if BR2_PACKAGE_BATOCERA_TARGET_H5 
     default "allwinner/h6/orangepi-3-lts allwinner/h6/orangepi-3 allwinner/h6/orangepi-one-plus"       if BR2_PACKAGE_BATOCERA_TARGET_H6
     default "allwinner/h616/orangepi-zero2 allwinner/h616/x96-mate"                                    if BR2_PACKAGE_BATOCERA_TARGET_H616
-	default "allwinner/h700/rg35xx-plus"										if BR2_PACKAGE_BATOCERA_TARGET_RG35XXH
+    default "allwinner/h5/tritium-h5 allwinner/h5/orangepi-pc2"              if BR2_PACKAGE_BATOCERA_TARGET_RG35XXH
     default "amlogic/s812"																	if BR2_PACKAGE_BATOCERA_TARGET_S812
     default "samsung/exynos5422/odroidxu4"													if BR2_PACKAGE_BATOCERA_TARGET_XU4
     default "x86"																			if BR2_PACKAGE_BATOCERA_TARGET_X86
@@ -559,7 +559,7 @@ config BR2_PACKAGE_BATOCERA_TARGET_H6
     bool "h6"
 
 config BR2_PACKAGE_BATOCERA_TARGET_RG35XXH
-    bool "rg35xxh"
+    bool "h700"
 
 # PC
 # ------------------------------------
@@ -820,7 +820,7 @@ config BR2_PACKAGE_BATOCERA_HANDHELD_SYSTEMS
                                                     BR2_PACKAGE_BATOCERA_TARGET_H616    || \
                                                     BR2_PACKAGE_BATOCERA_TARGET_H6      || \
 						    BR2_PACKAGE_BATOCERA_TARGET_H5 || \
-							BR2_PACKAGE_BATOCERA_TARGET_RG35XXH
+                                                    BR2_PACKAGE_BATOCERA_TARGET_RG35XXH
 
     select BR2_PACKAGE_MELONDS                  if BR2_PACKAGE_BATOCERA_TARGET_X86_64_ANY || BR2_PACKAGE_BATOCERA_TARGET_BCM2712
 
@@ -1677,7 +1677,8 @@ config BR2_PACKAGE_BATOCERA_LINUX_FIRMWARES
     select BR2_PACKAGE_FIRMWARE_ORANGEPI		if BR2_PACKAGE_BATOCERA_TARGET_H3   || \
                                                    BR2_PACKAGE_BATOCERA_TARGET_H5   || \
                                                    BR2_PACKAGE_BATOCERA_TARGET_H6   || \
-                                                   BR2_PACKAGE_BATOCERA_TARGET_H616
+                                                   BR2_PACKAGE_BATOCERA_TARGET_H616	|| \
+                                                   BR2_PACKAGE_BATOCERA_TARGET_RG35XXH
 
 
 config BR2_PACKAGE_BATOCERA_SDL2
