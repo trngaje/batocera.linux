@@ -3,8 +3,8 @@
 # libretro-pc98
 #
 ################################################################################
-# Version.: Commits on May 10, 2020
-LIBRETRO_PC98_VERSION = rev.22
+
+LIBRETRO_PC98_VERSION = c2ca4046860264cb307e768f529f180caee5e224
 LIBRETRO_PC98_SITE = $(call github,AZO234,NP2kai,$(LIBRETRO_PC98_VERSION))
 LIBRETRO_PC98_LICENSE = GPLv3
 
@@ -15,7 +15,7 @@ LIBRETRO_PC98_PLATFORM = rpi1
 else ifeq ($(BR2_PACKAGE_BATOCERA_TARGET_BCM2836),y)
 LIBRETRO_PC98_PLATFORM = rpi2
 else ifeq ($(BR2_PACKAGE_BATOCERA_TARGET_RG35XXH),y)
-LIBRETRO_PC98_PLATFORM = rpi3
+LIBRETRO_PC98_PLATFORM = rpi3-aarch64
 else ifeq ($(BR2_PACKAGE_BATOCERA_TARGET_BCM2837),y)
 LIBRETRO_PC98_PLATFORM = rpi3-aarch64
 else ifeq ($(BR2_PACKAGE_BATOCERA_TARGET_BCM2711),y)
@@ -35,13 +35,13 @@ LIBRETRO_PC98_PLATFORM = unix
 endif
 
 define LIBRETRO_PC98_BUILD_CMDS
-	$(TARGET_CONFIGURE_OPTS) $(MAKE) CXX="$(TARGET_CXX)" CC="$(TARGET_CC)" -C $(@D)/sdl2/ -f Makefile.libretro platform="$(LIBRETRO_PC98_PLATFORM)" \
-        GIT_VERSION="-$(shell echo $(LIBRETRO_PC98_VERSION) | cut -c 1-7)"
+	$(TARGET_CONFIGURE_OPTS) $(MAKE) CXX="$(TARGET_CXX)" CC="$(TARGET_CC)" -C $(@D)/sdl/ -f Makefile.libretro platform="$(LIBRETRO_PC98_PLATFORM)" \
+         NP2KAI_VERSION="rev.22" NP2KAI_HASH=c2ca404
 endef
 
 define LIBRETRO_PC98_INSTALL_TARGET_CMDS
 	mkdir -p $(TARGET_DIR)/usr/share/batocera/datainit/bios/np2kai
-	$(INSTALL) -D $(@D)/sdl2/np2kai_libretro.so \
+	$(INSTALL) -D $(@D)/sdl/np2kai_libretro.so \
 		$(TARGET_DIR)/usr/lib/libretro/np2kai_libretro.so
 endef
 

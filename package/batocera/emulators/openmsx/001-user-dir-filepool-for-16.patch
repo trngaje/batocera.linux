@@ -1,0 +1,28 @@
+diff --git a/src/file/FileOperations.cc b/src/file/FileOperations.cc
+index 6fc258141..1cecb072e 100644
+--- a/src/file/FileOperations.cc
++++ b/src/file/FileOperations.cc
+@@ -550,7 +550,7 @@ const string& getUserOpenMSXDir()
+ 	// via SDL_AndroidGetExternalStorageState
+ 	static const string OPENMSX_DIR = strCat(SDL_AndroidGetExternalStoragePath(), "/openMSX");
+ #else
+-	static const string OPENMSX_DIR = expandTilde("~/.openMSX");
++	static const string OPENMSX_DIR = expandTilde("/userdata/system/configs/openmsx");
+ #endif
+ 	return OPENMSX_DIR;
+ }
+diff --git a/src/file/FilePool.cc b/src/file/FilePool.cc
+index 707e4898d..2f424655b 100644
+--- a/src/file/FilePool.cc
++++ b/src/file/FilePool.cc
+@@ -47,7 +47,9 @@ static string initialFilePoolSettingValue()
+ 
+ 	for (auto& p : systemFileContext().getPaths()) {
+ 		result.addListElement(
+-			makeTclDict("-path", FileOperations::join(p, "systemroms"),
++			makeTclDict("-path", "/userdata/bios/Machines",
++			            "-types", "system_rom"),
++			makeTclDict("-path", "/userdata/bios/openmsx",
+ 			            "-types", "system_rom"),
+ 			makeTclDict("-path", FileOperations::join(p, "software"),
+ 			            "-types", "rom disk tape"));
