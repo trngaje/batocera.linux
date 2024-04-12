@@ -14747,7 +14747,7 @@ msgctxt "keys_files"
 msgid "Fast Forward"
 msgstr "Быстрая перемотка"
 
-#. TRANSLATION: xbox360.xenia.keys, psp.ppsspp.keys, 3ds.citra.keys, daphne.daphne.keys, scummvm.keys, ...
+#. TRANSLATION: xbox360.xenia.keys, psp.ppsspp.keys, 3ds.citra.keys, daphne.daphne.keys, pico8.keys, ...
 msgctxt "keys_files"
 msgid "Exit emulator"
 msgstr "Выйти из эмулятора"

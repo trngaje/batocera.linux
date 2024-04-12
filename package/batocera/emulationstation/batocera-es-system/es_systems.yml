@@ -1272,8 +1272,11 @@ pico8:
   hardware: console
   extensions: [p8, png, m3u]
   emulators:
+    lexaloffle:
+      pico8_official: { requireAnyOf: [BR2_PACKAGE_LEXALOFFLE_PICO8] }
     libretro:
       fake08: { requireAnyOf: [BR2_PACKAGE_LIBRETRO_FAKE08] }
+      
   comment_en: |
     For more info: https://wiki.batocera.org/systems:pico-8
   comment_fr: |
