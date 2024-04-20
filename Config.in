@@ -317,6 +317,7 @@ menu "Emulators"
       source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/emulators/retroarch/libretro/libretro-crocods/Config.in"
       source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/emulators/retroarch/libretro/libretro-supafaust/Config.in"
       source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/emulators/retroarch/libretro/libretro-vb/Config.in"
+      source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/emulators/retroarch/libretro/libretro-snes9x2005/Config.in"
      endmenu
   endmenu
 
@@ -532,6 +533,7 @@ menu "Utils"
   source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/utils/mokutil/Config.in"
   source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/utils/wsdd/Config.in"
   source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/utils/zramswap/Config.in"
+  source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/utils/sdl-flip-clock/Config.in"
 endmenu
 
 menu "Cases"

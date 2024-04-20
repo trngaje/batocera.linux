@@ -1,0 +1,8 @@
+config BR2_PACKAGE_SDL_FLIP_CLOCK
+    bool "sdl-flip-clock"
+    help
+      This is a simple Flip Clock created using SDL.
+	  
+	  https://github.com/JaeSeoKim/sdl-flip-clock
+
+

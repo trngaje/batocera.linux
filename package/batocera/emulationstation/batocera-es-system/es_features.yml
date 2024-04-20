@@ -5718,7 +5718,11 @@ libretro:
                     "RGB":        "rgb"
                     "S-Video":    "s-video"
                     "Composite":  "composite"
-
+ 
+    snes9x2005:
+      features: [netplay, cheevos]
+      shared: [rewind, autosave, use_guns]
+      
     snes9x_next:
       features: [netplay, cheevos]
       shared: [rewind, autosave, use_guns]
