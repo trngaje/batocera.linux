@@ -181,6 +181,9 @@ define RETROARCH_INSTALL_TARGET_CMDS
 	mkdir -p $(TARGET_DIR)/usr/share/audio_filters
 	cp $(@D)/libretro-common/audio/dsp_filters/*.so $(TARGET_DIR)/usr/share/audio_filters
 	cp $(@D)/libretro-common/audio/dsp_filters/*.dsp $(TARGET_DIR)/usr/share/audio_filters
+	
+	mkdir -p $(TARGET_DIR)/usr/share/evmapy/
+	cp $(BR2_EXTERNAL_BATOCERA_PATH)/package/batocera/emulators/retroarch/retroarch/E_libretro.keys $(TARGET_DIR)/usr/share/evmapy/
 endef
 
 define RETROARCH_INSTALL_STAGING_CMDS

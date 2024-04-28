@@ -124,7 +124,12 @@ class OpenmsxGenerator(Generator):
                         if input.name == "r3":
                             file.write('bind "joy{} button{} down" "toggle console"\n'.format(nplayer, input.id))
                 nplayer += 1
-        
+
+            file.write("dict set joystick1_config LEFT {-axis0 L_hat0}\n")
+            file.write("dict set joystick1_config RIGHT {+axis0 R_hat0}\n")
+            file.write("dict set joystick1_config UP {-axis1 U_hat0}\n")
+            file.write("dict set joystick1_config DOWN {+axis1 D_hat0}\n")
+            
         # now run the rom with the appropriate flags
         file_extension = os.path.splitext(rom)[1].lower()
         commandArray = ["/usr/bin/openmsx", "-cart", rom, "-script", settings_tcl]

@@ -52,6 +52,8 @@ menu "System"
     source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/boot/uboot-evb-rk3399/Config.in"
     source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/boot/rk3128-blobs/Config.in"
     source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/boot/uboot-multiboard/Config.in"
+    source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/boot/uboot-anbernic-rg35xxh/Config.in"
+	
   endmenu
 
   menu "Toolchain"
@@ -369,6 +371,7 @@ menu "Emulators"
     source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/emulators/snes9x/Config.in"
     source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/emulators/duckstation-legacy/Config.in"
     source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/emulators/openbor/openbor7530/Config.in"
+    source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/emulators/advancemame-bin/Config.in"	
   endmenu
 
   menu "WINE"
@@ -510,6 +513,7 @@ menu "Utils"
   source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/utils/mokutil/Config.in"
   source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/utils/wsdd/Config.in"
   source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/utils/zramswap/Config.in"
+  source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/utils/sdl-flip-clock/Config.in"
 endmenu
 
 menu "Cases"

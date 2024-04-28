@@ -100,8 +100,8 @@ define LIBRETRO_PPSSPP_INSTALL_TARGET_CMDS
 		$(TARGET_DIR)/usr/lib/libretro/ppsspp_libretro.so
 
     # Required for game menus
-    mkdir -p $(TARGET_DIR)/usr/share/ppsspp
-	cp -R $(@D)/assets $(TARGET_DIR)/usr/share/ppsspp/PPSSPP
+    #mkdir -p $(TARGET_DIR)/usr/share/ppsspp
+	#cp -R $(@D)/assets $(TARGET_DIR)/usr/share/ppsspp/PPSSPP
 endef
 
 $(eval $(cmake-package))

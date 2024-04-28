@@ -31,10 +31,10 @@ systemToSwapDisable = {'amigacd32', 'amigacdtv', 'naomi', 'atomiswave', 'megadri
 # Warning, function used by amiberry because it reads the same retroarch formatting
 def writeControllersConfig(retroconfig, system, controllers, lightgun):
     # Map buttons to the corresponding retroarch specials keys
-    retroarchspecials = {'x': 'load_state', 'y': 'save_state', 'a': 'reset', 'start': 'exit_emulator', \
+    retroarchspecials = {'pageup': 'load_state', 'pagedown': 'save_state', 'b': 'reset', 'start': 'exit_emulator', \
                          'up': 'state_slot_increase', 'down': 'state_slot_decrease', 'left': 'rewind', 'right': 'hold_fast_forward', \
-                         'pageup': 'screenshot', 'pagedown': 'ai_service', 'l2': 'shader_prev', 'r2': 'shader_next'}
-    retroarchspecials["b"] = "menu_toggle"
+                         'l3': 'screenshot', 'r3': 'ai_service', 'l2': 'shader_prev', 'r2': 'shader_next'}
+    retroarchspecials["x"] = "menu_toggle"
 
     # Some input adaptations for some systems with swap Disc/CD
     if (system.config['core'] in coreWithSwapSupport) and (system.name not in systemToSwapDisable):
@@ -54,7 +54,7 @@ def writeControllersConfig(retroconfig, system, controllers, lightgun):
 
     # No menu in non full uimode
     if system.config["uimode"] != "Full":
-        del retroarchspecials['b']
+        del retroarchspecials['x']
     
     # Check if hotkeys need to be removed/disabled (Needed for N64 controllers without a dedicated hotkey button)
     # Assign value based on core
@@ -90,7 +90,7 @@ def cleanControllerConfig(retroconfig, controllers, retroarchspecials):
 def writeHotKeyConfig(retroconfig, controllers):
     if '1' in controllers:
         if 'hotkey' in controllers['1'].inputs and controllers['1'].inputs['hotkey'].type == 'button':
-            retroconfig.save('input_enable_hotkey_btn', controllers['1'].inputs['hotkey'].id)
+            retroconfig.save('input_enable_hotkey_btn', controllers['1'].inputs['select'].id)
 
 
 # Write a configuration for a specified controller

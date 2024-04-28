@@ -1,0 +1,8 @@
+config BR2_PACKAGE_ADVANCEMAME_BIN
+    bool "advancemame-bin"
+    help
+      A MAME and MESS port with an advanced video support for Arcade Monitors, TVs, and PC Monitor
+	  
+	  https://github.com/trngaje/advancemame
+
+

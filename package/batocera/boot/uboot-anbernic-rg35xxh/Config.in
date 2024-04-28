@@ -1,0 +1,4 @@
+config BR2_PACKAGE_UBOOT_ANBERNIC_RG35XXH
+	bool "U-Boot for Anbernic RG35XXH family"
+	help
+	  u-boot for Anbernic RG35XXH

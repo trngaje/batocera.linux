@@ -17,7 +17,8 @@ OPENMSX_CONF_ENV += $(TARGET_CONFIGURE_OPTS) \
                 PREFIX="$(STAGING_DIR)" \
                 PKG_CONFIG="$(STAGING_DIR)/usr/bin/pkg-config" \
                 PATH="$(HOST_DIR)/bin:$(HOST_DIR)/sbin:$(PATH):$(STAGING_DIR)/usr/bin" \
-                TCL_CONFIG="$(STAGING_DIR)/usr/lib" LD_FOR_BUILD="$(TARGET_CROSS)ld"
+                TCL_CONFIG="$(STAGING_DIR)/usr/lib" LD_FOR_BUILD="$(TARGET_CROSS)ld" \
+				COMPILER=${CXX} OPENMSX_TARGET_CPU="arm" OPENMSX_TARGET_OS="linux"
 
 # additional config options
 #linux
@@ -56,6 +57,7 @@ define OPENMSX_BUILD_CMDS
     echo 'INSTALL_DOC_DIR:=$(TARGET_DIR)/usr/share/doc/openmsx' >> $(@D)/build/custom.mk
     echo 'INSTALL_SHARE_DIR:=$(TARGET_DIR)/usr/share/openmsx' >> $(@D)/build/custom.mk
     echo 'INSTALL_BINARY_DIR:=$(TARGET_DIR)/usr/bin' >> $(@D)/build/custom.mk
+	( cd $(@D) && $(OPENMSX_CONF_ENV) ./configure )
     $(OPENMSX_CONF_ENV) $(MAKE) -C $(@D) install
 endef
 

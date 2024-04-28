@@ -1,0 +1,251 @@
+diff --git a/src/frontends/sdl/inputconfig.c b/src/frontends/sdl/inputconfig.c
+index ab48b14..748b756 100644
+--- a/src/frontends/sdl/inputconfig.c
++++ b/src/frontends/sdl/inputconfig.c
+@@ -45,10 +45,10 @@ int input_config_init(char *inputconf_file)
+ 	inputconf = cfg_init();
+ 	if (cfg_read_config_file(inputconf, inputconf_file) == 0) {
+ 		char key[128];
+-		int  e, j, ja;
++		int  e;
+ 		/* Load keyboard configuration ... */
+ 		sprintf(key, "Button-0");
+-		for (e = 0; cfg_is_key_available(inputconf, key) && e < MAX_BUTTONS; e++) {
++		for (e = 0; cfg_is_key_available(inputconf, key) && e < MAX_BUTTONS && number_of_buttons < MAX_BUTTONS; e++) {
+ 			char *val, *name;
+ 			int   val_int, namelen;
+ 
+@@ -58,97 +58,128 @@ int input_config_init(char *inputconf_file)
+ 			if (val) {
+ 				val_int = atoi(val);
+ 				name = val;
+-				number_of_buttons++;
++				
+ 				while (*name != '\0' && *name++ != ',');
+ 				namelen = strlen(name);
+ 
+ 				/* Check for ",R" (fire on button RELEASE instead of button press) */
+ 				if (namelen >= 2 && name[namelen-2] == ',' && name[namelen-1] == 'R') {
+-					hw_button_method[e] = ACTIVATE_RELEASE;
++					hw_button_method[number_of_buttons] = ACTIVATE_RELEASE;
+ 					name[namelen-2] = '\0';
+ 					namelen = strlen(name);
+ 				} else {
+-					hw_button_method[e] = ACTIVATE_PRESS;
++					hw_button_method[number_of_buttons] = ACTIVATE_PRESS;
+ 				}
+ 
+-				hw_button_name[e]   = malloc(namelen+1);
+-				hw_button_type[e]   = INPUT_KEYBOARD;
+-				if (hw_button_name[e]) {
+-					strncpy(hw_button_name[e], name, namelen);
+-					hw_button_name[e][namelen] = '\0';
+-					hw_button_val[e] = val_int;
+-					/*printf("%03d: '%s' = %d (a-method = %d)\n", e, hw_button_name[e], hw_button_val[e], hw_button_method[e]);*/
++				hw_button_name[number_of_buttons]   = malloc(namelen+1);
++				hw_button_type[number_of_buttons]   = INPUT_KEYBOARD;
++				if (hw_button_name[number_of_buttons]) {
++					strncpy(hw_button_name[number_of_buttons], name, namelen);
++					hw_button_name[number_of_buttons][namelen] = '\0';
++					hw_button_val[number_of_buttons] = val_int;
++					printf("%03d: '%s' = %d (a-method = %d)\n", number_of_buttons, hw_button_name[number_of_buttons], hw_button_val[number_of_buttons], hw_button_method[number_of_buttons]);
+ 				} else { /* out of memory */
+ 					wdprintf(V_ERROR, "inputconfig", "ERROR: Out of memory!\n");
+ 					break;
+ 				}
++				number_of_buttons++;
+ 			}
+ 		}
+-		if (e > 0) e--;
+ 
+ 		/* Load joystick configuration... */
+ 		sprintf(key, "JoyButton-0");
+-		for (j = e; cfg_is_key_available(inputconf, key) && j < MAX_BUTTONS; j++) {
++		for (e = 0; cfg_is_key_available(inputconf, key) && e < MAX_BUTTONS && number_of_buttons < MAX_BUTTONS; e++) {
+ 			char *val, *name;
+ 			int   val_int, namelen;
+ 
+-			snprintf(key, 127, "JoyButton-%d", j-e+1);
++			snprintf(key, 127, "JoyButton-%d", e);
+ 			val = cfg_get_key_value(inputconf, key);
+ 			if (val) {
+ 				/* split val into keycode and name */
+ 				val_int = atoi(val);
+ 				name = val;
+ 
+-				number_of_buttons++;
+ 				while (*name != '\0' && *name++ != ',');
+ 				namelen = strlen(name);
+-				hw_button_name[j] = malloc(namelen+1);
+-				hw_button_type[j] = INPUT_JOYSTICK;
+-				if (hw_button_name[j]) {
++				hw_button_name[number_of_buttons] = malloc(namelen+1);
++				hw_button_type[number_of_buttons] = INPUT_JOYSTICK;
++				if (hw_button_name[number_of_buttons]) {
+ 					has_joystick = 1;
+-					strncpy(hw_button_name[j], name, namelen);
+-					hw_button_name[j][namelen] = '\0';
+-					hw_button_val[j] = val_int;
+-					/*printf("%03d: '%s' = %d\n", j, hw_button_name[j], hw_button_val[j]);*/
++					strncpy(hw_button_name[number_of_buttons], name, namelen);
++					hw_button_name[number_of_buttons][namelen] = '\0';
++					hw_button_val[number_of_buttons] = val_int;
++					printf("%03d: '%s' = %d\n", number_of_buttons, hw_button_name[number_of_buttons], hw_button_val[number_of_buttons]);
+ 				} else { /* out of memory */
+ 					wdprintf(V_ERROR, "inputconfig", "ERROR: Out of memory!\n");
+ 					break;
+ 				}
++				number_of_buttons++;
+ 			}
+ 		}
+-		if (j > 0) j--;
+ 
+ 		/* Load joystick axis configuration... */
+ 		sprintf(key, "JoyAxis-0");
+-		for (ja = j; cfg_is_key_available(inputconf, key) && j < MAX_BUTTONS; ja++) {
++		for (e = 0; cfg_is_key_available(inputconf, key) && e < MAX_BUTTONS && number_of_buttons < MAX_BUTTONS; e++) {
+ 			char *val, *name;
+ 			int   val_int, namelen;
+ 
+-			snprintf(key, 127, "JoyAxis-%d", ja-j);
++			snprintf(key, 127, "JoyAxis-%d", e);
+ 			val = cfg_get_key_value(inputconf, key);
+ 			if (val) {
+ 				/* split val into keycode and name */
+ 				val_int = atoi(val);
+ 				name = val;
+ 
+-				number_of_buttons++;
+ 				while (*name != '\0' && *name++ != ',');
+ 				namelen = strlen(name);
+-				hw_button_name[ja] = malloc(namelen+1);
+-				hw_button_type[ja] = INPUT_JOYSTICK;
+-				if (hw_button_name[ja]) {
++				hw_button_name[number_of_buttons] = malloc(namelen+1);
++				hw_button_type[number_of_buttons] = INPUT_JOYSTICK;
++				if (hw_button_name[number_of_buttons]) {
+ 					has_joystick = 1;
+-					strncpy(hw_button_name[ja], name, namelen);
+-					hw_button_name[ja][namelen] = '\0';
+-					hw_button_val[ja] = val_int;
+-					hw_button_method[ja] = ACTIVATE_JOYAXIS_MOVE;
+-					/*printf("%03d: '%s' = %d\n", ja, hw_button_name[ja], hw_button_val[ja]);*/
++					strncpy(hw_button_name[number_of_buttons], name, namelen);
++					hw_button_name[number_of_buttons][namelen] = '\0';
++					hw_button_val[number_of_buttons] = val_int;
++					hw_button_method[number_of_buttons] = ACTIVATE_JOYAXIS_MOVE;
++					printf("%03d: '%s' = %d\n", number_of_buttons, hw_button_name[number_of_buttons], hw_button_val[number_of_buttons]);
+ 				} else { /* out of memory */
+ 					wdprintf(V_ERROR, "inputconfig", "ERROR: Out of memory!\n");
+ 					break;
+ 				}
++				number_of_buttons++;
+ 			}
+ 		}
++
++		/* Load joystick hat configuration... */
++		sprintf(key, "JoyHat-0");
++		for (e = 0; cfg_is_key_available(inputconf, key) && e < MAX_BUTTONS && number_of_buttons < MAX_BUTTONS; e++) {
++			char *val, *name;
++			int   val_int, namelen;
++
++			snprintf(key, 127, "JoyHat-%d", e);
++			val = cfg_get_key_value(inputconf, key);
++			if (val) {
++				/* split val into keycode and name */
++				val_int = atoi(val);
++				name = val;
++
++				while (*name != '\0' && *name++ != ',');
++				namelen = strlen(name);
++				hw_button_name[number_of_buttons] = malloc(namelen+1);
++				hw_button_type[number_of_buttons] = INPUT_JOYSTICK;
++				if (hw_button_name[number_of_buttons]) {
++					has_joystick = 1;
++					strncpy(hw_button_name[number_of_buttons], name, namelen);
++					hw_button_name[number_of_buttons][namelen] = '\0';
++					hw_button_val[number_of_buttons] = val_int;
++					hw_button_method[number_of_buttons] = ACTIVATE_JOYHAT_MOVE;
++					printf("%03d: '%s' = %d\n", number_of_buttons, hw_button_name[number_of_buttons], hw_button_val[number_of_buttons]);
++				} else { /* out of memory */
++					wdprintf(V_ERROR, "inputconfig", "ERROR: Out of memory!\n");
++					break;
++				}
++				number_of_buttons++;
++			}
++		}		
+ 		wdprintf(V_INFO, "inputconfig", "Init done.\n");
+ 		result = 1;
+ 	} else {
+@@ -168,7 +199,7 @@ int input_config_get_val(char *button_name, ActivateMethod *am)
+ 	for (w = 0; w < number_of_buttons; w++) {
+ 		if (strlen(hw_button_name[w]) == bnl) {
+ 			if (strncmp(hw_button_name[w], button_name, strlen(hw_button_name[w])) == 0) {
+-				/*wdprintf(V_DEBUG, "inputconfig", "Found match: %s = %s (%d)\n", hw_button_name[w], button_name, hw_button_val[w]);*/
++				wdprintf(V_DEBUG, "inputconfig", "Found match: %s = %s (%d)\n", hw_button_name[w], button_name, hw_button_val[w]);
+ 				result = hw_button_val[w];
+ 				if (am) *am = hw_button_method[w];
+ 				break;
+diff --git a/src/frontends/sdl/inputconfig.h b/src/frontends/sdl/inputconfig.h
+index 0609077..c403351 100644
+--- a/src/frontends/sdl/inputconfig.h
++++ b/src/frontends/sdl/inputconfig.h
+@@ -24,7 +24,7 @@
+ #define MAX_BUTTONS 256
+ 
+ typedef enum InputType { INPUT_KEYBOARD, INPUT_JOYSTICK } InputType;
+-typedef enum ActivateMethod { ACTIVATE_PRESS, ACTIVATE_RELEASE, ACTIVATE_JOYAXIS_MOVE } ActivateMethod;
++typedef enum ActivateMethod { ACTIVATE_PRESS, ACTIVATE_RELEASE, ACTIVATE_JOYAXIS_MOVE, ACTIVATE_JOYHAT_MOVE } ActivateMethod;
+ 
+ int   input_config_init(char *inputconf_file);
+ char *input_config_get_button_name(int val, InputType type);
+diff --git a/src/frontends/sdl/sdl.c b/src/frontends/sdl/sdl.c
+index 9ee6453..11fac13 100644
+--- a/src/frontends/sdl/sdl.c
++++ b/src/frontends/sdl/sdl.c
+@@ -868,7 +868,22 @@ static void run_player(char *skin_name, char *decoders_str)
+ 				break;
+ 			}
+ 			case SDL_JOYHATMOTION:
+-				wdprintf(V_DEBUG, "sdl_frontend", "Joy Hat motion\n");
++				//wdprintf(V_DEBUG, "sdl_frontend", "Joy Hat motion\n");
++				static int last_hat = 0;
++				int        joy_hat_dir = 0;
++
++				joy_hat_dir = event.jhat.value;
++				
++				if (event.jhat.value == 0) {
++					button_repeat_timer = -1;
++				}
++				else {
++					if (joy_hat_dir == last_hat)
++						continue; /* Eat the event */
++					else
++						button_repeat_timer = 5;
++				}
++				last_hat = joy_hat_dir;
+ 				break;
+ 			case SDL_QUIT:
+ 				gmu_core_quit();
+@@ -902,7 +917,7 @@ static void run_player(char *skin_name, char *decoders_str)
+ 
+ 		if (event.type == SDL_KEYDOWN || event.type == SDL_JOYBUTTONDOWN ||
+ 		    event.type == SDL_KEYUP   || event.type == SDL_JOYBUTTONUP   ||
+-		    event.type == SDL_JOYAXISMOTION ||
++		    event.type == SDL_JOYAXISMOTION || event.type == SDL_JOYHATMOTION ||
+ 		    (button_repeat_timer == 0 && user_key_action > 0)) {
+ 			ActivateMethod amethod = ACTIVATE_PRESS;
+ 
+@@ -925,6 +940,12 @@ static void run_player(char *skin_name, char *decoders_str)
+ 					}
+ 					break;
+ 				}
++				case SDL_JOYHATMOTION: {
++					amethod = ACTIVATE_JOYHAT_MOVE;
++					button = event.jhat.value;
++					
++					break;
++				}
+ 				default: break;
+ 			}
+ 			wdprintf(V_DEBUG, "sdl_frontend", "event.type=%d, button=%d\n", event.type, button);

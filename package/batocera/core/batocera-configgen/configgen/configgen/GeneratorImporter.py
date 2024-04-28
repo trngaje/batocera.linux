@@ -363,4 +363,8 @@ def getGenerator(emulator):
         from generators.sh.shGenerator import ShGenerator
         return ShGenerator()
 
+    if emulator == 'advmame':
+        from generators.advmame.advmameGenerator import AdvMameGenerator
+        return AdvMameGenerator()
+
     raise Exception(f"no generator found for emulator {emulator}")

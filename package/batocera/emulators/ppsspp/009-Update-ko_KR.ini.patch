@@ -1,0 +1,290 @@
+From ee06594c61addf4d68c905e2d4d21c7c1d1657dd Mon Sep 17 00:00:00 2001
+From: DDinghoya <ddinghoya@gmail.com>
+Date: Mon, 12 Feb 2024 18:34:02 +0900
+Subject: [PATCH 06/40] Update ko_KR.ini
+
+---
+ assets/lang/ko_KR.ini | 80 +++++++++++++++++++++----------------------
+ 1 file changed, 40 insertions(+), 40 deletions(-)
+
+diff --git a/assets/lang/ko_KR.ini b/assets/lang/ko_KR.ini
+index 5c1e366bc..fda669f65 100644
+--- a/assets/lang/ko_KR.ini
++++ b/assets/lang/ko_KR.ini
+@@ -3,7 +3,7 @@
+ %1: Attempt started = %1: 순위표 시도 시작
+ %1: Attempt failed = %1: 순위표 시도 실패
+ Account = 계정
+-Achievement sound volume = Achievement sound volume
++Achievement sound volume = Achievement 사운드 볼륨
+ Achievement unlocked = 성과 잠금 해제
+ Achievement progress = 성과 진행률
+ Achievements = 성과
+@@ -83,7 +83,7 @@ Analog Limiter = 아날로그 리미터
+ Analog Settings = 아날로그 설정
+ Analog Stick = 아날로그 스틱
+ Analog Style = 아날로그 스타일
+-Analog trigger threshold = Analog trigger threshold
++Analog trigger threshold = 아날로그 트리거 임계값
+ AnalogLimiter Tip = 아날로그 리미터 버튼을 눌렀을 때
+ Auto = 자동
+ Auto-centering analog stick = 자동 센터링 아날로그 스틱
+@@ -135,7 +135,7 @@ Low end radius = 하단 반경
+ Mouse = 마우스 설정
+ Mouse sensitivity = 마우스 감도
+ Mouse smoothing = 마우스 스무딩
+-Mouse wheel button-release delay = Mouse wheel button-release delay
++Mouse wheel button-release delay = 마우스 휠 버튼 해제 지연
+ MouseControl Tip = 이제 'M' 아이콘을 눌러 제어 매핑 화면에서 마우스를 매핑할 수 있습니다.
+ None (Disabled) = 없음 (비활성화)
+ Off = 끔
+@@ -233,7 +233,7 @@ Log Console = 콘솔 로그(&L)
+ Memory View... = 메모리 보기(&V)...
+ More Settings... = 기타 설정(&M)...
+ Nearest = 근접 필터링(&N)
+-Restart Graphics = Restart Graphics
++Restart Graphics = 그래픽 재시작
+ Skip Buffer Effects = 버퍼 효과 건너뛰기(&S)
+ Off = 끔(&O)
+ Open Chat = 채팅 열기
+@@ -266,7 +266,7 @@ Show Debug Statistics = 디버그 통계 표시(&G)
+ Show FPS Counter = FPS 카운터 표시(&F)
+ Skip Number of Frames = 프레임 수 생략
+ Skip Percent of FPS = FPS 비율 생략
+-Smart 2D texture filtering = Smart 2D texture filtering
++Smart 2D texture filtering = 스마트 2D 텍스처 필터링
+ Stop = 정지(&S)
+ Switch UMD = UMD 교체
+ Take Screenshot = 스크린샷 찍기(&T)
+@@ -403,7 +403,7 @@ Log in = 로그인
+ Log out = 로그아웃
+ Logging in... = 로그인 중...
+ Logged in! = 로그인했습니다!
+-More information... = More information...
++More information... = 추가 정보...
+ Move = 이동
+ Move Up = 위로 이동
+ Move Down = 아래로 이동
+@@ -452,8 +452,8 @@ Zoom = 확대/축소
+ [Error]
+ 7z file detected (Require 7-Zip) = 파일은 (7z로) 압축되어 있습니다.\n먼저 압축을 해제하십시오 (7-Zip 또는 WinRAR 시도).
+ A PSP game couldn't be found on the disc. = 디스크에서 PSP 게임을 찾을 수 없습니다.
+-BadCHD = Bad CHD file.\nCompress using "chdman createdvd" for good performance
+ Cannot boot ELF located outside mountRoot. = mountRoot 외부에 있는 ELF를 부팅할 수 없습니다.
++BadCHD = CHD 파일이 잘못되었습니다.\n좋은 성능을 위해 "chdmancreatedvd"를 사용하여 압축하세요.
+ Could not save screenshot file = 스크린샷 파일을 저장할 수 없습니다.
+ D3D9or11 = 다이렉트3D 9? (또는 Direct3D 11의 경우 "아니오")
+ D3D11CompilerMissing = D3DCompiler_47.dll을 찾을 수 없습니다. 설치하세요. 또는 예를 눌러 대신 Direct3D 9를 사용하여 다시 시도하세요.
+@@ -563,7 +563,7 @@ Use UI background = UI 배경 사용
+ 9x PSP = PSP 9배
+ 10x PSP = PSP 10배
+ 16x = 16배
+-AdrenoTools driver manager = AdrenoTools driver manager
++AdrenoTools driver manager = AdrenoTools 드라이버 관리자
+ Aggressive = 과격
+ Alternative Speed = 대체 속도 (%, 0 = 무제한)
+ Alternative Speed 2 = 대체 속도 2 (%, 0 = 무제한)
+@@ -579,12 +579,12 @@ Auto Scaling = 자동 스케일링
+ Backend = 백엔드
+ Balanced = 평형
+ Bicubic = 고등차수보간
+-Copy to texture = Copy to texture
+-Current GPU Driver = Current GPU Driver
+-Default GPU driver = Default GPU driver
+-Disable culling = Disable culling
+-Driver requires Android API version %1, current is %2 = Driver requires Android API version %1, current is %2
+-Drivers = Drivers
++Copy to texture = 텍스처에 복사
++Current GPU Driver = 현재 GPU 드라이버
++Default GPU driver = 기본 GPU 드라이버
++Disable culling = 컬링 비활성화
++Driver requires Android API version %1, current is %2 = 드라이버에는 Android API 버전 %1이(가) 필요하며, 현재는 %2입니다.
++Drivers = 드라이버
+ GPUReadbackRequired = 경고: 이 게임은 "GPU 다시 읽기 건너뛰기"를 꺼짐으로 설정해야 합니다.
+ Both = 둘 다
+ Buffer graphics commands (faster, input lag) = 버퍼 그래픽 명령 (빠름, 입력 지연)
+@@ -622,7 +622,7 @@ High = 높음
+ Hybrid = 혼합
+ Hybrid + Bicubic = 혼합 + 고등차수보간
+ Ignore camera notch when centering = 센터링 시 카메라 노치 무시
+-Install custom driver... = Install custom driver...
++Install custom driver... = 커스텀 드라이버 설치...
+ Integer scale factor = 정수 배율
+ Internal Resolution = 내부 해상도
+ Lazy texture caching = 레이지 텍스처 캐싱 (속도 상승)
+@@ -638,11 +638,11 @@ Mode = 모드
+ Must Restart = 이 변경 사항을 적용하려면 PPSSPP를 다시 시작해야 합니다.
+ Native device resolution = 기본 장치 해상도
+ Nearest = 근접 필터링
+-No (default) = No (default)
++No (default) = 아니오 (기본값)
+ No buffer = 버퍼 없음
+ Show Battery % = 배터리 % 표시
+ Show Speed = 속도 표시
+-Skip = Skip
++Skip = 건너뜀
+ Skip Buffer Effects = 버퍼 효과 건너뛰기(버퍼되지 않음, 더 빠름)
+ None = 없음
+ Number of Frames = 프레임 수
+@@ -666,7 +666,7 @@ Screen Scaling Filter = 화면 크기 조정 필터
+ Show Debug Statistics = 디버그 통계 표시
+ Show FPS Counter = FPS 카운터 표시
+ Skip GPU Readbacks = GPU 다시 읽기 건너뛰기
+-Smart 2D texture filtering = Smart 2D texture filtering
++Smart 2D texture filtering = 스마트 2D 텍스처 필터링
+ Software Rendering = 소프트웨어 렌더링 (느림)
+ Software Skinning = 소프트웨어 스키닝
+ SoftwareSkinning Tip = 대부분의 게임에서 더 빠르게 CPU에서 스킨 모델 드로우를 결합합니다.
+@@ -680,7 +680,7 @@ Texture Filtering = 텍스처 필터링
+ Texture replacement pack activated = 텍스처 교체 팩 활성화
+ Texture Scaling = 텍스처 스케일링
+ Texture Shader = 텍스처 쉐이더
+-The chosen ZIP file doesn't contain a valid driver = The chosen ZIP file doesn't contain a valid driver
++The chosen ZIP file doesn't contain a valid driver = 선택한 ZIP 파일에는 유효한 드라이버가 포함되어 있지 않습니다.
+ Turn off Hardware Tessellation - unsupported = "하드웨어 조각화" 끄기: 지원되지 않음
+ Unlimited = 무제한
+ Up to 1 = 최대 1까지
+@@ -699,7 +699,7 @@ Delete ZIP file = ZIP 파일 삭제
+ Install = 설치
+ Install game from ZIP file? = ZIP 파일에서 게임을 설치하겠습니까?
+ Install textures from ZIP file? = ZIP 파일에서 텍스처를 설치하겠습니까?
+-Installation failed = Installation failed
++Installation failed = 설치 실패
+ Installed! = 설치되었습니다!
+ Texture pack doesn't support install = 텍스처 팩은 설치를 지원하지 않습니다.
+ Zip archive corrupt = ZIP 아카이브가 손상되었습니다.
+@@ -712,17 +712,17 @@ Autoconfigure for device = 장치 자동 구성
+ Bind All = 모두 바인딩
+ Clear All = 모두 지움
+ Combo mappings are not enabled = 콤보 매핑이 활성화되지 않음
+-Control modifiers = Control modifiers
++Control modifiers = 컨트롤 수정기
+ Default All = 기본값 복원
+-Emulator controls = Emulator controls
+-Extended PSP controls = Extended PSP controls
++Emulator controls = 에뮬레이터 컨트롤
++Extended PSP controls = 확장된 PSP 컨트롤
+ Map a new key for = 새로운 키 입력
+ Map Key = 키 매핑
+ Map Mouse = 마우스 매핑
+ Replace = 교체
+ Show PSP = PSP 표시
+-Standard PSP controls = Standard PSP controls
+-Strict combo input order = Strict combo input order
++Standard PSP controls = 표준 PSP 컨트롤
++Strict combo input order = 엄격한 콤보 입력 순서
+ You can press ESC to cancel. = Esc를 눌러 취소할 수 있습니다.
+ 
+ [MainMenu]
+@@ -825,12 +825,12 @@ Texture Dumping = 텍스처 덤핑
+ Texture Replacement = 텍스처 교체
+ Toggle Fullscreen = 전체 화면 토글
+ Toggle mode = 모드 토글
+-Toggle mouse input = Toggle mouse input
+-Toggle touch controls = Toggle touch controls
++Toggle mouse input = 마우스 입력 전환
++Toggle touch controls = 터치 컨트롤 전환
+ Toggle WLAN = 무선랜 토글
+ Triangle = 세모
+ Fast-forward = 빨리 감기
+-Up = 십자 패드 위쪽
++Up = 십자패드 위쪽
+ Vol + = 볼륨 +
+ Vol - = 볼륨 -
+ Wlan = 무선랜
+@@ -876,7 +876,7 @@ Hostname = 호스트 이름
+ Invalid IP or hostname = 잘못된 IP 또는 호스트 이름
+ Minimum Timeout = 최소 시간 초과 (ms 단위로 재정의, 0 = 기본값)
+ Misc = 기타 (기본값 = PSP 호환성)
+-Network connected = Network connected
++Network connected = 네트워크 연결됨
+ Network initialized = 네트워크 초기화
+ Please change your Port Offset = 포트 오프셋을 변경하세요.
+ Port offset = 포트 오프셋 (0 = PSP 호환성)
+@@ -1003,14 +1003,14 @@ written = 속도와 이식성을 위해 C++로 작성되었습니다.
+ [MemStick]
+ Already contains PSP data = 이미 PSP 데이터가 포함되어 있습니다.
+ Cancelled - try again = 취소됨 - 다시 시도
+-Checking... = Checking...
++Checking... = 확인 중...
+ Create or Choose a PSP folder = PSP 폴더 생성 또는 선택
+ Current = 현재
+ DataCanBeShared = PPSSPP 레귤러/골드 간에 데이터 공유 가능
+ DataCannotBeShared = PPSSPP 레귤러/골드 간에 데이터를 공유할 수 없습니다!
+ DataWillBeLostOnUninstall = 경고! PPSSPP를 제거하면 데이터가 손실됩니다!
+ DataWillStay = PPSSPP를 제거해도 데이터는 유지됩니다.
+-Deleting... = Deleting...
++Deleting... = 삭제 중...
+ Done! = 완료!
+ EasyUSBAccess = 쉬운 USB 접속
+ Failed to move some files! = 일부 파일을 이동하지 못했습니다!
+@@ -1066,7 +1066,7 @@ RemoteISOWinFirewall = 경고: Windows 방화벽이 공유를 차단하고 있
+ Settings = 설정
+ Share Games (Server) = 게임 공유하기 (서버)
+ Share on PPSSPP startup = PPSSPP 시작시 자동으로 공유하기
+-Show Remote tab on main screen = Show Remote tab on main screen
++Show Remote tab on main screen = 메인 화면에 원격 탭 표시
+ Stop Sharing = 공유 끝내기
+ Stopping.. = 중지하는 중...
+ 
+@@ -1128,7 +1128,7 @@ Size = 크기
+ [Screen]
+ Cardboard VR OFF = 카드보드 VR 끔
+ Chainfire3DWarning = 경고: Chainfire3D가 감지되어 문제를 일으킬 수 있습니다.
+-ExtractedISOWarning = Extracted ISOs often don't work.\nPlay the ISO file directly.
++ExtractedISOWarning = 추출된 ISO는 종종 작동하지 않습니다.\nISO 파일을 직접 재생하세요.
+ Failed to load state = 상태를 불러오지 못함
+ Failed to save state = 상태를 저장하지 못함
+ fixed = 속도: 대체
+@@ -1202,7 +1202,7 @@ GPU Information = GPU 정보
+ High precision float range = 고정밀 부동소수점 범위
+ High precision int range = 고정밀 정수 범위
+ Icon cache = 아이콘 캐시
+-Instance = Instance
++Instance = 사례
+ JIT available = JIT 사용 가능
+ Lang/Region = 언어/지역
+ Memory Page Size = 메모리 페이지 크기
+@@ -1222,7 +1222,7 @@ Refresh rate = 주사율
+ Release = 개정
+ RW/RX exclusive = RW/RX 전용
+ Sample rate = 샘플 속도
+-Screen notch insets = Screen notch insets
++Screen notch insets = 화면 노치 삽입
+ Shading Language = 쉐이딩 언어
+ Storage = 저장소
+ Sustained perf mode = 지속 성능 모드
+@@ -1249,9 +1249,9 @@ AVI Dump stopped. = AVI 덤프가 중지됨
+ Cache ISO in RAM = RAM에 전체 ISO 캐시
+ Change CPU Clock = 에뮬레이트된 PSP의 CPU 클럭 변경 (불안정)
+ CPU Core = CPU 코어
+-Dynarec/JIT (recommended) = 동적 재컴파일 (JIT)
+-JIT using IR = JIT using IR
+-Loaded plugin: %1 = Loaded plugin: %1
++Dynarec/JIT (recommended) = 동적 재컴파일/JIT (추천)
++JIT using IR = IR을 이용한 JIT
++Loaded plugin: %1 = 로드된 플러그인: %1
+ Memory Stick folder = 메모리 스틱 폴더
+ Memory Stick size = 메모리 스틱 크기
+ Change Nickname = 별명 변경
+@@ -1304,7 +1304,7 @@ No animation = 애니메이션 없음
+ Not a PSP game = PSP 게임이 아님
+ Off = 끔
+ Oldest Save = 가장 오래된 저장
+-Only JPG and PNG images are supported = Only JPG and PNG images are supported
++Only JPG and PNG images are supported = JPG 및 PNG 이미지만 지원됩니다.
+ Path does not exist! = 경로가 존재하지 않습니다!
+ PSP Memory Stick = PSP 메모리 스틱
+ PSP Model = PSP 모델
+@@ -1314,7 +1314,7 @@ PSP-2000/3000 = PSP-2000/3000
+ Recent games = 최근 게임
+ Record Audio = 오디오 녹음
+ Record Display = 녹화 표시
+-Recording = Recording
++Recording = 녹화
+ Reset Recording on Save/Load State = 저장/불러오기 상태에서 녹화 재설정
+ Restore Default Settings = PPSSPP의 설정을 기본값으로 복원
+ RetroAchievements = RetroAchievements
+-- 
+2.34.1
+

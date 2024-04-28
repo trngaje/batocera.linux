@@ -14757,32 +14757,22 @@ msgctxt "game_options"
 msgid "TRIPLE BUFFERING"
 msgstr "HÁRMAS PUFFERELÉS"
 
-#. TRANSLATION: steam.keys
-msgctxt "keys_files"
-msgid "Exit Steam"
-msgstr ""
-
-#. TRANSLATION: flatpak.keys
-msgctxt "keys_files"
-msgid "Exit running Flatpak"
-msgstr ""
-
-#. TRANSLATION: raze.keys, gzdoom.keys, eduke32.keys
+#. TRANSLATION: eduke32.keys, gzdoom.keys, raze.keys
 msgctxt "keys_files"
 msgid "quicksave"
 msgstr "quicksave"
 
-#. TRANSLATION: raze.keys, gzdoom.keys, eduke32.keys
+#. TRANSLATION: eduke32.keys, gzdoom.keys, raze.keys
 msgctxt "keys_files"
 msgid "quickload"
 msgstr "quickload"
 
-#. TRANSLATION: raze.keys, gzdoom.keys, eduke32.keys
+#. TRANSLATION: eduke32.keys, gzdoom.keys, raze.keys
 msgctxt "keys_files"
 msgid "screenshot"
 msgstr "képernyőkép"
 
-#. TRANSLATION: dxx-rebirth.keys, fallout2-ce.keys, fallout1-ce.keys, etlegacy.keys, sonic-mania.keys, ...
+#. TRANSLATION: fallout2-ce.keys, etlegacy.keys, dxx-rebirth.keys, sonic3-air.keys, fallout1-ce.keys, ...
 msgctxt "keys_files"
 msgid "Exit game"
 msgstr "Kilépés a játékból"
@@ -14792,25 +14782,35 @@ msgctxt "keys_files"
 msgid "Bring up menu"
 msgstr "A menü előhívása"
 
-#. TRANSLATION: fallout2-ce.keys, fallout1-ce.keys, iortcw.keys, corsixth.keys
+#. TRANSLATION: fallout2-ce.keys, corsixth.keys, fallout1-ce.keys, iortcw.keys
 msgctxt "keys_files"
 msgid "Quick save"
 msgstr "Gyors mentés"
 
-#. TRANSLATION: fallout2-ce.keys, fallout1-ce.keys, iortcw.keys, corsixth.keys
+#. TRANSLATION: fallout2-ce.keys, corsixth.keys, fallout1-ce.keys, iortcw.keys
 msgctxt "keys_files"
 msgid "Quick load"
 msgstr "Gyors betöltés"
 
-#. TRANSLATION: iortcw.keys, theforceengine.keys
+#. TRANSLATION: theforceengine.keys, dreamcast.redream.keys, switch.ryujinx.keys, vpinball.keys, naomi2.demul.keys, ...
+msgctxt "keys_files"
+msgid "Exit the emulator"
+msgstr "Kilépés az emulátorból"
+
+#. TRANSLATION: theforceengine.keys
+msgctxt "keys_files"
+msgid "Quick Load"
+msgstr "Mentés betöltése"
+
+#. TRANSLATION: theforceengine.keys
+msgctxt "keys_files"
+msgid "Quick Save"
+msgstr "Gyors mentés"
+
+#. TRANSLATION: theforceengine.keys, iortcw.keys
 msgctxt "keys_files"
 msgid "Skip cutscene"
 msgstr "A jelenetet kihagyása"
-
-#. TRANSLATION: iortcw.keys, triforce.dolphin_triforce.keys, psx.duckstation.keys, 3ds.lemonade.keys, psp.ppsspp.keys, ...
-msgctxt "keys_files"
-msgid "Screenshot"
-msgstr "Pillanatkép"
 
 #. TRANSLATION: corsixth.keys
 msgctxt "keys_files"
@@ -14952,45 +14952,10 @@ msgctxt "keys_files"
 msgid "Manage Staff"
 msgstr "Személyzet kezelése"
 
-#. TRANSLATION: theforceengine.keys, dreamcast.redream.keys, cave3rd.demul.keys, dreamcast.demul.keys, naomi.demul.keys, ...
+#. TRANSLATION: iortcw.keys, psx.duckstation.keys, psp.ppsspp.keys, 3ds.lemonade.keys, scummvm.keys, ...
 msgctxt "keys_files"
-msgid "Exit the emulator"
-msgstr "Kilépés az emulátorból"
-
-#. TRANSLATION: theforceengine.keys
-msgctxt "keys_files"
-msgid "Quick Load"
-msgstr "Mentés betöltése"
-
-#. TRANSLATION: theforceengine.keys
-msgctxt "keys_files"
-msgid "Quick Save"
-msgstr "Gyors mentés"
-
-#. TRANSLATION: dreamcast.redream.keys, dreamcast.flycast.keys, naomi2.flycast.keys, naomi.flycast.keys, atomiswave.flycast.keys
-msgctxt "keys_files"
-msgid "Hide the bezel"
-msgstr "Rejtse el a keretet"
-
-#. TRANSLATION: xbox360.xenia.keys, triforce.dolphin_triforce.keys, amigacdtv.fsuae.keys, amigacd32.fsuae.keys, amiga500.fsuae.keys, ...
-msgctxt "keys_files"
-msgid "Exit emulator"
-msgstr "Kilépés az emulátorból"
-
-#. TRANSLATION: triforce.dolphin_triforce.keys
-msgctxt "keys_files"
-msgid "Open Dolphin-triforce's menu"
-msgstr "Dolphin-triforce menü megnyitása"
-
-#. TRANSLATION: triforce.dolphin_triforce.keys
-msgctxt "keys_files"
-msgid "Load State Slot 1"
-msgstr "Betöltési állapot Slot 1"
-
-#. TRANSLATION: triforce.dolphin_triforce.keys
-msgctxt "keys_files"
-msgid "Save State Slot 1"
-msgstr "Állapot mentése Slot 1"
+msgid "Screenshot"
+msgstr "Pillanatkép"
 
 #. TRANSLATION: psx.duckstation.keys
 msgctxt "keys_files"
@@ -15042,200 +15007,20 @@ msgctxt "keys_files"
 msgid "Fast Forward"
 msgstr "Gyorsan előre"
 
-#. TRANSLATION: cave3rd.demul.keys, dreamcast.demul.keys, naomi.demul.keys, hikaru.demul.keys, gaelco.demul.keys, ...
+#. TRANSLATION: xbox360.xenia.keys, psp.ppsspp.keys, 3ds.lemonade.keys, daphne.daphne.keys, pico8.keys, ...
 msgctxt "keys_files"
-msgid "Start"
-msgstr "Start"
+msgid "Exit emulator"
+msgstr "Kilépés az emulátorból"
 
-#. TRANSLATION: cave3rd.demul.keys, dreamcast.demul.keys, naomi.demul.keys, hikaru.demul.keys, gaelco.demul.keys, ...
+#. TRANSLATION: psp.ppsspp.keys
 msgctxt "keys_files"
-msgid "Coin"
-msgstr "Érme"
+msgid "Pause / Menu"
+msgstr "Szünet / Menü"
 
-#. TRANSLATION: cave3rd.demul.keys, dreamcast.demul.keys, naomi.demul.keys, hikaru.demul.keys, gaelco.demul.keys, ...
+#. TRANSLATION: moonlight.moonlight.keys
 msgctxt "keys_files"
-msgid "Push 2"
-msgstr "Nyomd meg a 2. gombot"
-
-#. TRANSLATION: cave3rd.demul.keys, dreamcast.demul.keys, naomi.demul.keys, hikaru.demul.keys, gaelco.demul.keys, ...
-msgctxt "keys_files"
-msgid "Push 1"
-msgstr "Nyomd meg az 1. gombot"
-
-#. TRANSLATION: cave3rd.demul.keys, dreamcast.demul.keys, naomi.demul.keys, hikaru.demul.keys, gaelco.demul.keys, ...
-msgctxt "keys_files"
-msgid "Push 4"
-msgstr "Nyomd meg a 4. gombot"
-
-#. TRANSLATION: cave3rd.demul.keys, dreamcast.demul.keys, naomi.demul.keys, hikaru.demul.keys, gaelco.demul.keys, ...
-msgctxt "keys_files"
-msgid "Push 3"
-msgstr "Nyomd meg a 3. gombot"
-
-#. TRANSLATION: cave3rd.demul.keys, dreamcast.demul.keys, naomi.demul.keys, hikaru.demul.keys, gaelco.demul.keys, ...
-msgctxt "keys_files"
-msgid "Push 5"
-msgstr "Nyomd meg az 5. gombot"
-
-#. TRANSLATION: cave3rd.demul.keys, dreamcast.demul.keys, naomi.demul.keys, hikaru.demul.keys, gaelco.demul.keys, ...
-msgctxt "keys_files"
-msgid "Push 6"
-msgstr "Nyomd meg a 6. gombot"
-
-#. TRANSLATION: cave3rd.demul.keys, dreamcast.demul.keys, naomi.demul.keys, hikaru.demul.keys, gaelco.demul.keys, ...
-msgctxt "keys_files"
-msgid "Push 7"
-msgstr "Nyomd meg a 7. gombot"
-
-#. TRANSLATION: cave3rd.demul.keys, dreamcast.demul.keys, naomi.demul.keys, hikaru.demul.keys, gaelco.demul.keys, ...
-msgctxt "keys_files"
-msgid "Push 8"
-msgstr "Nyomd meg a 8. gombot"
-
-#. TRANSLATION: cave3rd.demul.keys, dreamcast.demul.keys, naomi.demul.keys, hikaru.demul.keys, gaelco.demul.keys, ...
-msgctxt "keys_files"
-msgid "Digital Left"
-msgstr "Digitális bal"
-
-#. TRANSLATION: cave3rd.demul.keys, dreamcast.demul.keys, naomi.demul.keys, hikaru.demul.keys, gaelco.demul.keys, ...
-msgctxt "keys_files"
-msgid "Digital Right"
-msgstr "Digitális jobb"
-
-#. TRANSLATION: cave3rd.demul.keys, dreamcast.demul.keys, naomi.demul.keys, hikaru.demul.keys, gaelco.demul.keys, ...
-msgctxt "keys_files"
-msgid "Digital Up"
-msgstr "Digitális fel"
-
-#. TRANSLATION: cave3rd.demul.keys, dreamcast.demul.keys, naomi.demul.keys, hikaru.demul.keys, gaelco.demul.keys, ...
-msgctxt "keys_files"
-msgid "Digital Down"
-msgstr "Digitális le"
-
-#. TRANSLATION: cave3rd.demul.keys, dreamcast.demul.keys, naomi.demul.keys, hikaru.demul.keys, gaelco.demul.keys, ...
-msgctxt "keys_files"
-msgid "Analog 1 Left"
-msgstr "Analóg 1 bal"
-
-#. TRANSLATION: cave3rd.demul.keys, dreamcast.demul.keys, naomi.demul.keys, hikaru.demul.keys, gaelco.demul.keys, ...
-msgctxt "keys_files"
-msgid "Analog 1 Right"
-msgstr "Analóg 1 jobb"
-
-#. TRANSLATION: cave3rd.demul.keys, dreamcast.demul.keys, naomi.demul.keys, hikaru.demul.keys, gaelco.demul.keys, ...
-msgctxt "keys_files"
-msgid "Analog 1 Up"
-msgstr "Analóg 1 fel"
-
-#. TRANSLATION: cave3rd.demul.keys, dreamcast.demul.keys, naomi.demul.keys, hikaru.demul.keys, gaelco.demul.keys, ...
-msgctxt "keys_files"
-msgid "Analog 1 Down"
-msgstr "Analóg 1 le"
-
-#. TRANSLATION: cave3rd.demul.keys, dreamcast.demul.keys, naomi.demul.keys, hikaru.demul.keys, gaelco.demul.keys, ...
-msgctxt "keys_files"
-msgid "Analog 2 Left"
-msgstr "Analóg 2 bal"
-
-#. TRANSLATION: cave3rd.demul.keys, dreamcast.demul.keys, naomi.demul.keys, hikaru.demul.keys, gaelco.demul.keys, ...
-msgctxt "keys_files"
-msgid "Analog 2 Right"
-msgstr "Analóg 2 jobb"
-
-#. TRANSLATION: cave3rd.demul.keys, dreamcast.demul.keys, naomi.demul.keys, hikaru.demul.keys, gaelco.demul.keys, ...
-msgctxt "keys_files"
-msgid "Analog 2 Up"
-msgstr "Analóg 2 fel"
-
-#. TRANSLATION: cave3rd.demul.keys, dreamcast.demul.keys, naomi.demul.keys, hikaru.demul.keys, gaelco.demul.keys, ...
-msgctxt "keys_files"
-msgid "Analog 2 Down"
-msgstr "Analóg 2 le"
-
-#. TRANSLATION: hikaru.demul.keys, gaelco.demul.keys
-msgctxt "keys_files"
-msgid "Set to full screen"
-msgstr "Teljes képernyőre állítás"
-
-#. TRANSLATION: amigacdtv.fsuae.keys, amigacd32.fsuae.keys, amiga500.fsuae.keys, amiga1200.fsuae.keys
-msgctxt "keys_files"
-msgid "Virtual Keyboard"
-msgstr "Virtuális Billentyűzet"
-
-#. TRANSLATION: amigacdtv.fsuae.keys, amigacd32.fsuae.keys, amiga500.fsuae.keys, amiga1200.fsuae.keys
-msgctxt "keys_files"
-msgid "Settings GUI"
-msgstr "Grafikus felület beállítása"
-
-#. TRANSLATION: vpinball.keys
-msgctxt "keys_files"
-msgid "Reset the table, sometimes required for PinMame"
-msgstr "Állítsa vissza a táblázatot, ami néha szükséges a PinMame számára"
-
-#. TRANSLATION: vpinball.keys
-msgctxt "keys_files"
-msgid "Start game"
-msgstr "Játék kezdése"
-
-#. TRANSLATION: vpinball.keys
-msgctxt "keys_files"
-msgid "Insert coin"
-msgstr "Érme bedobó"
-
-#. TRANSLATION: vpinball.keys
-msgctxt "keys_files"
-msgid "Nudge up"
-msgstr "Lökés fel"
-
-#. TRANSLATION: vpinball.keys
-msgctxt "keys_files"
-msgid "Nudge left"
-msgstr "Lökés balra"
-
-#. TRANSLATION: vpinball.keys
-msgctxt "keys_files"
-msgid "Nudge right"
-msgstr "Lökés jobbra"
-
-#. TRANSLATION: vpinball.keys
-msgctxt "keys_files"
-msgid "Pull plunger"
-msgstr "Kilövés"
-
-#. TRANSLATION: vpinball.keys
-msgctxt "keys_files"
-msgid "Lockbar Fire Button"
-msgstr ""
-
-#. TRANSLATION: vpinball.keys
-msgctxt "keys_files"
-msgid "Buy extraball for a credit"
-msgstr ""
-
-#. TRANSLATION: vpinball.keys
-msgctxt "keys_files"
-msgid "Left flipper"
-msgstr "Bal kar"
-
-#. TRANSLATION: vpinball.keys
-msgctxt "keys_files"
-msgid "Right flipper"
-msgstr "Jobb kar"
-
-#. TRANSLATION: vpinball.keys
-msgctxt "keys_files"
-msgid "Left magnasave"
-msgstr "Bal magnasave"
-
-#. TRANSLATION: vpinball.keys
-msgctxt "keys_files"
-msgid "Right magnasave"
-msgstr "Jobb magnasave"
-
-#. TRANSLATION: dos.dosbox-x.keys
-msgctxt "keys_files"
-msgid "Exit Dosbox-X"
-msgstr "Kilépés a  Dosbox-X-ből"
+msgid "Exit emulator using SDL"
+msgstr "Kilépés az emulátorból SDL használatával"
 
 #. TRANSLATION: 3ds.lemonade.keys
 msgctxt "keys_files"
@@ -15277,25 +15062,65 @@ msgctxt "keys_files"
 msgid "Mouse Click"
 msgstr "Egérkattintás"
 
+#. TRANSLATION: E_libretro.keys
+msgctxt "keys_files"
+msgid "menu"
+msgstr ""
+
 #. TRANSLATION: daphne.daphne.keys
 msgctxt "keys_files"
 msgid "Service menu"
 msgstr ""
+
+#. TRANSLATION: dos.dosbox-x.keys
+msgctxt "keys_files"
+msgid "Exit Dosbox-X"
+msgstr "Kilépés a  Dosbox-X-ből"
+
+#. TRANSLATION: dreamcast.redream.keys, naomi2.flycast.keys, naomi.flycast.keys, dreamcast.flycast.keys, atomiswave.flycast.keys
+msgctxt "keys_files"
+msgid "Hide the bezel"
+msgstr "Rejtse el a keretet"
+
+#. TRANSLATION: scummvm.keys
+msgctxt "keys_files"
+msgid "Menu"
+msgstr "Menü"
+
+#. TRANSLATION: scummvm.keys
+msgctxt "keys_files"
+msgid "Graphics filtering on/off"
+msgstr "Grafikai szűrés be/ki"
+
+#. TRANSLATION: amiga500.fsuae.keys, amigacdtv.fsuae.keys, amigacd32.fsuae.keys, amiga1200.fsuae.keys
+msgctxt "keys_files"
+msgid "Virtual Keyboard"
+msgstr "Virtuális Billentyűzet"
+
+#. TRANSLATION: amiga500.fsuae.keys, amigacdtv.fsuae.keys, amigacd32.fsuae.keys, amiga1200.fsuae.keys
+msgctxt "keys_files"
+msgid "Settings GUI"
+msgstr "Grafikus felület beállítása"
 
 #. TRANSLATION: wiiu.keys
 msgctxt "keys_files"
 msgid "Display the controller screen"
 msgstr "A vezérlő képernyőjének megjelenítése"
 
-#. TRANSLATION: psp.ppsspp.keys
+#. TRANSLATION: triforce.dolphin_triforce.keys
 msgctxt "keys_files"
-msgid "Pause / Menu"
-msgstr "Szünet / Menü"
+msgid "Open Dolphin-triforce's menu"
+msgstr "Dolphin-triforce menü megnyitása"
 
-#. TRANSLATION: moonlight.moonlight.keys
+#. TRANSLATION: triforce.dolphin_triforce.keys
 msgctxt "keys_files"
-msgid "Exit emulator using SDL"
-msgstr "Kilépés az emulátorból SDL használatával"
+msgid "Load State Slot 1"
+msgstr "Betöltési állapot Slot 1"
+
+#. TRANSLATION: triforce.dolphin_triforce.keys
+msgctxt "keys_files"
+msgid "Save State Slot 1"
+msgstr "Állapot mentése Slot 1"
 
 #. TRANSLATION: nds.drastic.keys
 msgctxt "keys_files"
@@ -15417,15 +15242,195 @@ msgctxt "keys_files"
 msgid "FastForward"
 msgstr "Gyors előre"
 
-#. TRANSLATION: scummvm.keys
+#. TRANSLATION: vpinball.keys
 msgctxt "keys_files"
-msgid "Menu"
-msgstr "Menü"
+msgid "Reset the table, sometimes required for PinMame"
+msgstr "Állítsa vissza a táblázatot, ami néha szükséges a PinMame számára"
 
-#. TRANSLATION: scummvm.keys
+#. TRANSLATION: vpinball.keys
 msgctxt "keys_files"
-msgid "Graphics filtering on/off"
-msgstr "Grafikai szűrés be/ki"
+msgid "Start game"
+msgstr "Játék kezdése"
+
+#. TRANSLATION: vpinball.keys
+msgctxt "keys_files"
+msgid "Insert coin"
+msgstr "Érme bedobó"
+
+#. TRANSLATION: vpinball.keys
+msgctxt "keys_files"
+msgid "Nudge up"
+msgstr "Lökés fel"
+
+#. TRANSLATION: vpinball.keys
+msgctxt "keys_files"
+msgid "Nudge left"
+msgstr "Lökés balra"
+
+#. TRANSLATION: vpinball.keys
+msgctxt "keys_files"
+msgid "Nudge right"
+msgstr "Lökés jobbra"
+
+#. TRANSLATION: vpinball.keys
+msgctxt "keys_files"
+msgid "Pull plunger"
+msgstr "Kilövés"
+
+#. TRANSLATION: vpinball.keys
+msgctxt "keys_files"
+msgid "Lockbar Fire Button"
+msgstr ""
+
+#. TRANSLATION: vpinball.keys
+msgctxt "keys_files"
+msgid "Buy extraball for a credit"
+msgstr ""
+
+#. TRANSLATION: vpinball.keys
+msgctxt "keys_files"
+msgid "Left flipper"
+msgstr "Bal kar"
+
+#. TRANSLATION: vpinball.keys
+msgctxt "keys_files"
+msgid "Right flipper"
+msgstr "Jobb kar"
+
+#. TRANSLATION: vpinball.keys
+msgctxt "keys_files"
+msgid "Left magnasave"
+msgstr "Bal magnasave"
+
+#. TRANSLATION: vpinball.keys
+msgctxt "keys_files"
+msgid "Right magnasave"
+msgstr "Jobb magnasave"
+
+#. TRANSLATION: naomi2.demul.keys, gaelco.demul.keys, cave3rd.demul.keys, naomi.demul.keys, hikaru.demul.keys, ...
+msgctxt "keys_files"
+msgid "Start"
+msgstr "Start"
+
+#. TRANSLATION: naomi2.demul.keys, gaelco.demul.keys, cave3rd.demul.keys, naomi.demul.keys, hikaru.demul.keys, ...
+msgctxt "keys_files"
+msgid "Coin"
+msgstr "Érme"
+
+#. TRANSLATION: naomi2.demul.keys, gaelco.demul.keys, cave3rd.demul.keys, naomi.demul.keys, hikaru.demul.keys, ...
+msgctxt "keys_files"
+msgid "Push 2"
+msgstr "Nyomd meg a 2. gombot"
+
+#. TRANSLATION: naomi2.demul.keys, gaelco.demul.keys, cave3rd.demul.keys, naomi.demul.keys, hikaru.demul.keys, ...
+msgctxt "keys_files"
+msgid "Push 1"
+msgstr "Nyomd meg az 1. gombot"
+
+#. TRANSLATION: naomi2.demul.keys, gaelco.demul.keys, cave3rd.demul.keys, naomi.demul.keys, hikaru.demul.keys, ...
+msgctxt "keys_files"
+msgid "Push 4"
+msgstr "Nyomd meg a 4. gombot"
+
+#. TRANSLATION: naomi2.demul.keys, gaelco.demul.keys, cave3rd.demul.keys, naomi.demul.keys, hikaru.demul.keys, ...
+msgctxt "keys_files"
+msgid "Push 3"
+msgstr "Nyomd meg a 3. gombot"
+
+#. TRANSLATION: naomi2.demul.keys, gaelco.demul.keys, cave3rd.demul.keys, naomi.demul.keys, hikaru.demul.keys, ...
+msgctxt "keys_files"
+msgid "Push 5"
+msgstr "Nyomd meg az 5. gombot"
+
+#. TRANSLATION: naomi2.demul.keys, gaelco.demul.keys, cave3rd.demul.keys, naomi.demul.keys, hikaru.demul.keys, ...
+msgctxt "keys_files"
+msgid "Push 6"
+msgstr "Nyomd meg a 6. gombot"
+
+#. TRANSLATION: naomi2.demul.keys, gaelco.demul.keys, cave3rd.demul.keys, naomi.demul.keys, hikaru.demul.keys, ...
+msgctxt "keys_files"
+msgid "Push 7"
+msgstr "Nyomd meg a 7. gombot"
+
+#. TRANSLATION: naomi2.demul.keys, gaelco.demul.keys, cave3rd.demul.keys, naomi.demul.keys, hikaru.demul.keys, ...
+msgctxt "keys_files"
+msgid "Push 8"
+msgstr "Nyomd meg a 8. gombot"
+
+#. TRANSLATION: naomi2.demul.keys, gaelco.demul.keys, cave3rd.demul.keys, naomi.demul.keys, hikaru.demul.keys, ...
+msgctxt "keys_files"
+msgid "Digital Left"
+msgstr "Digitális bal"
+
+#. TRANSLATION: naomi2.demul.keys, gaelco.demul.keys, cave3rd.demul.keys, naomi.demul.keys, hikaru.demul.keys, ...
+msgctxt "keys_files"
+msgid "Digital Right"
+msgstr "Digitális jobb"
+
+#. TRANSLATION: naomi2.demul.keys, gaelco.demul.keys, cave3rd.demul.keys, naomi.demul.keys, hikaru.demul.keys, ...
+msgctxt "keys_files"
+msgid "Digital Up"
+msgstr "Digitális fel"
+
+#. TRANSLATION: naomi2.demul.keys, gaelco.demul.keys, cave3rd.demul.keys, naomi.demul.keys, hikaru.demul.keys, ...
+msgctxt "keys_files"
+msgid "Digital Down"
+msgstr "Digitális le"
+
+#. TRANSLATION: naomi2.demul.keys, gaelco.demul.keys, cave3rd.demul.keys, naomi.demul.keys, hikaru.demul.keys, ...
+msgctxt "keys_files"
+msgid "Analog 1 Left"
+msgstr "Analóg 1 bal"
+
+#. TRANSLATION: naomi2.demul.keys, gaelco.demul.keys, cave3rd.demul.keys, naomi.demul.keys, hikaru.demul.keys, ...
+msgctxt "keys_files"
+msgid "Analog 1 Right"
+msgstr "Analóg 1 jobb"
+
+#. TRANSLATION: naomi2.demul.keys, gaelco.demul.keys, cave3rd.demul.keys, naomi.demul.keys, hikaru.demul.keys, ...
+msgctxt "keys_files"
+msgid "Analog 1 Up"
+msgstr "Analóg 1 fel"
+
+#. TRANSLATION: naomi2.demul.keys, gaelco.demul.keys, cave3rd.demul.keys, naomi.demul.keys, hikaru.demul.keys, ...
+msgctxt "keys_files"
+msgid "Analog 1 Down"
+msgstr "Analóg 1 le"
+
+#. TRANSLATION: naomi2.demul.keys, gaelco.demul.keys, cave3rd.demul.keys, naomi.demul.keys, hikaru.demul.keys, ...
+msgctxt "keys_files"
+msgid "Analog 2 Left"
+msgstr "Analóg 2 bal"
+
+#. TRANSLATION: naomi2.demul.keys, gaelco.demul.keys, cave3rd.demul.keys, naomi.demul.keys, hikaru.demul.keys, ...
+msgctxt "keys_files"
+msgid "Analog 2 Right"
+msgstr "Analóg 2 jobb"
+
+#. TRANSLATION: naomi2.demul.keys, gaelco.demul.keys, cave3rd.demul.keys, naomi.demul.keys, hikaru.demul.keys, ...
+msgctxt "keys_files"
+msgid "Analog 2 Up"
+msgstr "Analóg 2 fel"
+
+#. TRANSLATION: naomi2.demul.keys, gaelco.demul.keys, cave3rd.demul.keys, naomi.demul.keys, hikaru.demul.keys, ...
+msgctxt "keys_files"
+msgid "Analog 2 Down"
+msgstr "Analóg 2 le"
+
+#. TRANSLATION: gaelco.demul.keys, hikaru.demul.keys
+msgctxt "keys_files"
+msgid "Set to full screen"
+msgstr "Teljes képernyőre állítás"
+
+#. TRANSLATION: steam.keys
+msgctxt "keys_files"
+msgid "Exit Steam"
+msgstr ""
+
+#. TRANSLATION: flatpak.keys
+msgctxt "keys_files"
+msgid "Exit running Flatpak"
+msgstr ""
 
 #~ msgctxt "game_options"
 #~ msgid "AMD FidelityFX (Vulkan Only)"

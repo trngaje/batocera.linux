@@ -32,6 +32,8 @@ class Evmapy():
         for keysfile in [
                 "{}.keys" .format (rom),
                 "{}/padto.keys" .format (rom), # case when the rom is a directory
+                "/userdata/system/configs/evmapy/E_{}.keys" .format (emulator),
+                "/usr/share/evmapy/E_{}.keys" .format (emulator),
                 #"/userdata/system/configs/evmapy/{}.{}.{}.keys" .format (system, emulator, core),
                 #"/userdata/system/configs/evmapy/{}.{}.keys" .format (system, emulator),
                 "/userdata/system/configs/evmapy/{}.keys" .format (system),

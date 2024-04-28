@@ -285,6 +285,11 @@ class LibretroGenerator(Generator):
                 raise
 
             commandArray = [batoceraFiles.batoceraBins[system.config['emulator']], "-L", retroarchCore, "--config", system.config['configfile']]
+        elif system.name == 'pc98':
+            romPC98Name, romExtension = os.path.splitext(romName)
+            shutil.copyfile(os.path.dirname(os.path.abspath(rom)) + "/" + romPC98Name + ".bmp", "/userdata/bios/np2kai/font.bmp")
+            retroarchCore = batoceraFiles.retroarchCores + system.config['core'] + "_libretro.so"
+            commandArray = [batoceraFiles.batoceraBins[system.config['emulator']], "-L", retroarchCore, "--config", system.config['configfile']]
         else:
             commandArray = [batoceraFiles.batoceraBins[system.config['emulator']], "-L", retroarchCore, "--config", system.config['configfile']]
         
@@ -385,9 +390,9 @@ def getGFXBackend(system):
         if not setManually:
             # If set to glcore or gl, override setting for certain cores that require one or the other
             core = system.config['core']
-            if backend == "gl" and core in [ 'kronos', 'citra', 'mupen64plus-next', 'melonds', 'beetle-psx-hw' ]:
+            if backend == "gl" and core in [ 'kronos', 'citra', 'melonds', 'beetle-psx-hw' ]:
                 backend = "glcore"
-            if backend == "glcore" and core in [ 'parallel_n64', 'yabasanshiro', 'openlara', 'boom3' ]:
+            if backend == "glcore" and core in [ 'parallel_n64', 'yabasanshiro', 'mupen64plus-next', 'openlara', 'boom3' ]:
                 backend = "gl"
 
         return backend
