@@ -90,7 +90,7 @@ def cleanControllerConfig(retroconfig, controllers, retroarchspecials):
 def writeHotKeyConfig(retroconfig, controllers):
     if '1' in controllers:
         if 'hotkey' in controllers['1'].inputs and controllers['1'].inputs['hotkey'].type == 'button':
-            retroconfig.save('input_enable_hotkey_btn', controllers['1'].inputs['hotkey'].id)
+            retroconfig.save('input_enable_hotkey_btn', controllers['1'].inputs['select'].id)
 
 
 # Write a configuration for a specified controller
