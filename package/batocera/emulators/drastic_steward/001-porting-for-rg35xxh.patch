@@ -1,0 +1,1976 @@
+diff --git a/Makefile b/Makefile
+index c577a6f..2808fda 100644
+--- a/Makefile
++++ b/Makefile
+@@ -29,6 +29,12 @@ ifeq ($(MOD),mmiyoo)
+     export CROSS=/opt/mmiyoo/bin/arm-linux-gnueabihf-
+ endif
+ 
++ifeq ($(MOD),rg35xxh)
++    SDL2_CFG+= --disable-oss
++    SDL2_CFG+= --disable-alsa
++    #export CROSS=/opt/mmiyoo/bin/arm-linux-gnueabihf-
++endif
++
+ ifeq ($(MOD),trimui)
+     SDL2_CFG+= --disable-oss
+     SDL2_CFG+= --disable-alsa
+@@ -58,25 +64,35 @@ else
+     export HOST=arm-linux
+     $(shell cd sdl2 && rm -rf libEGL.so libGLESv2.so)
+ ifneq ($(MOD),qx1000)
+-    $(shell cd sdl2 && ln -s ../drastic/libs/libEGL.so)
+-    $(shell cd sdl2 && ln -s ../drastic/libs/libGLESv2.so)
++	ifneq ($(MOD),rg35xxh)
++		$(shell cd sdl2 && ln -s ../drastic/libs/libEGL.so)
++		$(shell cd sdl2 && ln -s ../drastic/libs/libGLESv2.so)
++	endif
+ endif
+ endif
+ 
+ .PHONY: all
+ all:
++ifneq ($(MOD),rg35xxh)
+ 	make -C loader MOD=$(MOD)
++endif
+ 	make -C detour MOD=$(MOD)
+ 	cp detour/libdtr.so drastic/libs/
++ifneq ($(MOD),rg35xxh)
+ 	make -C alsa MOD=$(MOD)
+ 	cp alsa/libasound.so.2 drastic/libs/
++endif
+ 	make -C sdl2 -j4
+ 	cp sdl2/build/.libs/libSDL2-2.0.so.0 drastic/libs/
++ifneq ($(MOD),rg35xxh)
+ 	make -C unittest $(MOD)
++endif
+ 
+ .PHONY: cfg
+ cfg:
++ifneq ($(MOD),rg35xxh)
+ 	cp assets/$(MOD)/* drastic/
++endif
+ 	cd sdl2 && ./autogen.sh && MOD=$(MOD) ./configure $(SDL2_CFG) --host=$(HOST)
+ 
+ .PHONY: rel
+diff --git a/detour/Makefile b/detour/Makefile
+index 51a3db8..18e0438 100644
+--- a/detour/Makefile
++++ b/detour/Makefile
+@@ -10,6 +10,12 @@ ifeq ($(MOD),mmiyoo)
+     LDFLAGS+= -L../mmiyoo/lib -lmi_common -lmi_sys -lmi_gfx -lmi_ao
+ endif
+ 
++ifeq ($(MOD),rg35xxh)
++    CFLAGS += -DRG35XXH -I../mmiyoo/inc
++    CFLAGS += -mcpu=cortex-a7 -mfpu=neon-vfpv4 -O3 -Wl,--no-undefined
++    LDFLAGS+= -ljson-c
++endif
++
+ ifeq ($(MOD),trimui)
+     CFLAGS += -DTRIMUI -I../trimui/inc
+     CFLAGS += -mcpu=cortex-a7 -mfpu=neon-vfpv4 -O3 -Wl,--no-undefined
+diff --git a/detour/main.c b/detour/main.c
+index 765c6da..027adf6 100644
+--- a/detour/main.c
++++ b/detour/main.c
+@@ -33,7 +33,7 @@ static int32_t dtr_load_state_index(void *system, uint32_t index, uint16_t *snap
+     char buf[255] = {0};
+     nds_load_state _func = (nds_load_state)FUN_LOAD_STATE;
+ 
+-    sprintf(buf, "%s/%s_%d.dss", states_path, VAR_SYSTEM_GAMECARD_NAME, index);
++    sprintf(buf, "%s/savestates/%s_%d.dss", states_path, VAR_SYSTEM_GAMECARD_NAME, index);
+     _func((void*)VAR_SYSTEM, buf, snapshot_top, snapshot_bottom, snapshot_only);
+ }
+ 
+@@ -42,7 +42,7 @@ static int32_t dtr_save_state_index(void *system, uint32_t index, uint16_t *snap
+     char buf[255] = {0};
+     nds_save_state _func1 = (nds_save_state)FUN_SAVE_STATE;
+ 
+-    sprintf(buf, "%s_%d.dss", VAR_SYSTEM_GAMECARD_NAME, index);
++    sprintf(buf, "savestates/%s_%d.dss", VAR_SYSTEM_GAMECARD_NAME, index);
+     _func1((void*)VAR_SYSTEM, states_path, buf, snapshot_top, snapshot_bottom);
+ }
+ 
+@@ -63,10 +63,11 @@ static void dtr_initialize_backup(backup_struct *backup, backup_type_enum backup
+     uint32_t desmume_footer_position = 0;
+     uint32_t clean_pages_loaded = 0;
+ 
++    printf("dtr_initialize_backup: path=%s, states_path=%s\n", path, states_path);
+     if (path != NULL) {
+         data_file_name = malloc(255);
+         memset(data_file_name, 0, 255);
+-        sprintf(data_file_name, "%s/%s.dsv", states_path, VAR_SYSTEM_GAMECARD_NAME);
++        sprintf(data_file_name, "%s/backup/%s.dsv", states_path, VAR_SYSTEM_GAMECARD_NAME);
+     }
+     backup->type = backup_type;
+     backup->address_mask = size - 1;
+@@ -152,7 +153,7 @@ LAB_08092f94:
+ 
+ int dtr_savestate(int slot)
+ {
+-#if defined(MMIYOO) || defined(QX1000)
++#if defined(MMIYOO) || defined(QX1000) || defined(RG35XXH)
+     char buf[255] = {0};
+     nds_screen_copy16 _func0 = (nds_screen_copy16)FUN_SCREEN_COPY16;
+ 
+@@ -171,7 +172,7 @@ int dtr_savestate(int slot)
+         else {
+             nds_save_state _func1 = (nds_save_state)FUN_SAVE_STATE;
+ 
+-            sprintf(buf, "%s_%d.dss", VAR_SYSTEM_GAMECARD_NAME, slot);
++            sprintf(buf, "savestates/%s_%d.dss", VAR_SYSTEM_GAMECARD_NAME, slot);
+             _func1((void*)VAR_SYSTEM, states_path, buf, d0, d1);
+         }
+     }
+@@ -206,7 +207,7 @@ int dtr_savestate(int slot)
+ 
+ int dtr_loadstate(int slot)
+ {
+-#if defined(MMIYOO) || defined(QX1000)
++#if defined(MMIYOO) || defined(QX1000) || defined(RG35XXH)
+     char buf[255] = {0};
+ 
+     if (is_hooked == 0) {
+@@ -217,7 +218,7 @@ int dtr_loadstate(int slot)
+     else {
+         nds_load_state _func = (nds_load_state)FUN_LOAD_STATE;
+ 
+-        sprintf(buf, "%s/%s_%d.dss", states_path, VAR_SYSTEM_GAMECARD_NAME, slot);
++        sprintf(buf, "%s/savestates/%s_%d.dss", states_path, VAR_SYSTEM_GAMECARD_NAME, slot);
+         _func((void*)VAR_SYSTEM, buf, 0, 0, 0);
+     }
+ #endif
+diff --git a/drastic/resources/lang/korean_kr b/drastic/resources/lang/korean_kr
+new file mode 100644
+index 0000000..9dc31c9
+--- /dev/null
++++ b/drastic/resources/lang/korean_kr
+@@ -0,0 +1,108 @@
++CPU=CPU
++Overlay=오버레이
++Display=화면
++Alpha=알파값 
++Border=테두리
++Position=위치
++Alt. Display=대체 화면
++Volume=소리 크기
++Disabled=비활성화
++Touchpad=터치패드
++Wallpaper=바탕화면
++Quick Save=빠른 저장하기
++Quick Load=빠른 불러오기
++Fast Forward=빠르게 플레이
++Top-Right=우측 상단
++Top-Left=좌측 상단
++Bottom-Left=좌측 하단
++Bottom-Right=우측 하단
++White=흰색
++Red=붉은색
++Green=녹색
++Blue=파란색
++Black=검정색
++Yellow=노란색
++Cyan=하늘색
++Version=버젼
++Change Options=옵션 변경
++Configure Controls=입력 설정
++Configure Firmware=펌웨어 설정
++Configure Cheats=치트 설정
++Load state=상태 불러오기
++Save state=상태 저장하기
++Load new game=새로운 게임 불러오기
++Restart game=게임 재 시작하기
++Return to game=게임으로 돌아가기
++Exit DraStic=DraStic 끝내기
++Keys=키
++Frame skip type=프레임 스킵 타입
++automatic=자동
++manual=수동
++yes=네
++no=아니오
++Yes=네
++No=아니오
++none=없음
++None=없음
++Frame skip value=프레임 스킵 값
++Screen orientation=화면 회전
++vertical=수직
++horizontal=수평
++single=단일
++Screen swap=화면 교환
++Show speed=표시 속도
++Enable sound=소리 활성화
++Fast forward=빠른 진행
++Mirror touchscreen=터치스크린 반전
++Compress savestates=savestates 압축하기
++Snapshot in savestates=Snapshot in savestates
++Enable cheats=치트 활성화
++Uncompress ROMs=ROMs 압축 풀기
++Backup in savestates=savestates 백업하기
++Speed override=Speed override
++Fix main 2D screen=Fix main 2D screen
++Disable edge marking=edge marking 비활성화
++High-resolution 3D=고해상도 3D
++Threaded 3D=Threaded 3D
++Delete game-specific config=게임 지정 설정 값 제거
++Exit: save for all games=끝내기: 모든게임을 위한 설정 값 저장
++Exit: save for this game=끝내기: 에 게임에만 설정 값 저장
++Exit without saving=저장 없이 끝내기
++Username=사용자 이름
++Language=언어
++Favorite Color=좋아하는 색
++Birthday Month=태어난 달
++Birthday Day=태어난 날
++English=영어
++French=프랑스어
++German=독일어
++Italian=이탈리아어
++Spanish=스페인어
++Chinese=중국어
++Japanese=일본어
++January=1월
++February=2월
++March=3월
++April=4월
++May=5월
++June=6월
++July=7월
++August=8월
++September=9월
++October=10월
++November=11월
++December=12월
++Extra Controls=기타 제어
++Restore default controls=기본 설정값으로 복구
++Unmapped=설정 안함
++Hotkey=핫키
++Swap L1-L2=L1과 L2 교환
++Swap R1-R2=R1과 R2 교환
++Mode=모드
++Pen X Speed=펜 X축 속도
++Pen Y Speed=펜 Y축 속도
++Pixel=펙셀
++Blur=블러
++Cursor=커서
++Show=표시
++Hide=감추기
+diff --git a/drastic/resources/settings.json b/drastic/resources/settings.json
+index 087baba..2b514ba 100644
+--- a/drastic/resources/settings.json
++++ b/drastic/resources/settings.json
+@@ -24,7 +24,7 @@
+   "half_vol":0,
+   "splash":3,
+   "hotkey":0,
+-  "states":"",
++  "states":"\/userdata\/saves\/nds\/drastic",
+   "menu_bg":0,
+   "menu_cursor":1,
+   "fast_forward":6
+diff --git a/sdl2/configure.ac b/sdl2/configure.ac
+index e5a7647..23a3ac8 100644
+--- a/sdl2/configure.ac
++++ b/sdl2/configure.ac
+@@ -2411,6 +2411,20 @@ CheckMMiyooVideo()
+     fi
+ }
+ 
++CheckRG35XXHVideo()
++{
++    if test x$enable_video = xyes; then
++        AC_DEFINE(SDL_VIDEO_DRIVER_MMIYOO, 1, [ ])
++        AC_DEFINE(SDL_VIDEO_RENDER_MMIYOO, 1, [ ])
++        SOURCES="$SOURCES $srcdir/src/video/mmiyoo/*.c"
++        have_video=yes
++        
++        EXTRA_CFLAGS="$EXTRA_CFLAGS -DRG35XXH -fPIC -mcpu=cortex-a7 -mfpu=neon-vfpv4  -O3 -I../mmiyoo/inc -I../detour -I/%SDL2%"
++        EXTRA_LDFLAGS="$EXTRA_LDFLAGS -L. -lEGL -lGLESv2 -lrt -lSDL2_image -lSDL2_ttf -ljson-c -L../detour -ldtr"
++        SUMMARY_video="${SUMMARY_video} mmiyoo"
++    fi
++}
++
+ CheckTrimuiVideo()
+ {
+     if test x$enable_video = xyes; then
+@@ -2490,6 +2504,20 @@ CheckMMiyooAudio()
+     fi
+ }
+ 
++CheckRG35XXHAudio()
++{
++    if test x$enable_audio = xyes; then
++        AC_DEFINE(SDL_AUDIO_DRIVER_MMIYOO, 1, [ ])
++        SOURCES="$SOURCES $srcdir/src/audio/mmiyoo/*.c"
++        have_audio=yes
++        if test x$HOST = xarm-linux; then
++            EXTRA_CFLAGS="$EXTRA_CFLAGS -mcpu=cortex-a7 -mfpu=neon-vfpv4 -O3"
++            EXTRA_LDFLAGS="$EXTRA_LDFLAGS -L../mmiyoo/lib  -l:libasound.so.2"
++        fi
++        SUMMARY_audio="${SUMMARY_audio} mmiyoo"
++    fi
++}
++
+ CheckTrimuiAudio()
+ {
+     if test x$enable_audio = xyes; then
+@@ -3844,6 +3872,9 @@ case "$host" in
+             *mmiyoo*)           ARCH=mmiyoo
+                 CheckMMiyooVideo
+                 ;;
++            *rg35xxh*)           ARCH=rg35xxh
++                CheckRG35XXHVideo
++                ;;
+             *trimui*)           ARCH=trimui
+                 CheckTrimuiVideo
+                 ;;
+@@ -3975,6 +4006,9 @@ case "$host" in
+             mmiyoo)
+                 CheckMMiyooAudio
+             ;;
++            rg35xxh)
++                CheckRG35XXHAudio
++            ;;
+             trimui)
+                 CheckTrimuiAudio
+             ;;
+@@ -4015,7 +4049,7 @@ case "$host" in
+                 SOURCES="$SOURCES $srcdir/src/joystick/steam/*.c"
+                 have_joystick=yes
+             ;;
+-            mmiyoo|trimui|funkeys|pandora|unittest)
++            mmiyoo|rg35xxh|trimui|funkeys|pandora|unittest)
+                 AC_DEFINE(SDL_JOYSTICK_MMIYOO, 1, [ ])
+                 SOURCES="$SOURCES $srcdir/src/joystick/mmiyoo/*.c"
+                 have_joystick=yes
+diff --git a/sdl2/src/video/SDL_stretch.c b/sdl2/src/video/SDL_stretch.c
+index dad3eb5..d608a2e 100644
+--- a/sdl2/src/video/SDL_stretch.c
++++ b/sdl2/src/video/SDL_stretch.c
+@@ -296,7 +296,7 @@ INTERPOL_BILINEAR(const Uint32 *s0, const Uint32 *s1, int frac_w0, int frac_h0,
+     INTERPOL(tmp,   tmp + 1, frac_w0, frac_w1, dst);
+ }
+ 
+-static int
++int
+ scale_mat(const Uint32 *src, int src_w, int src_h, int src_pitch,
+           Uint32 *dst, int dst_w, int dst_h, int dst_pitch)
+ {
+@@ -595,7 +595,7 @@ INTERPOL_BILINEAR_NEON(const Uint32 *s0, const Uint32 *s1, int frac_w, uint8x8_t
+     *dst = vget_lane_u32(CAST_uint32x2_t e0, 0);
+ }
+ 
+-static int
++int
+ scale_mat_NEON(const Uint32 *src, int src_w, int src_h, int src_pitch, Uint32 *dst, int dst_w, int dst_h, int dst_pitch)
+ {
+     BILINEAR___START
+diff --git a/sdl2/src/video/mmiyoo/SDL_event_mmiyoo.c b/sdl2/src/video/mmiyoo/SDL_event_mmiyoo.c
+index 9ce76ee..43aed66 100644
+--- a/sdl2/src/video/mmiyoo/SDL_event_mmiyoo.c
++++ b/sdl2/src/video/mmiyoo/SDL_event_mmiyoo.c
+@@ -44,10 +44,55 @@
+     #define INPUT_DEV "/dev/input/event4"
+ #elif defined(QX1000)
+     #define INPUT_DEV "/dev/input/event3"
++#elif defined(RG35XXH)
++    #define INPUT_DEV "/dev/input/event1" /* RG35XXH */
++//    #define INPUT_DEV "/dev/input/event2" /* RG35XXH evmapy*/
+ #else
+     #define INPUT_DEV "/dev/input/event0"
+ #endif
+ 
++#ifdef RG35XXH
++/*
++// for evmapy 
++    #define UP      103
++    #define DOWN    108
++    #define LEFT    105
++    #define RIGHT   106
++    #define A       57
++    #define B       29
++    #define X       42
++    #define Y       56
++    #define L1      18
++    #define L2      15
++    #define R1      20
++    #define R2      14
++    #define START   28
++    #define SELECT  97
++    #define MENU    1
++    #define POWER   116
++    #define VOLUP   115
++    #define VOLDOWN 114
++	*/
++    #define UP      103	/* not defined */
++    #define DOWN    108 /* not defined */
++    #define LEFT    105 /* not defined */
++    #define RIGHT   106 /* not defined */
++    #define A       BTN_SOUTH
++    #define B       BTN_EAST
++    #define X       BTN_NORTH
++    #define Y       BTN_C
++    #define L1      BTN_WEST
++    #define L2      BTN_SELECT
++    #define R1      BTN_Z
++    #define R2      BTN_START
++    #define START   BTN_TR
++    #define SELECT  BTN_TL
++    #define MENU    BTN_TL2
++    #define POWER   116 /* not defined */
++    #define VOLUP   115 /* not defined */
++    #define VOLDOWN 114	/* not defined */
++#endif
++
+ #ifdef MMIYOO
+     #define UP      103
+     #define DOWN    108
+@@ -252,7 +297,7 @@ static void release_all_keys(void)
+ 
+ static int hit_hotkey(uint32_t bit)
+ {
+-#ifdef MMIYOO
++#if defined(MMIYOO) || defined(RG35XXH)
+     uint32_t mask = (1 << bit) | (1 << ((nds.hotkey == HOTKEY_BIND_SELECT) ? MYKEY_SELECT : MYKEY_MENU));
+ #endif
+ 
+@@ -289,7 +334,7 @@ static void set_key(uint32_t bit, int val)
+         }
+ #endif
+ 
+-#ifdef MMIYOO
++#if defined(MMIYOO) || defined(RG35XXH)
+         if (nds.hotkey == HOTKEY_BIND_SELECT) {
+             if (bit == MYKEY_SELECT) {
+                 hotkey = (1 << MYKEY_SELECT);
+@@ -314,7 +359,7 @@ int EventUpdate(void *data)
+ 
+     uint32_t l1 = L1;
+     uint32_t r1 = R1;
+-#if defined(MMIYOO) || defined(QX1000)
++#if defined(MMIYOO) || defined(QX1000) || defined(RG35XXH)
+     uint32_t l2 = L2;
+     uint32_t r2 = R2;
+ #endif
+@@ -373,7 +418,7 @@ int EventUpdate(void *data)
+             y = Y;
+         }
+ 
+-#if defined(MMIYOO) || defined(QX1000)
++#if defined(MMIYOO) || defined(QX1000) || defined(RG35XXH)
+         if (nds.swap_l1l2) {
+             l1 = L2;
+             l2 = L1;
+@@ -407,69 +452,245 @@ int EventUpdate(void *data)
+ 
+         if (event_fd > 0) {
+             if (read(event_fd, &ev, sizeof(struct input_event))) {
+-                if ((ev.type == EV_KEY) && (ev.value != 2)) {
+-                    //printf(PREFIX"code:%d, value:%d\n", ev.code, ev.value);
+-                    if (ev.code == l1)      { set_key(MYKEY_L1,    ev.value); }
+-                    if (ev.code == r1)      { set_key(MYKEY_R1,    ev.value); }
+-                    if (ev.code == up)      { set_key(MYKEY_UP,    ev.value); }
+-                    if (ev.code == down)    { set_key(MYKEY_DOWN,  ev.value); }
+-                    if (ev.code == left)    { set_key(MYKEY_LEFT,  ev.value); }
+-                    if (ev.code == right)   { set_key(MYKEY_RIGHT, ev.value); }
+-                    if (ev.code == a)       { set_key(MYKEY_A,     ev.value); }
+-                    if (ev.code == b)       { set_key(MYKEY_B,     ev.value); }
+-                    if (ev.code == x)       { set_key(MYKEY_X,     ev.value); }
+-                    if (ev.code == y)       { set_key(MYKEY_Y,     ev.value); }
+-#if defined(MMIYOO) || defined(QX1000)
+-                    if (ev.code == l2)      { set_key(MYKEY_L2,    ev.value); }
+-                    if (ev.code == r2)      { set_key(MYKEY_R2,    ev.value); }
+-#endif
+-#ifdef QX1000
+-                    if (ev.code == L10)     { set_key(MYKEY_L1,    ev.value); }
+-                    if (ev.code == R10)     { set_key(MYKEY_R1,    ev.value); }
+-#endif
+-                    switch (ev.code) {
+-                    case START:  set_key(MYKEY_START, ev.value);  break;
+-                    case SELECT: set_key(MYKEY_SELECT, ev.value); break;
+-                    case MENU:   set_key(MYKEY_MENU, ev.value);   break;
+-#ifdef QX1000
+-                    case QSAVE:  set_key(MYKEY_QSAVE, ev.value);  break;
+-                    case QLOAD:  set_key(MYKEY_QLOAD, ev.value);  break;
+-                    case EXIT:   set_key(MYKEY_EXIT, ev.value);   break;
+-#endif
+-#ifdef MMIYOO
+-                    case POWER:  set_key(MYKEY_POWER, ev.value);  break;
+-                    case VOLUP:
+-                        set_key(MYKEY_VOLUP, ev.value);
+-                        if (is_stock_os) {
+-                            if (ev.value == 0) {
+-                                nds.volume = volume_inc();
+-                            }
+-                        }
+-                        else {
+-                            nds.defer_update_bg = 60;
+-                        }
+-                        break;
+-                    case VOLDOWN:
+-                        set_key(MYKEY_VOLDOWN, ev.value);
+-                        if (is_stock_os) {
+-                            if (ev.value == 0) {
+-                                nds.volume = volume_dec();
+-                            }
+-                        }
+-                        else {
+-                            nds.defer_update_bg = 60;
+-                        }
+-                        break;
+-#endif
+-                    }
+-
++				if (ev.type == EV_ABS) {
++					if (ev.code == ABS_HAT0X) {
++						 if ((nds.menu.enable == 0) && (nds.menu.drastic.enable == 0) && nds.keys_rotate) {
++							if (nds.keys_rotate == 1) {
++								// degree 270
++								if (ev.value < 0) { 
++									// up 
++									if (evt.keypad.bitmaps & (1 << MYKEY_DOWN)) { 
++										set_key(MYKEY_DOWN, 0); 
++									} 
++									set_key(MYKEY_UP,    1); 
++								}  
++								else if (ev.value > 0) { 
++									// down 
++									if (evt.keypad.bitmaps & (1 << MYKEY_UP)) {
++										set_key(MYKEY_UP, 0); 
++									} 
++									set_key(MYKEY_DOWN,    1); 
++								} 
++								else { 
++									// center 
++									if (evt.keypad.bitmaps & (1 << MYKEY_UP)) { 
++										set_key(MYKEY_UP, 0); 
++									} 
++
++									if (evt.keypad.bitmaps & (1 << MYKEY_DOWN)) { 
++										set_key(MYKEY_DOWN, 0); 
++									} 
++								}
++							}
++							else {
++								// degree 90
++								if (ev.value > 0) { 
++									// up 
++									if (evt.keypad.bitmaps & (1 << MYKEY_DOWN)) { 
++										set_key(MYKEY_DOWN, 0); 
++									} 
++									set_key(MYKEY_UP,    1); 
++								}  
++								else if (ev.value < 0) { 
++									// down 
++									if (evt.keypad.bitmaps & (1 << MYKEY_UP)) {
++										set_key(MYKEY_UP, 0); 
++									} 
++									set_key(MYKEY_DOWN,    1); 
++								} 
++								else { 
++									// center 
++									if (evt.keypad.bitmaps & (1 << MYKEY_UP)) { 
++										set_key(MYKEY_UP, 0); 
++									} 
++
++									if (evt.keypad.bitmaps & (1 << MYKEY_DOWN)) { 
++										set_key(MYKEY_DOWN, 0); 
++									} 
++								} 
++							}
++						 }
++						else {
++							// degree 0
++				
++							if (ev.value < 0) {
++								// left
++								if (evt.keypad.bitmaps & (1 << MYKEY_RIGHT)) {
++									set_key(MYKEY_RIGHT, 0);
++								}
++								set_key(MYKEY_LEFT,    1); 
++							} 
++							else if (ev.value > 0) {
++								// right
++								if (evt.keypad.bitmaps & (1 << MYKEY_LEFT)) {
++									set_key(MYKEY_LEFT, 0);
++								} 
++								set_key(MYKEY_RIGHT,    1); 
++							} 
++							else { 
++								// center 
++								if (evt.keypad.bitmaps & (1 << MYKEY_LEFT)) { 
++									set_key(MYKEY_LEFT, 0); 
++								} 
++								if (evt.keypad.bitmaps & (1 << MYKEY_RIGHT)) { 
++									set_key(MYKEY_RIGHT, 0); 
++								} 
++							} 
++						}
++					} 
++					else if (ev.code == ABS_HAT0Y) { 
++						if ((nds.menu.enable == 0) && (nds.menu.drastic.enable == 0) && nds.keys_rotate) {
++							if (nds.keys_rotate == 1) {
++								// degree 270
++								if (ev.value > 0) {
++									// left
++									if (evt.keypad.bitmaps & (1 << MYKEY_RIGHT)) {
++										set_key(MYKEY_RIGHT, 0);
++									}
++									set_key(MYKEY_LEFT,    1); 
++								} 
++								else if (ev.value < 0) {
++									// right
++									if (evt.keypad.bitmaps & (1 << MYKEY_LEFT)) {
++										set_key(MYKEY_LEFT, 0);
++									} 
++									set_key(MYKEY_RIGHT,    1); 
++								} 
++								else { 
++									// center 
++									if (evt.keypad.bitmaps & (1 << MYKEY_LEFT)) { 
++										set_key(MYKEY_LEFT, 0); 
++									} 
++									if (evt.keypad.bitmaps & (1 << MYKEY_RIGHT)) { 
++										set_key(MYKEY_RIGHT, 0); 
++									} 
++								} 
++							}
++							else {
++								// degree 90
++								if (ev.value < 0) {
++									// left
++									if (evt.keypad.bitmaps & (1 << MYKEY_RIGHT)) {
++										set_key(MYKEY_RIGHT, 0);
++									}
++									set_key(MYKEY_LEFT,    1); 
++								} 
++								else if (ev.value > 0) {
++									// right
++									if (evt.keypad.bitmaps & (1 << MYKEY_LEFT)) {
++										set_key(MYKEY_LEFT, 0);
++									} 
++									set_key(MYKEY_RIGHT,    1); 
++								} 
++								else { 
++									// center 
++									if (evt.keypad.bitmaps & (1 << MYKEY_LEFT)) { 
++										set_key(MYKEY_LEFT, 0); 
++									} 
++									if (evt.keypad.bitmaps & (1 << MYKEY_RIGHT)) { 
++										set_key(MYKEY_RIGHT, 0); 
++									} 
++								} 
++							}
++						}
++						else {
++							// degree 0
++							
++							if (ev.value < 0) { 
++								// up 
++								if (evt.keypad.bitmaps & (1 << MYKEY_DOWN)) { 
++									set_key(MYKEY_DOWN, 0); 
++								} 
++								set_key(MYKEY_UP,    1); 
++							}  
++							else if (ev.value > 0) { 
++								// down 
++								if (evt.keypad.bitmaps & (1 << MYKEY_UP)) {
++									set_key(MYKEY_UP, 0); 
++								} 
++								set_key(MYKEY_DOWN,    1); 
++							} 
++							else { 
++								// center 
++								if (evt.keypad.bitmaps & (1 << MYKEY_UP)) { 
++									set_key(MYKEY_UP, 0); 
++								} 
++
++								if (evt.keypad.bitmaps & (1 << MYKEY_DOWN)) { 
++									set_key(MYKEY_DOWN, 0); 
++								} 
++							} 
++						}
++					} 
++					else if (ev.code == ABS_RY) {
++						if (nds.dis_mode == NDS_DIS_MODE_HH1) {
++							// right analog x -> dpad
++							// left -> up
++							// right -> down
++							if (ev.value < -100) {
++								// up 
++								if (evt.keypad.bitmaps & (1 << MYKEY_DOWN)) { 
++									set_key(MYKEY_DOWN, 0); 
++								} 
++								set_key(MYKEY_UP,    1); 							
++							}
++							else if (ev.value > 100) {
++								// down 
++								if (evt.keypad.bitmaps & (1 << MYKEY_UP)) {
++									set_key(MYKEY_UP, 0); 
++								} 
++								set_key(MYKEY_DOWN,    1); 							
++							}
++							else {
++								// center 
++								if (evt.keypad.bitmaps & (1 << MYKEY_UP)) { 
++									set_key(MYKEY_UP, 0); 
++								} 
++
++								if (evt.keypad.bitmaps & (1 << MYKEY_DOWN)) { 
++									set_key(MYKEY_DOWN, 0); 
++								} 							
++							}
++						}
++					}
++					else if (ev.code ==  ABS_RZ) {
++						if (nds.dis_mode == NDS_DIS_MODE_HH1) {
++							// right analog y to dpad
++							// down ->left
++							// up -> right
++							if (ev.value < -100) {
++								// right
++								if (evt.keypad.bitmaps & (1 << MYKEY_LEFT)) {
++									set_key(MYKEY_LEFT, 0);
++								} 
++								set_key(MYKEY_RIGHT,    1); 					
++							}
++							else if (ev.value > 100) {
++								// left
++								if (evt.keypad.bitmaps & (1 << MYKEY_RIGHT)) {
++									set_key(MYKEY_RIGHT, 0);
++								}
++								set_key(MYKEY_LEFT,    1); 									
++							}
++							else {
++								// center 
++								if (evt.keypad.bitmaps & (1 << MYKEY_LEFT)) { 
++									set_key(MYKEY_LEFT, 0); 
++								} 
++								if (evt.keypad.bitmaps & (1 << MYKEY_RIGHT)) { 
++									set_key(MYKEY_RIGHT, 0); 
++								} 							
++							}
++						}
++					}
++					
++/*					
+                     hotkey_mask = 1;
+                     if (nds.menu.enable || nds.menu.drastic.enable) {
+                         hotkey_mask = 0;
+                     }
+ 
+                     if (hotkey_mask && hit_hotkey(MYKEY_UP)) {
+-#if defined(MMIYOO) || defined(QX1000)
+                         if (evt.mode == MMIYOO_MOUSE_MODE) {
+                             switch (nds.dis_mode) {
+                             case NDS_DIS_MODE_VH_T0:
+@@ -482,12 +703,10 @@ int EventUpdate(void *data)
+                                 break;
+                             }
+                         }
+-#endif
+                         set_key(MYKEY_UP, 0);
+                     }
+ 
+                     if (hotkey_mask && hit_hotkey(MYKEY_DOWN)) {
+-#if defined(MMIYOO) || defined(QX1000)
+                         if (evt.mode == MMIYOO_MOUSE_MODE) {
+                             switch (nds.dis_mode) {
+                             case NDS_DIS_MODE_VH_T0:
+@@ -500,12 +719,10 @@ int EventUpdate(void *data)
+                                 break;
+                             }
+                         }
+-#endif
+                         set_key(MYKEY_DOWN, 0);
+                     }
+ 
+                     if (hotkey_mask && hit_hotkey(MYKEY_LEFT)) {
+-#ifdef MMIYOO
+                         if (nds.hres_mode == 0) {
+                             if (nds.dis_mode > 0) {
+                                 nds.dis_mode-= 1;
+@@ -514,23 +731,11 @@ int EventUpdate(void *data)
+                         else {
+                             nds.dis_mode = NDS_DIS_MODE_HRES0;
+                         }
+-#endif
+-
+-#if defined(TRIMUI) || defined(FUNKEYS) || defined(PANDORA)
+-                        if ((nds.menu.enable == 0) && (nds.menu.drastic.enable == 0)) {
+-                            evt.mode = (evt.mode == MMIYOO_KEYPAD_MODE) ? MMIYOO_MOUSE_MODE : MMIYOO_KEYPAD_MODE;
+ 
+-                            if (evt.mode == MMIYOO_MOUSE_MODE) {
+-                                release_all_keys();
+-                            }
+-                            lower_speed = 0;
+-                        }
+-#endif
+                         set_key(MYKEY_LEFT, 0);
+                     }
+ 
+                     if (hotkey_mask && hit_hotkey(MYKEY_RIGHT)) {
+-#ifdef MMIYOO
+                         if (nds.hres_mode == 0) {
+                             if (nds.dis_mode < NDS_DIS_MODE_LAST) {
+                                 nds.dis_mode+= 1;
+@@ -539,218 +744,355 @@ int EventUpdate(void *data)
+                         else {
+                             nds.dis_mode = NDS_DIS_MODE_HRES1;
+                         }
++					}*/
++				}
++                else if ((ev.type == EV_KEY) && (ev.value != 2)) {
++                    //printf(PREFIX"code:%d, value:%d\n", ev.code, ev.value);
++                    if (ev.code == l1)      { set_key(MYKEY_L1,    ev.value); }
++                    if (ev.code == r1)      { set_key(MYKEY_R1,    ev.value); }
++#ifndef RG35XXH
++                    if (ev.code == up)      { set_key(MYKEY_UP,    ev.value); }
++                    if (ev.code == down)    { set_key(MYKEY_DOWN,  ev.value); }
++                    if (ev.code == left)    { set_key(MYKEY_LEFT,  ev.value); }
++                    if (ev.code == right)   { set_key(MYKEY_RIGHT, ev.value); }
++#endif 
++                    if (ev.code == a)       { set_key(MYKEY_A,     ev.value); }
++                    if (ev.code == b)       { set_key(MYKEY_B,     ev.value); }
++                    if (ev.code == x)       { set_key(MYKEY_X,     ev.value); }
++                    if (ev.code == y)       { set_key(MYKEY_Y,     ev.value); }
++#if defined(MMIYOO) || defined(QX1000) || defined(RG35XXH)
++                    if (ev.code == l2)      { set_key(MYKEY_L2,    ev.value); }
++                    if (ev.code == r2)      { set_key(MYKEY_R2,    ev.value); }
++#endif
++#ifdef QX1000
++                    if (ev.code == L10)     { set_key(MYKEY_L1,    ev.value); }
++                    if (ev.code == R10)     { set_key(MYKEY_R1,    ev.value); }
++#endif
++                    switch (ev.code) {
++                    case START:  set_key(MYKEY_START, ev.value);  break;
++                    case SELECT: set_key(MYKEY_SELECT, ev.value); break;
++                    case MENU:   set_key(MYKEY_MENU, ev.value);   break;
++#ifdef QX1000
++                    case QSAVE:  set_key(MYKEY_QSAVE, ev.value);  break;
++                    case QLOAD:  set_key(MYKEY_QLOAD, ev.value);  break;
++                    case EXIT:   set_key(MYKEY_EXIT, ev.value);   break;
++#endif
++#ifdef MMIYOO
++                    case POWER:  set_key(MYKEY_POWER, ev.value);  break;
++                    case VOLUP:
++                        set_key(MYKEY_VOLUP, ev.value);
++                        if (is_stock_os) {
++                            if (ev.value == 0) {
++                                nds.volume = volume_inc();
++                            }
++                        }
++                        else {
++                            nds.defer_update_bg = 60;
++                        }
++                        break;
++                    case VOLDOWN:
++                        set_key(MYKEY_VOLDOWN, ev.value);
++                        if (is_stock_os) {
++                            if (ev.value == 0) {
++                                nds.volume = volume_dec();
++                            }
++                        }
++                        else {
++                            nds.defer_update_bg = 60;
++                        }
++                        break;
++#endif
++                    }
++
++				}
++		
++				hotkey_mask = 1;
++				if (nds.menu.enable || nds.menu.drastic.enable) {
++					hotkey_mask = 0;
++				}
++
++				if (hotkey_mask && hit_hotkey(MYKEY_UP)) {
++#if defined(MMIYOO) || defined(QX1000) || defined(RG35XXH)
++					if (evt.mode == MMIYOO_MOUSE_MODE) {
++						switch (nds.dis_mode) {
++						case NDS_DIS_MODE_VH_T0:
++						case NDS_DIS_MODE_VH_T1:
++						case NDS_DIS_MODE_S0:
++						case NDS_DIS_MODE_S1:
++							break;
++						default:
++							nds.pen.pos = 1;
++							break;
++						}
++					}
++#endif
++					set_key(MYKEY_UP, 0);
++				}
++
++				if (hotkey_mask && hit_hotkey(MYKEY_DOWN)) {
++#if defined(MMIYOO) || defined(QX1000) || defined(RG35XXH)
++					if (evt.mode == MMIYOO_MOUSE_MODE) {
++						switch (nds.dis_mode) {
++						case NDS_DIS_MODE_VH_T0:
++						case NDS_DIS_MODE_VH_T1:
++						case NDS_DIS_MODE_S0:
++						case NDS_DIS_MODE_S1:
++							break;
++						default:
++							nds.pen.pos = 0;
++							break;
++						}
++					}
++#endif
++					set_key(MYKEY_DOWN, 0);
++				}
++
++				if (hotkey_mask && hit_hotkey(MYKEY_LEFT)) {
++#if defined(MMIYOO) || defined(RG35XXH)
++					if (nds.hres_mode == 0) {
++						if (nds.dis_mode > 0) {
++							nds.dis_mode-= 1;
++						}
++					}
++					else {
++						nds.dis_mode = NDS_DIS_MODE_HRES0;
++					}
+ #endif
+ 
+ #if defined(TRIMUI) || defined(FUNKEYS) || defined(PANDORA)
+-                        set_key(MYKEY_R2, 1);
++					if ((nds.menu.enable == 0) && (nds.menu.drastic.enable == 0)) {
++						evt.mode = (evt.mode == MMIYOO_KEYPAD_MODE) ? MMIYOO_MOUSE_MODE : MMIYOO_KEYPAD_MODE;
++
++						if (evt.mode == MMIYOO_MOUSE_MODE) {
++							release_all_keys();
++						}
++						lower_speed = 0;
++					}
++#endif
++					set_key(MYKEY_LEFT, 0);
++				}
++
++				if (hotkey_mask && hit_hotkey(MYKEY_RIGHT)) {
++#if defined(MMIYOO) || defined(RG35XXH)
++					if (nds.hres_mode == 0) {
++						if (nds.dis_mode < NDS_DIS_MODE_LAST) {
++							nds.dis_mode+= 1;
++						}
++					}
++					else {
++						nds.dis_mode = NDS_DIS_MODE_HRES1;
++					}
+ #endif
+-                        set_key(MYKEY_RIGHT, 0);
+-                    }
+ 
+-                    if (hotkey_mask && hit_hotkey(MYKEY_A)) {
+-#ifdef MMIYOO
+-                        if ((evt.mode == MMIYOO_KEYPAD_MODE) && (nds.hres_mode == 0)) {
+-                            uint32_t tmp = nds.alt_mode;
+-                            nds.alt_mode = nds.dis_mode;
+-                            nds.dis_mode = tmp;
+-                        }
++#if defined(TRIMUI) || defined(FUNKEYS) || defined(PANDORA)
++					set_key(MYKEY_R2, 1);
++#endif
++					set_key(MYKEY_RIGHT, 0);
++				}
++
++				if (hotkey_mask && hit_hotkey(MYKEY_A)) {
++#if defined(MMIYOO) || defined(RG35XXH)
++					if ((evt.mode == MMIYOO_KEYPAD_MODE) && (nds.hres_mode == 0)) {
++						uint32_t tmp = nds.alt_mode;
++						nds.alt_mode = nds.dis_mode;
++						nds.dis_mode = tmp;
++					}
+ #endif
+ 
+ #ifdef TRIMUI
+-                        nds.dis_mode = (nds.dis_mode == NDS_DIS_MODE_S0) ? NDS_DIS_MODE_S1 : NDS_DIS_MODE_S0;
+-                        disp_resize();
++					nds.dis_mode = (nds.dis_mode == NDS_DIS_MODE_S0) ? NDS_DIS_MODE_S1 : NDS_DIS_MODE_S0;
++					disp_resize();
+ #endif
+-                        set_key(MYKEY_A, 0);
+-                    }
++					set_key(MYKEY_A, 0);
++				}
+ 
+-                    if (hotkey_mask && hit_hotkey(MYKEY_B)) {
++				if (hotkey_mask && hit_hotkey(MYKEY_B)) {
+ #ifdef MMIYOO
+-                        pixel_filter = pixel_filter ? 0 : 1;
++					pixel_filter = pixel_filter ? 0 : 1;
+ #endif
+-                        set_key(MYKEY_B, 0);
+-                    }
++					set_key(MYKEY_B, 0);
++				}
+ 
+-                    if (hit_hotkey(MYKEY_X)) {
++				if (hit_hotkey(MYKEY_X)) {
+ #ifdef MMIYOO
+ #endif
+ 
+ #ifdef TRIMUI
+-                        int w = FB_W;
+-                        int h = FB_H;
+-                        int pitch = FB_W * FB_BPP;
+-                        uint32_t *dst = NULL;
+-                        SDL_Surface *p = NULL;
+-                        time_t t = time(NULL);
+-                        struct tm tm = *localtime(&t);
+-
+-                        // for MMIYOO
+-                        // dst = (uint32_t *)gfx.fb.virAddr + (w * (gfx.vinfo.yoffset ? 0 : h));
+-                        dst = (uint32_t *)gfx.hw.ion.vadd + (w * h * (gfx.fb.flip ? 0 : 1));
+-
+-                        if (nds.dis_mode == NDS_DIS_MODE_S0) {
+-                            w = NDS_H;
+-                            h = NDS_W;
+-                        }
+-                        else {
+-                            w = FB_H;
+-                            h = FB_W;
+-                        }
+-                        pitch = FB_H * FB_BPP;
+-
+-                        if (dst) {
+-                            p = SDL_CreateRGBSurfaceFrom(dst, w, h, 32, pitch, 0, 0, 0, 0);
+-                            if (p) {
+-                                sprintf(buf, "%s/%02d%02d%02d.png", nds.shot.path, tm.tm_hour, tm.tm_min, tm.tm_sec);
+-                                IMG_SavePNG(p, buf);
+-                                SDL_FreeSurface(p);
+-                                printf(PREFIX"Saved \'%s\'\n", buf);
+-                            }
+-                        }
+-                        nds.shot.take = 1;
++					int w = FB_W;
++					int h = FB_H;
++					int pitch = FB_W * FB_BPP;
++					uint32_t *dst = NULL;
++					SDL_Surface *p = NULL;
++					time_t t = time(NULL);
++					struct tm tm = *localtime(&t);
++
++					// for MMIYOO
++					// dst = (uint32_t *)gfx.fb.virAddr + (w * (gfx.vinfo.yoffset ? 0 : h));
++					dst = (uint32_t *)gfx.hw.ion.vadd + (w * h * (gfx.fb.flip ? 0 : 1));
++
++					if (nds.dis_mode == NDS_DIS_MODE_S0) {
++						w = NDS_H;
++						h = NDS_W;
++					}
++					else {
++						w = FB_H;
++						h = FB_W;
++					}
++					pitch = FB_H * FB_BPP;
++
++					if (dst) {
++						p = SDL_CreateRGBSurfaceFrom(dst, w, h, 32, pitch, 0, 0, 0, 0);
++						if (p) {
++							sprintf(buf, "%s/%02d%02d%02d.png", nds.shot.path, tm.tm_hour, tm.tm_min, tm.tm_sec);
++							IMG_SavePNG(p, buf);
++							SDL_FreeSurface(p);
++							printf(PREFIX"Saved \'%s\'\n", buf);
++						}
++					}
++					nds.shot.take = 1;
+ #endif
+-                        set_key(MYKEY_X, 0);
+-                    }
+-
+-                    if (hit_hotkey(MYKEY_Y)) {
+-                        if (hotkey_mask) {
+-                            if (evt.mode == MMIYOO_KEYPAD_MODE) {
+-                                if ((nds.overlay.sel >= nds.overlay.max) &&
+-                                    (nds.dis_mode != NDS_DIS_MODE_VH_T0) &&
+-                                    (nds.dis_mode != NDS_DIS_MODE_VH_T1) &&
+-                                    (nds.dis_mode != NDS_DIS_MODE_S1) &&
+-                                    (nds.dis_mode != NDS_DIS_MODE_HRES1))
+-                                {
+-                                    nds.theme.sel+= 1;
+-                                    if (nds.theme.sel > nds.theme.max) {
+-                                        nds.theme.sel = 0;
+-                                    }
+-                                }
+-                            }
+-                            else {
+-                                nds.pen.sel+= 1;
+-                                if (nds.pen.sel >= nds.pen.max) {
+-                                    nds.pen.sel = 0;
+-                                }
+-                                reload_pen();
+-                            }
+-                        }
+-                        else {
+-                            nds.menu.sel+= 1;
+-                            if (nds.menu.sel >= nds.menu.max) {
+-                                nds.menu.sel = 0;
+-                            }
+-                            reload_menu();
+-
+-                            if (nds.menu.drastic.enable) {
+-                                SDL_SendKeyboardKey(SDL_PRESSED, SDLK_e);
+-                                usleep(100000);
+-                                SDL_SendKeyboardKey(SDL_RELEASED, SDLK_e);
+-                            }
+-                        }
+-                        set_key(MYKEY_Y, 0);
+-                    }
++					set_key(MYKEY_X, 0);
++				}
++
++				if (hit_hotkey(MYKEY_Y)) {
++					if (hotkey_mask) {
++						if (evt.mode == MMIYOO_KEYPAD_MODE) {
++							if ((nds.overlay.sel >= nds.overlay.max) &&
++								(nds.dis_mode != NDS_DIS_MODE_VH_T0) &&
++								(nds.dis_mode != NDS_DIS_MODE_VH_T1) &&
++								(nds.dis_mode != NDS_DIS_MODE_S1) &&
++								(nds.dis_mode != NDS_DIS_MODE_HRES1))
++							{
++								nds.theme.sel+= 1;
++								if (nds.theme.sel > nds.theme.max) {
++									nds.theme.sel = 0;
++								}
++							}
++						}
++						else {
++							nds.pen.sel+= 1;
++							if (nds.pen.sel >= nds.pen.max) {
++								nds.pen.sel = 0;
++							}
++							reload_pen();
++						}
++					}
++					else {
++						nds.menu.sel+= 1;
++						if (nds.menu.sel >= nds.menu.max) {
++							nds.menu.sel = 0;
++						}
++						reload_menu();
++
++						if (nds.menu.drastic.enable) {
++							SDL_SendKeyboardKey(SDL_PRESSED, SDLK_e);
++							usleep(100000);
++							SDL_SendKeyboardKey(SDL_RELEASED, SDLK_e);
++						}
++					}
++					set_key(MYKEY_Y, 0);
++				}
+ 
+ #ifndef FUNKEYS
+-                    if (hotkey_mask && hit_hotkey(MYKEY_START)) {
+-#if defined(MMIYOO) || defined(QX1000)
+-                        if (nds.menu.enable == 0) {
++				if (hotkey_mask && hit_hotkey(MYKEY_START)) {
++#if defined(MMIYOO) || defined(QX1000) || defined(RG35XXH)
++					if (nds.menu.enable == 0) {
+ #ifdef QX1000
+-                            update_wayland_res(640, 480);
++						update_wayland_res(640, 480);
+ #endif
+-                            nds.menu.enable = 1;
+-                            usleep(100000);
+-                            handle_menu(-1);
+-                            hotkey = 0;
+-                            pre_keypad_bitmaps = evt.keypad.bitmaps = 0;
+-                        }
++						nds.menu.enable = 1;
++						usleep(100000);
++						handle_menu(-1);
++						hotkey = 0;
++						pre_keypad_bitmaps = evt.keypad.bitmaps = 0;
++					}
+ #endif
+ 
+ #if defined(TRIMUI) || defined(PANDORA) || defined(QX1000)
+-                        set_key(MYKEY_EXIT, 1);
++					set_key(MYKEY_EXIT, 1);
+ #endif
+-                        set_key(MYKEY_START, 0);
+-                    }
++					set_key(MYKEY_START, 0);
++				}
+ #endif
+ 
+-#ifdef MMIYOO
+-                    if (nds.hotkey == HOTKEY_BIND_MENU) {
+-                        if (hotkey_mask && hit_hotkey(MYKEY_SELECT)) {
+-                            set_key(MYKEY_MENU_ONION, 1);
+-                            set_key(MYKEY_SELECT, 0);
+-                        }
+-                    }
++#if defined(MMIYOO) || defined(RG35XXH)
++				if (nds.hotkey == HOTKEY_BIND_MENU) {
++					if (hotkey_mask && hit_hotkey(MYKEY_SELECT)) {
++						set_key(MYKEY_MENU_ONION, 1);
++						set_key(MYKEY_SELECT, 0);
++					}
++				}
+ #endif
+ 
+ #if defined(TRIMUI) || defined(PANDORA) || defined(QX1000)
+-                    if (hotkey_mask && hit_hotkey(MYKEY_SELECT)) {
+-                        set_key(MYKEY_MENU_ONION, 1);
+-                        set_key(MYKEY_SELECT, 0);
+-                    }
++				if (hotkey_mask && hit_hotkey(MYKEY_SELECT)) {
++					set_key(MYKEY_MENU_ONION, 1);
++					set_key(MYKEY_SELECT, 0);
++				}
+ #endif
+ 
+ #ifdef FUNKEYS
+-                    if (hotkey_mask && hit_hotkey(MYKEY_SELECT)) {
+-                        set_key(MYKEY_EXIT, 1);
+-                        set_key(MYKEY_SELECT, 0);
+-                    }
++				if (hotkey_mask && hit_hotkey(MYKEY_SELECT)) {
++					set_key(MYKEY_EXIT, 1);
++					set_key(MYKEY_SELECT, 0);
++				}
+ #endif
+ 
+-                    if (hotkey_mask && hit_hotkey(MYKEY_R1)) {
+-#ifdef MMIYOO
+-                        static int pre_ff = 0;
++				if (hotkey_mask && hit_hotkey(MYKEY_R1)) {
++#if defined(MMIYOO) || defined(RG35XXH)
++					static int pre_ff = 0;
+ 
+-                        if (pre_ff != nds.fast_forward) {
+-                            pre_ff = nds.fast_forward;
+-                            dtr_fastforward(nds.fast_forward);
+-                        }
+-                        set_key(MYKEY_FF, 1);
++					if (pre_ff != nds.fast_forward) {
++						pre_ff = nds.fast_forward;
++						dtr_fastforward(nds.fast_forward);
++					}
++					set_key(MYKEY_FF, 1);
+ #endif
+ 
+ #if defined(TRIMUI) || defined(FUNKEYS) || defined(PANDORA)
+-                        set_key(MYKEY_QSAVE, 1);
++					set_key(MYKEY_QSAVE, 1);
+ #endif
+-                        set_key(MYKEY_R1, 0);
+-                    }
++					set_key(MYKEY_R1, 0);
++				}
+ 
+-                    if (hotkey_mask && hit_hotkey(MYKEY_L1)) {
+-#ifdef MMIYOO
+-                        set_key(MYKEY_EXIT, 1);
++				if (hotkey_mask && hit_hotkey(MYKEY_L1)) {
++#if defined(MMIYOO) || defined(RG35XXH)
++					set_key(MYKEY_EXIT, 1);
+ #endif
+ 
+ #if defined(TRIMUI) || defined(FUNKEYS) || defined(PANDORA)
+-                        set_key(MYKEY_QLOAD, 1);
++					set_key(MYKEY_QLOAD, 1);
+ #endif
+-                        set_key(MYKEY_L1, 0);
+-                    }
+-
+-#if defined(MMIYOO) || defined(QX1000)
+-                    if (hotkey_mask && hit_hotkey(MYKEY_R2)) {
+-                        set_key(MYKEY_QSAVE, 1);
+-                        set_key(MYKEY_R2, 0);
+-                    }
+-
+-                    if (hotkey_mask && hit_hotkey(MYKEY_L2)) {
+-                        set_key(MYKEY_QLOAD, 1);
+-                        set_key(MYKEY_L2, 0);
+-                    }
+-                    else if (evt.keypad.bitmaps & (1 << MYKEY_L2)) {
+-                        if ((nds.menu.enable == 0) && (nds.menu.drastic.enable == 0)) {
+-                            evt.mode = (evt.mode == MMIYOO_KEYPAD_MODE) ? MMIYOO_MOUSE_MODE : MMIYOO_KEYPAD_MODE;
+-                            set_key(MYKEY_L2, 0);
+-
+-                            if (evt.mode == MMIYOO_MOUSE_MODE) {
+-                                release_all_keys();
+-                            }
+-                            lower_speed = 0;
+-                        }
+-                    }
++					set_key(MYKEY_L1, 0);
++				}
++
++#if defined(MMIYOO) || defined(QX1000) || defined(RG35XXH)
++				if (hotkey_mask && hit_hotkey(MYKEY_R2)) {
++					set_key(MYKEY_QSAVE, 1);
++					set_key(MYKEY_R2, 0);
++				}
++
++				if (hotkey_mask && hit_hotkey(MYKEY_L2)) {
++					set_key(MYKEY_QLOAD, 1);
++					set_key(MYKEY_L2, 0);
++				}
++				else if (evt.keypad.bitmaps & (1 << MYKEY_L2)) {
++					if ((nds.menu.enable == 0) && (nds.menu.drastic.enable == 0)) {
++						evt.mode = (evt.mode == MMIYOO_KEYPAD_MODE) ? MMIYOO_MOUSE_MODE : MMIYOO_KEYPAD_MODE;
++						set_key(MYKEY_L2, 0);
++
++						if (evt.mode == MMIYOO_MOUSE_MODE) {
++							release_all_keys();
++						}
++						lower_speed = 0;
++					}
++				}
+ #endif
+-                }
+-            
+-                if (!(evt.keypad.bitmaps & 0x0f)) {
+-                    nds.pen.pre_ticks = clock();
+-                }
+-            }
++			}
++		
++			if (!(evt.keypad.bitmaps & 0x0f)) {
++				nds.pen.pre_ticks = clock();
++			}
+         }
+         SDL_SemPost(event_sem);
+         usleep(1000000 / 60);
+@@ -761,7 +1103,7 @@ int EventUpdate(void *data)
+ 
+ void MMIYOO_EventInit(void)
+ {
+-#ifdef MMIYOO
++#if defined(MMIYOO) || defined(RG35XXH)
+     DIR *dir = NULL;
+ #endif
+ 
+@@ -850,7 +1192,7 @@ void MMIYOO_PumpEvents(_THIS)
+ {
+     SDL_SemWait(event_sem);
+     if (nds.menu.enable) {
+-#if defined(MMIYOO) || defined(QX1000)
++#if defined(MMIYOO) || defined(QX1000) || defined(RG35XXH)
+         int cc = 0;
+         uint32_t bit = 0;
+         uint32_t changed = pre_keypad_bitmaps ^ evt.keypad.bitmaps;
+@@ -876,7 +1218,7 @@ void MMIYOO_PumpEvents(_THIS)
+                 for (cc=0; cc<=MYKEY_LAST_BITS; cc++) {
+                     bit = 1 << cc;
+ 
+-#ifdef MMIYOO
++#if defined(MMIYOO) || defined(RG35XXH)
+                     if ((nds.hotkey == HOTKEY_BIND_MENU) && (cc == MYKEY_MENU)) {
+                         continue;
+                     }
+diff --git a/sdl2/src/video/mmiyoo/SDL_video_mmiyoo.c b/sdl2/src/video/mmiyoo/SDL_video_mmiyoo.c
+index 73c1528..c1ab896 100644
+--- a/sdl2/src/video/mmiyoo/SDL_video_mmiyoo.c
++++ b/sdl2/src/video/mmiyoo/SDL_video_mmiyoo.c
+@@ -85,6 +85,10 @@ static int is_running = 0;
+ static int need_reload_bg = RELOAD_BG_COUNT;
+ static SDL_Surface *cvt = NULL;
+ 
++//extern scale_mat_NEON(const Uint32 *src, int src_w, int src_h, int src_pitch, Uint32 *dst, int dst_w, int dst_h, int dst_pitch);
++extern scale_mat(const Uint32 *src, int src_w, int src_h, int src_pitch,
++          Uint32 *dst, int dst_w, int dst_h, int dst_pitch);
++		  
+ extern MMIYOO_EventInfo evt;
+ 
+ static int MMIYOO_VideoInit(_THIS);
+@@ -550,7 +554,7 @@ static int draw_drastic_menu_main(void)
+         p = &drastic_menu.item[cc];
+         if (p->y == 201) {
+             draw = 1;
+-#if defined(MMIYOO) || defined(TRIMUI)
++#if defined(MMIYOO) || defined(TRIMUI) || defined(RG35XXH)
+             sprintf(buf, "NDS %s", &p->msg[8]);
+             x = FB_W - get_font_width(buf) - 10;
+             y = 10 / div;
+@@ -640,7 +644,7 @@ static int draw_drastic_menu_main(void)
+     }
+ 
+     y = 10;
+-#ifdef MMIYOO
++#if defined(MMIYOO) || defined(RG35XXH)
+     sprintf(buf, "Rel "NDS_VER" Res %s", nds.enable_752x560 ? "752*560" : "640*480");
+ #endif
+ 
+@@ -695,7 +699,7 @@ static int draw_drastic_menu_main(void)
+             _func((void*)VAR_SYSTEM, slot, top, bottom, 1);
+             t = SDL_CreateRGBSurfaceFrom(top, NDS_W, NDS_H, 16, NDS_W * 2, 0, 0, 0, 0);
+             if (t) {
+-#ifdef MMIYOO
++#if defined(MMIYOO) || defined(RG35XXH)
+                 rt.x = FB_W - (NDS_W + (nds.enable_752x560 ? 30 : 10));
+                 rt.y = nds.enable_752x560 ? h - 20 : 50;
+                 rt.w = NDS_W;
+@@ -707,7 +711,7 @@ static int draw_drastic_menu_main(void)
+ 
+             t = SDL_CreateRGBSurfaceFrom(bottom, NDS_W, NDS_H, 16, NDS_W * 2, 0, 0, 0, 0);
+             if (t) {
+-#ifdef MMIYOO
++#if defined(MMIYOO) || defined(RG35XXH)
+                 rt.x = FB_W - (NDS_W + (nds.enable_752x560 ? 30 : 10));
+                 rt.y = nds.enable_752x560 ? (h + NDS_H) - 20 : 50 + NDS_H;
+                 rt.w = NDS_W;
+@@ -1413,8 +1417,27 @@ static int process_screen(void)
+     int idx = 0;
+     int screen_cnt = 0;
+     char buf[MAX_PATH] = {0};
++    int screen0_x, screen0_y, screen1_x, screen1_y;
++    
++#ifndef MMIYOO
++    // fixed values;
++    nds.screen.pixels[0] = (uint32_t *)(*((uint32_t *)VAR_SDL_SCREEN0_PIXELS));
++    nds.screen.pixels[1] = (uint32_t *)(*((uint32_t *)VAR_SDL_SCREEN1_PIXELS));
++    
++//    printf(PREFIX"screen0(0x%x), screen1(0x%x)\n", nds.screen.pixels[0], nds.screen.pixels[1]);
++#endif
++
++
++    // fixed values;
++    screen0_x = *((uint32_t *)VAR_SDL_SCREEN0_X);
++    screen0_y = *((uint32_t *)VAR_SDL_SCREEN0_Y);
++    screen1_x = *((uint32_t *)VAR_SDL_SCREEN1_X);
++    screen1_y = *((uint32_t *)VAR_SDL_SCREEN1_Y);
++    //printf(PREFIX"screen0(%d, %d), screen1(%d, %d)\n", screen0_x, screen0_y, screen1_x, screen1_y);
++    //[SDL] screen0(0, 0), screen1(0, 192)
+ 
+-#if defined(MMIYOO) || defined(PANDORA) || defined(QX1000)
++
++#if defined(MMIYOO) || defined(PANDORA) || defined(QX1000) || defined(RG35XXH)
+     screen_cnt = 2;
+ #else
+     screen_cnt = 1;
+@@ -1548,11 +1571,7 @@ static int process_screen(void)
+             *((uint8_t *)VAR_SDL_SCREEN1_HRES_MODE):
+             *((uint8_t *)VAR_SDL_SCREEN0_HRES_MODE);
+ 
+-#ifndef MMIYOO
+-        nds.screen.pixels[idx] = (idx == 0) ?
+-            (uint32_t *)(*((uint32_t *)VAR_SDL_SCREEN0_PIXELS)):
+-            (uint32_t *)(*((uint32_t *)VAR_SDL_SCREEN1_PIXELS));
+-#endif
++
+ 
+         if (nds.screen.hres_mode[idx]) {
+             srt.w = NDS_Wx2;
+@@ -1591,6 +1610,138 @@ static int process_screen(void)
+ #elif defined(TRIMUI)
+ #elif defined(PANDORA)
+ #elif defined(FUNKEYS)
++#elif defined(RG35XXH)
++       switch (nds.dis_mode) {
++        case NDS_DIS_MODE_VH_T0:
++            if (screen0) {
++                drt.x = 0;
++                drt.y = 0;
++                drt.w = FB_W;
++                drt.h = FB_H;
++            }
++            else {
++                //show_pen = 0;
++                need_update = 0;
++            }
++            break;
++        case NDS_DIS_MODE_VH_T1:
++            if (screen0) {
++                drt.x = 0;
++                drt.y = 0;
++                drt.w = FB_W;
++                drt.h = FB_H;
++            }
++            else {
++                //show_pen = 0;
++                need_update = 0;
++            }
++            break;
++        case NDS_DIS_MODE_S0:
++            if (screen0) {
++                drt.w = NDS_W * 2;
++                drt.h = NDS_H * 2;
++                drt.x = (FB_W - drt.w) / 2;
++                drt.y = (FB_H - drt.h) / 2;
++            }
++            else {
++                //show_pen = 0;
++                need_update = 0;
++            }
++            break;
++        case NDS_DIS_MODE_S1:
++            if (screen0) {
++                drt.x = 0;
++                drt.y = 0;
++                drt.w = FB_W;
++                drt.h = FB_H;
++            }
++            else {
++                //show_pen = 0;
++                need_update = 0;
++            }
++            break;
++        case NDS_DIS_MODE_V0:
++            drt.w = NDS_W;
++            drt.h = NDS_H;
++            drt.x = (FB_W - drt.w) / 2;
++            drt.y = screen0? 48 : 48 + drt.h;
++
++            break;
++        case NDS_DIS_MODE_V1:
++			drt.w = 320;
++			drt.h = 240;
++            drt.x = (FB_W - drt.w) / 2;
++            drt.y = screen0 ? 0 : drt.h;
++            break;
++        case NDS_DIS_MODE_H0:
++            drt.w = NDS_W;
++            drt.h = NDS_H;
++            drt.x = screen0 ? 64 : 64 + drt.w;
++            drt.y = (FB_H - drt.h) / 2;
++            break;
++        case NDS_DIS_MODE_H1:
++			drt.w = 320;
++			drt.h = 240;
++			drt.x = screen0 ? 0 : drt.w;
++            drt.y = (FB_H - drt.h) / 2;
++            break;
++        case NDS_DIS_MODE_VH_S0:
++            drt.x = screen1 ? FB_W -160 : 0;
++            drt.y = screen1 ? FB_H-120 : 0;
++            drt.w = screen1 ? 160:(FB_W - 160);
++            drt.h = screen1 ? 120:(FB_H - 120) ;
++            break;
++        case NDS_DIS_MODE_VH_S1:
++            drt.x = screen0 ? 0:FB_W - NDS_W ;
++            drt.y = screen0 ? 0:FB_H - NDS_H ;
++            drt.w = screen0 ? (FB_W - NDS_W) : NDS_W;
++            drt.h = screen0 ? (FB_H - NDS_H) : NDS_H;
++            break;
++       case NDS_DIS_MODE_VH_S2:
++            drt.w = screen0 ? (FB_W - 160) : 160;
++            drt.h = screen0 ? (FB_H - 120):120;
++            drt.x = screen0 ? ((FB_W - drt.w) / 2) : ((FB_W - drt.w) / 2);
++            drt.y = screen0 ? 0:FB_H-120;
++            break;
++        case NDS_DIS_MODE_VH_C0:
++            drt.w = screen0 ?  (FB_W - NDS_W):NDS_W;
++            drt.h = screen0 ?  (FB_H - NDS_H):NDS_H;
++            drt.x = (FB_W - drt.w) / 2;
++            drt.y = screen0 ?  0:FB_H - NDS_H;
++            break;
++        case NDS_DIS_MODE_VH_C1:
++            drt.w = screen0 ? (FB_W - NDS_W): NDS_W;
++            drt.h = screen0? (FB_H - NDS_H):NDS_H ;
++            drt.x = screen0 ? 0 : FB_W - NDS_W;
++            drt.y = screen0? ((FB_H - drt.h) / 2) : ((FB_H - drt.h) / 2);
++            break;
++        case NDS_DIS_MODE_HH0:
++			drt.x = screen0 ? 320 : 0;
++			drt.y = 26;
++			drt.w = 427;
++			drt.h = 320;
++            rotate = E_MI_GFX_ROTATE_270 ; /* not used  */
++            break;
++        case NDS_DIS_MODE_HH1:
++			drt.x = screen0 ? 0:320 ;
++			drt.y = 26;
++			drt.w = 427;
++			drt.h = 320;
++            rotate = E_MI_GFX_ROTATE_90 ;/* not used  */
++            break;
++        case NDS_DIS_MODE_HRES0:
++            drt.w = NDS_Wx2;
++            drt.h = NDS_Hx2;
++            drt.x = (FB_W - drt.w) / 2;
++            drt.y = (FB_H - drt.h) / 2;
++            break;
++        case NDS_DIS_MODE_HRES1:
++            drt.x = 0;
++            drt.y = 0;
++            drt.w = FB_W;
++            drt.h = FB_H;
++            break;
++        }
+ #elif defined(MMIYOO)
+         switch (nds.dis_mode) {
+         case NDS_DIS_MODE_VH_T0:
+@@ -1762,6 +1913,7 @@ static int process_screen(void)
+ 
+         if ((evt.mode == MMIYOO_MOUSE_MODE) && show_pen) {
+             draw_pen(nds.screen.pixels[idx], srt.w, nds.screen.pitch[idx]);
++            //draw_pen(nds.screen.pixels[1], srt.w, nds.screen.pitch[1]);
+         }
+ 
+         if (need_update) {
+@@ -1771,7 +1923,60 @@ static int process_screen(void)
+ 
+             GFX_Copy(nds.screen.pixels[idx], srt, drt, nds.screen.pitch[idx], 0, rotate);
+ 
+-#ifdef MMIYOO
++#ifdef RG35XXH
++            switch (nds.dis_mode) {
++            case NDS_DIS_MODE_VH_T0:
++                drt.y = 0;
++                drt.w = 160;
++                drt.h = 120;
++                drt.x = FB_W - drt.w;	
++		switch (nds.alpha.pos % 4) {
++		case 2:
++		    drt.x = 0;
++		    drt.y = FB_H - drt.h;
++		    break;
++		case 3:
++		    drt.x = FB_W - drt.w;
++		    drt.y = FB_H - drt.h;
++		    break;
++		case 0:
++		    drt.x = FB_W - drt.w;
++		    drt.y = 0;
++		    break;
++		case 1:
++		    drt.x = 0;
++		    drt.y = 0;
++		    break;
++		}			
++                GFX_Copy(nds.screen.pixels[1], srt, drt, nds.screen.pitch[1], 1, rotate);
++                break;
++            case NDS_DIS_MODE_VH_T1:
++                drt.y = 0;
++                drt.w = NDS_W;
++                drt.h = NDS_H;
++                drt.x = FB_W - drt.w;
++		switch (nds.alpha.pos % 4) {
++		case 2:
++		    drt.x = 0;
++		    drt.y = FB_H - drt.h;
++		    break;
++		case 3:
++		    drt.x = FB_W - drt.w;
++		    drt.y = FB_H - drt.h;
++		    break;
++		case 0:
++		    drt.x = FB_W - drt.w;
++		    drt.y = 0;
++		    break;
++		case 1:
++		    drt.x = 0;
++		    drt.y = 0;
++		    break;
++		}			
++                GFX_Copy(nds.screen.pixels[1], srt, drt, nds.screen.pitch[1], 1, rotate);
++                break;
++            }
++#elif defined(MMIYOO)
+             switch (nds.dis_mode) {
+             case NDS_DIS_MODE_VH_T0:
+                 drt.x = 0;
+@@ -2247,7 +2452,7 @@ static int read_config(void)
+         nds.fast_forward = json_object_get_int(jval);
+     }
+ 
+-#ifdef MMIYOO
++#if defined(MMIYOO) || defined(RG35XXH)
+     json_object_object_get_ex(jfile, JSON_NDS_STATES, &jval);
+     if (jval) {
+         struct stat st = {0};
+@@ -2280,7 +2485,7 @@ static int read_config(void)
+     reload_menu();
+ 
+     reload_pen();
+-#ifdef MMIYOO
++#if defined(MMIYOO) || defined(RG35XXH)
+     reload_overlay();
+ #endif
+     json_object_put(jfile);
+@@ -2290,7 +2495,9 @@ static int read_config(void)
+     if (fd > 0) {
+         close(fd);
+ #endif
++#ifndef RG35XXH
+         snd_nds_reload_config();
++#endif
+ #if defined(TRIMUI) || defined(FUNKEYS) || defined(PANDORA)
+     }
+ #endif
+@@ -2689,7 +2896,7 @@ int fb_quit(void)
+ }
+ #endif
+ 
+-#ifdef FUNKEYS
++#if  defined(FUNKEYS) || defined(RG35XXH)
+ int fb_init(void)
+ {
+     gfx.fb_dev = open("/dev/fb0", O_RDWR);
+@@ -2698,6 +2905,14 @@ int fb_init(void)
+         return -1;
+     }
+ 
++#ifdef RG35XXH
++    ioctl(gfx.fb_dev, FBIOGET_FSCREENINFO, &gfx.finfo);
++    ioctl(gfx.fb_dev, FBIOGET_VSCREENINFO, &gfx.vinfo);
++    gfx.vinfo.yoffset = 0;
++    gfx.vinfo.yres_virtual = gfx.vinfo.yres * 2;
++    ioctl(gfx.fb_dev, FBIOPUT_VSCREENINFO, &gfx.vinfo);
++#endif
++    
+     gfx.hw.mem = mmap(NULL, FB_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, gfx.fb_dev, 0);
+     if (gfx.hw.mem == (void *)-1) {
+         close(gfx.fb_dev);
+@@ -2705,11 +2920,22 @@ int fb_init(void)
+         return -1;
+     }
+     memset(gfx.hw.mem, 0 , FB_SIZE);
++	
++#ifdef RG35XXH
++	gfx.hw.swsurface = SDL_CreateRGBSurface(SDL_SWSURFACE, FB_W, FB_H, 32, 0, 0, 0, 0);
++#endif
+     return 0;
+ }
+ 
+ int fb_quit(void)
+ {
++#ifdef RG35XXH
++	if (gfx.hw.swsurface != NULL)
++		SDL_FreeSurface(gfx.hw.swsurface);
++#endif
++    gfx.vinfo.yoffset = 0;
++    ioctl(gfx.fb_dev, FBIOPUT_VSCREENINFO, &gfx.vinfo);
++    
+     munmap(gfx.hw.mem, FB_SIZE);
+     close(gfx.fb_dev);
+     gfx.fb_dev = -1;
+@@ -3613,6 +3839,78 @@ int GFX_Copy(const void *pixels, SDL_Rect srcrect, SDL_Rect dstrect, int pitch,
+         }
+     }
+ #endif
++#ifdef RG35XXH 
++// trngaje
++
++    int x = 0;
++    int y = 0;
++    const uint32_t *src = pixels;
++    //uint32_t *dst = (uint32_t *)gfx.hw.mem;
++	uint32_t *dst = (uint32_t *)gfx.hw.swsurface->pixels;
++
++	if (src != 0) {		
++		if (srcrect.w == NDS_W) {
++			if (nds.dis_mode == NDS_DIS_MODE_HH0 ||  nds.dis_mode == NDS_DIS_MODE_HH1) {
++				SDL_Surface *t = NULL;
++				t = SDL_CreateRGBSurface(SDL_SWSURFACE, NDS_H, NDS_W, 32, 0, 0, 0, 0);
++				if (nds.dis_mode == NDS_DIS_MODE_HH0) {
++					// degree 90
++					int row, col;
++
++					for (row = 0; row < srcrect.h; ++row) { 
++						src = (uint32_t *)pixels + (row * NDS_W); 
++						dst = (uint32_t *)t->pixels + (NDS_H - row - 1) ; 
++						for (col = 0; col < srcrect.w; ++col) { 
++							*dst = *src;
++							src ++; 
++							dst += NDS_H; 
++						}  
++					}  
++				}
++				else  {
++					// degree 270
++					int row, col;
++					for (row = 0; row < srcrect.h; ++row) { 
++						src = (uint32_t *)pixels + (row * NDS_W); 
++						dst = (uint32_t *)t->pixels + row + ((NDS_W-1)* NDS_H) ; 
++						for (col = 0; col < srcrect.w; ++col) { 
++							*dst = *src;
++							src ++; 
++							dst -= NDS_H; 
++						}  
++					}  				
++				}
++				
++				dst = (uint32_t *)gfx.hw.swsurface->pixels + dstrect.y  * FB_W + dstrect.x;
++				
++				scale_mat_NEON((uint32_t *)t->pixels, srcrect.h, srcrect.w, srcrect.h*4, 
++													   dst, dstrect.h, dstrect.w, FB_W*4); 
++				//scale_mat((uint32_t *)t->pixels, srcrect.h, srcrect.w, srcrect.h*4, 
++				//									   dst, dstrect.w, dstrect.h, FB_W*4); 			
++				SDL_FreeSurface(t);
++			}
++			else {
++				// degree 0 only
++				dst += dstrect.y  * FB_W + dstrect.x;
++				
++				scale_mat_NEON((uint32_t *)pixels + srcrect.y * srcrect.w + srcrect.x , srcrect.w, srcrect.h, srcrect.w*4, 
++													   dst, dstrect.w, dstrect.h, FB_W*4); 
++				//scale_mat((uint32_t *)pixels + srcrect.y * srcrect.w + srcrect.x , srcrect.w, srcrect.h, srcrect.w*4, 
++				//                                       dst, dstrect.w, dstrect.h, FB_W*4); 
++			}
++		}
++		else {
++			for (y = 0; y < srcrect.h; y++) {
++				for (x = 0; x < srcrect.w; x++) {
++					*dst++ = *src++;
++				}
++				dst+= (FB_W - srcrect.w);
++			}
++	  }
++	}
++
++
++#endif
+ 
+ #ifdef FUNKEYS
+     if ((srcrect.w == NDS_W) && (srcrect.h == NDS_H)) {
+@@ -4401,6 +4699,19 @@ void GFX_Flip(void)
+     ioctl(gfx.fb_dev, FBIO_WAITFORVSYNC, &r);
+     gfx.fb.flip^= 1;
+ #endif
++
++#ifdef RG35XXH
++	//neon_memcpy(gfx.hw.mem, gfx.hw.swsurface->pixels, FB_W * FB_H * 4); 
++    uint32_t *src = gfx.hw.swsurface->pixels;
++    uint32_t *dst = (uint32_t *)gfx.hw.mem;
++    int x, y;
++	
++	for (y = 0; y < FB_H; y++) {
++		for (x = 0; x < FB_W; x++) {
++			*dst++ = *src++;
++		}
++	}
++#endif
+ }
+ 
+ int get_font_width(const char *info)
+@@ -4602,7 +4913,7 @@ int reload_menu(void)
+     sprintf(buf, "%s/%s", folder, DRASTIC_MENU_YES_FILE);
+     t = IMG_Load(buf);
+     if (t) {
+-#if defined(MMIYOO) || defined(QX1000)
++#if defined(MMIYOO) || defined(QX1000) || defined(RG35XXH)
+         SDL_Rect nrt = {0, 0, LINE_H - 2, LINE_H - 2};
+ #endif
+ #if defined(TRIMUI) || defined(FUNKEYS) || defined(PANDORA)
+@@ -4621,8 +4932,8 @@ int reload_menu(void)
+     sprintf(buf, "%s/%s", folder, DRASTIC_MENU_NO_FILE);
+     t = IMG_Load(buf);
+     if (t) {
+-#if defined(MMIYOO) || defined(QX1000)
+-        SDL_Rect nrt = {0, 0, LINE_H - 2, LINE_H - 2};
++#if defined(MMIYOO) || defined(QX1000) || defined(RG35XXH)
++      SDL_Rect nrt = {0, 0, LINE_H - 2, LINE_H - 2};
+ #endif
+ #if defined(TRIMUI) || defined(FUNKEYS) || defined(PANDORA)
+         SDL_Rect nrt = {0, 0, t->w >> 1, t->h >> 1};
+@@ -4650,7 +4961,7 @@ int reload_bg(void)
+     static int pre_mode = -1;
+ #endif
+ 
+-#ifdef MMIYOO
++#if defined(MMIYOO) || defined(RG35XXH)
+     char buf[MAX_PATH] = {0};
+     SDL_Surface *t = NULL;
+     SDL_Rect srt = {0, 0, IMG_W, IMG_H};
+@@ -4914,7 +5225,7 @@ int reload_bg(void)
+     return 0;
+ }
+ 
+-#ifdef MMIYOO
++#if defined(MMIYOO) || defined(RG35XXH)
+ int reload_overlay(void)
+ {
+     static int pre_sel = -1;
+@@ -4940,6 +5251,7 @@ int reload_overlay(void)
+                     SDL_BlitSurface(t, NULL, nds.overlay.img, NULL);
+                     SDL_FreeSurface(t);
+ #ifndef UNITTEST
++	#ifndef RG35XXH
+                     gfx.hw.overlay.surf.phyAddr = gfx.overlay.phyAddr;
+                     gfx.hw.overlay.surf.eColorFmt = E_MI_GFX_FMT_ARGB8888;
+                     gfx.hw.overlay.surf.u32Width = FB_W;
+@@ -4951,6 +5263,7 @@ int reload_overlay(void)
+                     gfx.hw.overlay.rt.u32Height = FB_H;
+                     neon_memcpy(gfx.overlay.virAddr, nds.overlay.img->pixels, FB_W * FB_H * 4);
+                     MI_SYS_FlushInvCache(gfx.overlay.virAddr, FB_W * FB_H * FB_BPP);
++	#endif
+ #endif
+                 }
+                 else {
+@@ -5019,7 +5332,7 @@ VideoBootStrap MMIYOO_bootstrap = {MMIYOO_DRIVER_NAME, "MMIYOO VIDEO DRIVER", MM
+ 
+ int MMIYOO_VideoInit(_THIS)
+ {
+-#ifdef MMIYOO
++#if defined(MMIYOO) || defined(RG35XXH)
+     FILE *fd = NULL;
+     char buf[MAX_PATH] = {0};
+ #endif
+@@ -5240,7 +5553,7 @@ void MMIYOO_VideoQuit(_THIS)
+     lang_unload();
+ }
+ 
+-#if defined(MMIYOO) || defined(QX1000)
++#if defined(MMIYOO) || defined(QX1000) || defined(RG35XXH)
+ static const char *DIS_MODE0_640[] = {
+     "640*480",
+     "640*480",
+@@ -5788,7 +6101,7 @@ int handle_menu(int key)
+         case MENU_OVERLAY:
+             if (nds.overlay.sel < nds.overlay.max) {
+                 get_file_path(nds.overlay.path, nds.overlay.sel, buf, 0);
+-#ifdef MMIYOO
++#if defined(MMIYOO) || defined(RG35XXH)
+                 reload_overlay();
+ #endif
+             }
+diff --git a/sdl2/src/video/mmiyoo/SDL_video_mmiyoo.h b/sdl2/src/video/mmiyoo/SDL_video_mmiyoo.h
+index 36fb185..8c65d2f 100644
+--- a/sdl2/src/video/mmiyoo/SDL_video_mmiyoo.h
++++ b/sdl2/src/video/mmiyoo/SDL_video_mmiyoo.h
+@@ -68,9 +68,9 @@
+ #endif
+ 
+ #if !defined(MMIYOO)
+-    #define E_MI_GFX_ROTATE_90      0
+-    #define E_MI_GFX_ROTATE_180     0
+-    #define E_MI_GFX_ROTATE_270     0
++    #define E_MI_GFX_ROTATE_90      1
++    #define E_MI_GFX_ROTATE_180     2
++    #define E_MI_GFX_ROTATE_270     3
+ #endif
+ 
+ #ifdef QX1000
+@@ -126,6 +126,16 @@
+     #define MAX_PATH                128
+ #endif
+ 
++#ifdef RG35XXH
++    #define DEF_FB_W                640
++    #define DEF_FB_H                480
++    #define FB_BPP                  4
++    #define IMG_W                   640
++    #define IMG_H                   480
++    #define SCREEN_DMA_SIZE         (NDS_Wx2 * NDS_Hx2 * 4)
++    #define RELOAD_BG_COUNT         1
++#endif
++
+ #ifdef MMIYOO
+     #define DEF_FB_W                640
+     #define DEF_FB_H                480
+@@ -214,7 +224,7 @@
+ #define PEN_RB                      3
+ #define FONT_PATH                   "resources/font/font.ttf"
+ 
+-#ifdef MMIYOO
++#if defined(MMIYOO) || defined(RG35XXH)
+     #define DEF_FONT_SIZE           24
+ #endif
+ 
+@@ -371,6 +381,11 @@ typedef struct _GFX {
+         uint32_t *mem;
+ #endif
+ 
++#ifdef RG35XXH
++        uint32_t *mem;
++		SDL_Surface *swsurface;
++#endif
++
+ #ifdef PANDORA
+         uint32_t *mem[2];
+ #endif

@@ -10993,6 +10993,11 @@ drastic:
                 "Horizontal": 1
                 "Single": 3
 
+drastic_steward:
+  shared: []
+  
+
+
 xemu:
   shared: [powermode, tdp, videomode, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo]
   cfeatures:
