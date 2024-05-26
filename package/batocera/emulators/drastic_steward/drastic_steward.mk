@@ -7,7 +7,8 @@
 #https://github.com/steward-fu/nds 
 #baf343da4dd2d6e0f7611723c218deee2d7b5107
 
-DRASTIC_STEWARD_VERSION = baf343da4dd2d6e0f7611723c218deee2d7b5107
+#DRASTIC_STEWARD_VERSION = baf343da4dd2d6e0f7611723c218deee2d7b5107
+DRASTIC_STEWARD_VERSION = 824de8d83a5d984ae7939102eab5b3e9e1a08d38
 DRASTIC_STEWARD_SITE = $(call github,steward-fu/,nds,$(DRASTIC_STEWARD_VERSION))
 
 DRASTIC_STEWARD_CONF_ENV += $(TARGET_CONFIGURE_OPTS) \
@@ -33,8 +34,8 @@ define DRASTIC_STEWARD_BUILD_CMDS
 	
 	sed -i "s#-I/%SDL2%#-I$(STAGING_DIR)/usr/include/SDL2#" $(@D)/sdl2/configure.ac
 
-	cd $(@D) && $(DRASTIC_STEWARD_CONF_ENV) $(MAKE) cfg MOD=rg35xxh
-	cd $(@D) && $(DRASTIC_STEWARD_CONF_ENV) $(MAKE) MOD=rg35xxh
+	cd $(@D) && $(DRASTIC_STEWARD_CONF_ENV) $(MAKE) -f Makefile.mk cfg MOD=rg35xxh HOST=arm-buildroot-linux-gnueabihf
+	cd $(@D) && $(DRASTIC_STEWARD_CONF_ENV) $(MAKE) -f Makefile.mk MOD=rg35xxh HOST=arm-buildroot-linux-gnueabihf
 endef
 
 define DRASTIC_STEWARD_INSTALL_TARGET_CMDS
