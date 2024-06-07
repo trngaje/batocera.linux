@@ -1,5 +1,5 @@
 diff --git a/Makefile.mk b/Makefile.mk
-index 9cf2df5..3f40f76 100644
+index d58d504..a8a1e4f 100644
 --- a/Makefile.mk
 +++ b/Makefile.mk
 @@ -23,18 +23,18 @@ REL_VER  = $(shell git rev-parse HEAD | cut -c 1-8)
@@ -26,6 +26,14 @@ index 9cf2df5..3f40f76 100644
  	cd sdl2 && ./autogen.sh && MOD=$(MOD) ./configure $(SDL2_CFG) --host=$(HOST)
  
  .PHONY: rel
+@@ -47,7 +47,6 @@ clean:
+ 	rm -rf drastic/cpuclock
+ 	rm -rf drastic/launch.sh
+ 	rm -rf drastic/config.json
+-	rm -rf drastic/show_hotkeys
+ 	rm -rf drastic/libs/libdtr.so
+ 	rm -rf drastic/libs/libasound.so.2
+ 	rm -rf drastic/libs/libSDL2-2.0.so.0
 diff --git a/detour/Makefile b/detour/Makefile
 index 7d5bc20..fadccb5 100644
 --- a/detour/Makefile
@@ -44,7 +52,7 @@ index 7d5bc20..fadccb5 100644
      CFLAGS += -DTRIMUI -I../trimui/inc
      CFLAGS += -mcpu=cortex-a7 -mfpu=neon-vfpv4 -O3 -Wl,--no-undefined
 diff --git a/detour/main.c b/detour/main.c
-index 565bf12..9452c99 100644
+index 877e36f..fad768e 100644
 --- a/detour/main.c
 +++ b/detour/main.c
 @@ -33,7 +33,7 @@ static int32_t dtr_load_state_index(void *system, uint32_t index, uint16_t *snap
@@ -78,8 +86,8 @@ index 565bf12..9452c99 100644
  
  int dtr_savestate(int slot)
  {
--#if defined(MMIYOO) || defined(QX1000)
-+#if defined(MMIYOO) || defined(QX1000) || defined(RG35XXH)
+-#if defined(MMIYOO) || defined(QX1000) || defined(A30)
++#if defined(MMIYOO) || defined(QX1000) || defined(A30) || defined(RG35XXH)
      char buf[255] = {0};
      nds_screen_copy16 _func0 = (nds_screen_copy16)FUN_SCREEN_COPY16;
  
@@ -96,8 +104,8 @@ index 565bf12..9452c99 100644
  
  int dtr_loadstate(int slot)
  {
--#if defined(MMIYOO) || defined(QX1000)
-+#if defined(MMIYOO) || defined(QX1000) || defined(RG35XXH)
+-#if defined(MMIYOO) || defined(QX1000) || defined(A30)
++#if defined(MMIYOO) || defined(QX1000) || defined(A30) || defined(RG35XXH)
      char buf[255] = {0};
  
      if (is_hooked == 0) {
@@ -225,10 +233,10 @@ index 0000000..9dc31c9
 +Show=표시
 +Hide=감추기
 diff --git a/drastic/resources/settings.json b/drastic/resources/settings.json
-index 087baba..2b514ba 100644
+index f1e30fd..6b5ba93 100644
 --- a/drastic/resources/settings.json
 +++ b/drastic/resources/settings.json
-@@ -24,7 +24,7 @@
+@@ -26,7 +26,7 @@
    "half_vol":0,
    "splash":3,
    "hotkey":0,
@@ -236,9 +244,9 @@ index 087baba..2b514ba 100644
 +  "states":"\/userdata\/saves\/nds\/drastic",
    "menu_bg":0,
    "menu_cursor":1,
-   "fast_forward":6
+   "fast_forward":6,
 diff --git a/sdl2/configure.ac b/sdl2/configure.ac
-index d99f07e..87a6bdb 100644
+index d99f07e..9a55b4f 100644
 --- a/sdl2/configure.ac
 +++ b/sdl2/configure.ac
 @@ -2424,6 +2424,21 @@ CheckMMiyooVideo()
@@ -253,7 +261,7 @@ index d99f07e..87a6bdb 100644
 +        SOURCES="$SOURCES $srcdir/src/video/mmiyoo/*.c $srcdir/src/video/mmiyoo/*.S"
 +        have_video=yes
 +        
-+        EXTRA_CFLAGS="$EXTRA_CFLAGS -DRG35XXH -fPIC -mcpu=cortex-a7 -mfpu=neon-vfpv4  -O3 -I../mmiyoo/inc -I../detour -I/%SDL2%"
++        EXTRA_CFLAGS="$EXTRA_CFLAGS -DRG35XXH -DRG35XXH_GL -fPIC -mcpu=cortex-a7 -mfpu=neon-vfpv4  -O3 -I../mmiyoo/inc -I../detour -I/%SDL2%"
 +        EXTRA_LDFLAGS="$EXTRA_LDFLAGS -L. -lEGL -lGLESv2 -lrt -lSDL2_image -lSDL2_ttf -ljson-c -L../detour -ldtr"
 +        SUMMARY_video="${SUMMARY_video} mmiyoo"
 +    fi
@@ -336,7 +344,7 @@ index dad3eb5..d608a2e 100644
  {
      BILINEAR___START
 diff --git a/sdl2/src/video/mmiyoo/SDL_event_mmiyoo.c b/sdl2/src/video/mmiyoo/SDL_event_mmiyoo.c
-index 9543922..7fa1370 100644
+index b298ab0..4a403c9 100644
 --- a/sdl2/src/video/mmiyoo/SDL_event_mmiyoo.c
 +++ b/sdl2/src/video/mmiyoo/SDL_event_mmiyoo.c
 @@ -42,10 +42,57 @@
@@ -372,10 +380,10 @@ index 9543922..7fa1370 100644
 +    #define VOLUP   115
 +    #define VOLDOWN 114
 +	*/
-+    #define UP      103	/* not defined */
-+    #define DOWN    108 /* not defined */
-+    #define LEFT    105 /* not defined */
-+    #define RIGHT   106 /* not defined */
++    #define UP      -1	/* not defined */
++    #define DOWN    -1 /* not defined */
++    #define LEFT    -1 /* not defined */
++    #define RIGHT   -1 /* not defined */
 +    #define A       BTN_SOUTH
 +    #define B       BTN_EAST
 +    #define X       BTN_NORTH
@@ -397,7 +405,24 @@ index 9543922..7fa1370 100644
  #ifdef A30
      #define UP      103
      #define DOWN    108
-@@ -254,7 +301,7 @@ static void release_all_keys(void)
+@@ -189,6 +236,8 @@ const SDL_Scancode code[]={
+     SDLK_t,             // R1
+     SDLK_TAB,           // L2
+     SDLK_BACKSPACE,     // R2
++	SDLK_4,	// L3
++	SDLK_5, 	// R3
+     SDLK_RCTRL,         // SELECT
+     SDLK_RETURN,        // START
+     SDLK_HOME,          // MENU
+@@ -197,6 +246,7 @@ const SDL_Scancode code[]={
+     SDLK_2,             // FAST FORWARD
+     SDLK_3,             // EXIT
+     SDLK_HOME,          // MENU (Onion system)
++
+ };
+ 
+ int volume_inc(void);
+@@ -256,7 +306,7 @@ static void release_all_keys(void)
  
  static int hit_hotkey(uint32_t bit)
  {
@@ -406,7 +431,7 @@ index 9543922..7fa1370 100644
      uint32_t mask = (1 << bit) | (1 << ((nds.hotkey == HOTKEY_BIND_SELECT) ? MYKEY_SELECT : MYKEY_MENU));
  #endif
  
-@@ -281,7 +328,7 @@ static void set_key(uint32_t bit, int val)
+@@ -283,7 +333,7 @@ static void set_key(uint32_t bit, int val)
          }
  #endif
  
@@ -414,8 +439,116 @@ index 9543922..7fa1370 100644
 +#if defined(MMIYOO) || defined(A30) || defined(RG35XXH)
          if (nds.hotkey == HOTKEY_BIND_SELECT) {
              if (bit == MYKEY_SELECT) {
-                 hotkey = (1 << MYKEY_SELECT);
-@@ -306,7 +353,7 @@ int EventUpdate(void *data)
+                 cur_keypad_bitmaps = (1 << MYKEY_SELECT);
+@@ -507,7 +557,7 @@ static int handle_hotkey(void)
+     }
+ 
+     if (hotkey_mask && hit_hotkey(MYKEY_UP)) {
+-#if defined(MMIYOO) || defined(QX1000) || defined(A30)
++#if defined(MMIYOO) || defined(QX1000) || defined(A30) || defined(RG35XXH)
+         if (evt.mode == MMIYOO_MOUSE_MODE) {
+             switch (nds.dis_mode) {
+             case NDS_DIS_MODE_VH_T0:
+@@ -530,7 +580,7 @@ static int handle_hotkey(void)
+     }
+ 
+     if (hotkey_mask && hit_hotkey(MYKEY_DOWN)) {
+-#if defined(MMIYOO) || defined(QX1000) || defined(A30)
++#if defined(MMIYOO) || defined(QX1000) || defined(A30) || defined(RG35XXH)
+         if (evt.mode == MMIYOO_MOUSE_MODE) {
+             switch (nds.dis_mode) {
+             case NDS_DIS_MODE_VH_T0:
+@@ -553,7 +603,7 @@ static int handle_hotkey(void)
+     }
+ 
+     if (hotkey_mask && hit_hotkey(MYKEY_LEFT)) {
+-#if defined(MMIYOO) || defined(A30)
++#if defined(MMIYOO) || defined(A30) || defined(RG35XXH)
+         if (nds.hres_mode == 0) {
+             if (nds.dis_mode > 0) {
+                 nds.dis_mode -= 1;
+@@ -578,7 +628,7 @@ static int handle_hotkey(void)
+     }
+ 
+     if (hotkey_mask && hit_hotkey(MYKEY_RIGHT)) {
+-#if defined(MMIYOO) || defined(A30)
++#if defined(MMIYOO) || defined(A30) || defined(RG35XXH)
+         if (nds.hres_mode == 0) {
+             if (nds.dis_mode < NDS_DIS_MODE_LAST) {
+                 nds.dis_mode += 1;
+@@ -596,7 +646,7 @@ static int handle_hotkey(void)
+     }
+ 
+     if (hotkey_mask && hit_hotkey(MYKEY_A)) {
+-#if defined(MMIYOO) || defined(A30)
++#if defined(MMIYOO) || defined(A30) || defined(RG35XXH)
+         if ((evt.mode == MMIYOO_KEYPAD_MODE) && (nds.hres_mode == 0)) {
+             uint32_t tmp = nds.alt_mode;
+             nds.alt_mode = nds.dis_mode;
+@@ -612,7 +662,7 @@ static int handle_hotkey(void)
+     }
+ 
+     if (hotkey_mask && hit_hotkey(MYKEY_B)) {
+-#if defined(MMIYOO) || defined(A30)
++#if defined(MMIYOO) || defined(A30) || defined(RG35XXH)
+         pixel_filter = pixel_filter ? 0 : 1;
+ #endif
+         set_key(MYKEY_B, 0);
+@@ -696,7 +746,7 @@ static int handle_hotkey(void)
+     }
+ 
+     if (hotkey_mask && hit_hotkey(MYKEY_START)) {
+-#if defined(MMIYOO) || defined(QX1000) || defined(A30)
++#if defined(MMIYOO) || defined(QX1000) || defined(A30) || defined(RG35XXH)
+         if (nds.menu.enable == 0) {
+ #ifdef QX1000
+             update_wayland_res(640, 480);
+@@ -715,7 +765,7 @@ static int handle_hotkey(void)
+         set_key(MYKEY_START, 0);
+     }
+ 
+-#if defined(MMIYOO) || defined(A30)
++#if defined(MMIYOO) || defined(A30) || defined(RG35XXH)
+     if (nds.hotkey == HOTKEY_BIND_MENU) {
+         if (hotkey_mask && hit_hotkey(MYKEY_SELECT)) {
+             set_key(MYKEY_MENU_ONION, 1);
+@@ -732,7 +782,7 @@ static int handle_hotkey(void)
+ #endif
+ 
+     if (hotkey_mask && hit_hotkey(MYKEY_R1)) {
+-#if defined(MMIYOO) || defined(A30)
++#if defined(MMIYOO) || defined(A30) || defined(RG35XXH)
+         static int pre_ff = 0;
+ 
+         if (pre_ff != nds.fast_forward) {
+@@ -749,7 +799,7 @@ static int handle_hotkey(void)
+     }
+ 
+     if (hotkey_mask && hit_hotkey(MYKEY_L1)) {
+-#if defined(MMIYOO) || defined(A30)
++#if defined(MMIYOO) || defined(A30) || defined(RG35XXH)
+         set_key(MYKEY_EXIT, 1);
+ #endif
+ 
+@@ -759,7 +809,7 @@ static int handle_hotkey(void)
+         set_key(MYKEY_L1, 0);
+     }
+ 
+-#if defined(MMIYOO) || defined(QX1000) || defined(A30)
++#if defined(MMIYOO) || defined(QX1000) || defined(A30) || defined(RG35XXH)
+     if (hotkey_mask && hit_hotkey(MYKEY_R2)) {
+ #if defined(MMIYOO) || defined(A30)
+         set_key(MYKEY_QLOAD, 1);
+@@ -770,7 +820,7 @@ static int handle_hotkey(void)
+     }
+ 
+     if (hotkey_mask && hit_hotkey(MYKEY_L2)) {
+-#if defined(MMIYOO) || defined(A30)
++#if defined(MMIYOO) || defined(A30) || defined(RG35XXH)
+         set_key(MYKEY_QSAVE, 1);
+ #else
+         set_key(MYKEY_QLOAD, 1);
+@@ -803,7 +853,7 @@ int EventUpdate(void *data)
  
      uint32_t l1 = L1;
      uint32_t r1 = R1;
@@ -424,18 +557,98 @@ index 9543922..7fa1370 100644
      uint32_t l2 = L2;
      uint32_t r2 = R2;
  #endif
-@@ -365,7 +412,7 @@ int EventUpdate(void *data)
+@@ -818,9 +868,59 @@ int EventUpdate(void *data)
+     uint32_t left = LEFT;
+     uint32_t right = RIGHT;
+ 
++#ifdef RG35XXH
++	int i;
++	int input[NUM_OF_MYKEY] = {UP, DOWN, LEFT, RIGHT, A, B, X, Y, L1, R1, L2, R2, L3, R3,SELECT, START, MENU,-1, -1, -1, -1};
++
++	for (i=0; i < NUM_OF_MYKEY; i++) {
++		if (nds.input.key[i] != -1) {
++			printf(PREFIX"nds.input.key[%d]=%d\n", i, nds.input.key[i] );
++			input[i] = nds.input.key[i];
++		}
++	}
++	
++#endif
++
+     while (running) {
+         SDL_SemWait(event_sem);
+ 
++#ifdef RG35XXH
++        if ((nds.menu.enable == 0) && (nds.menu.drastic.enable == 0) && nds.keys_rotate) {
++            if (nds.keys_rotate == 1) {
++                up = input[MYKEY_LEFT];
++                down = input[MYKEY_RIGHT];
++                left = input[MYKEY_DOWN];
++                right = input[MYKEY_UP];
++
++                a = input[MYKEY_X];
++                b = input[MYKEY_A];
++                x = input[MYKEY_Y];
++                y = input[MYKEY_B];
++            }
++            else {
++                up = input[MYKEY_RIGHT];
++                down = input[MYKEY_LEFT];
++                left = input[MYKEY_UP];
++                right = input[MYKEY_DOWN];
++
++                a = input[MYKEY_B];
++                b = input[MYKEY_Y];
++                x = input[MYKEY_A];
++                y = input[MYKEY_X];
++            }
++        }
++        else {
++            up = input[MYKEY_UP];
++            down = input[MYKEY_DOWN];
++            left = input[MYKEY_LEFT];
++            right = input[MYKEY_RIGHT];
++
++            a = input[MYKEY_A];
++            b = input[MYKEY_B];
++            x = input[MYKEY_X];
++            y = input[MYKEY_Y];
++        }
++#else
+         if ((nds.menu.enable == 0) && (nds.menu.drastic.enable == 0) && nds.keys_rotate) {
+             if (nds.keys_rotate == 1) {
+                 up = LEFT;
+@@ -856,8 +956,27 @@ int EventUpdate(void *data)
+             x = X;
              y = Y;
          }
++#endif
  
 -#if defined(MMIYOO) || defined(QX1000) || defined(A30)
-+#if defined(MMIYOO) || defined(QX1000) || defined(A30) || defined(RG35XXH)
++#if defined(RG35XXH)
++        if (nds.swap_l1l2) {
++            l1 = input[MYKEY_L2];
++            l2 = input[MYKEY_L1];
++        }
++        else {
++            l1 = input[MYKEY_L1];
++            l2 = input[MYKEY_L2];
++        }
++
++        if (nds.swap_r1r2) {
++            r1 = input[MYKEY_R2];
++            r2 = input[MYKEY_R1];
++        }
++        else {
++            r1 = input[MYKEY_R1];
++            r2 = input[MYKEY_R2];
++        }
++#elif defined(MMIYOO) || defined(QX1000) || defined(A30)
          if (nds.swap_l1l2) {
              l1 = L2;
              l2 = L1;
-@@ -399,22 +446,330 @@ int EventUpdate(void *data)
+@@ -893,20 +1012,322 @@ int EventUpdate(void *data)
+             int r = 0;
  
-         if (event_fd > 0) {
              if (read(event_fd, &ev, sizeof(struct input_event))) {
 -                if ((ev.type == EV_KEY) && (ev.value != 2)) {
 +				if (ev.type == EV_ABS) {
@@ -739,140 +952,88 @@ index 9543922..7fa1370 100644
 +					}
 +				}
 +                else if ((ev.type == EV_KEY) && (ev.value != 2)) {
+                     r = 1;
                      //printf(PREFIX"code:%d, value:%d\n", ev.code, ev.value);
                      if (ev.code == l1)      { set_key(MYKEY_L1,    ev.value); }
                      if (ev.code == r1)      { set_key(MYKEY_R1,    ev.value); }
-+#ifndef RG35XXH
-                     if (ev.code == up)      { set_key(MYKEY_UP,    ev.value); }
-                     if (ev.code == down)    { set_key(MYKEY_DOWN,  ev.value); }
-                     if (ev.code == left)    { set_key(MYKEY_LEFT,  ev.value); }
-                     if (ev.code == right)   { set_key(MYKEY_RIGHT, ev.value); }
-+#endif 
+-                    if (ev.code == up)      { set_key(MYKEY_UP,    ev.value); }
+-                    if (ev.code == down)    { set_key(MYKEY_DOWN,  ev.value); }
+-                    if (ev.code == left)    { set_key(MYKEY_LEFT,  ev.value); }
+-                    if (ev.code == right)   { set_key(MYKEY_RIGHT, ev.value); }
++
++                    if (up != -1 && ev.code == up)      { set_key(MYKEY_UP,    ev.value); }
++                    if (down != -1 && ev.code == down)    { set_key(MYKEY_DOWN,  ev.value); }
++                    if (left != -1 && ev.code == left)    { set_key(MYKEY_LEFT,  ev.value); }
++                    if (right != -1 && ev.code == right)   { set_key(MYKEY_RIGHT, ev.value); }
++
                      if (ev.code == a)       { set_key(MYKEY_A,     ev.value); }
                      if (ev.code == b)       { set_key(MYKEY_B,     ev.value); }
                      if (ev.code == x)       { set_key(MYKEY_X,     ev.value); }
                      if (ev.code == y)       { set_key(MYKEY_Y,     ev.value); }
 -#if defined(MMIYOO) || defined(QX1000) || defined(A30)
 +#if defined(MMIYOO) || defined(QX1000) || defined(A30) || defined(RG35XXH)
-                     if (ev.code == l2)      { set_key(MYKEY_L2,    ev.value); }
-                     if (ev.code == r2)      { set_key(MYKEY_R2,    ev.value); }
+ #ifdef A30
+                     if (ev.code == r2) {
+                         if (nds.joy.mode == MYJOY_MODE_MOUSE) {
+@@ -929,16 +1350,34 @@ int EventUpdate(void *data)
+                         }
+                     }
+                     if (ev.code == l2)      { set_key(MYKEY_R2,    ev.value); }
++#elif defined(RG35XXH)
++                    if (ev.code == r2)      { set_key(MYKEY_R2,    ev.value); }
++                    if (ev.code == l2)      { set_key(MYKEY_L2,    ev.value); }
+ #else
+                     if (ev.code == r2)      { set_key(MYKEY_L2,    ev.value); }
+                     if (ev.code == l2)      { set_key(MYKEY_R2,    ev.value); }
  #endif
-+
+ #endif
+ 
 +#if defined(RG35XXH)
-+                    if (ev.code == L3)      { set_key(MYKEY_L3,    ev.value); }
-+                    if (ev.code == R3)      { set_key(MYKEY_R3,    ev.value); }
-+#endif
++                    if (ev.code == input[MYKEY_L3])      { set_key(MYKEY_L3,    ev.value);}
++                    if (ev.code == input[MYKEY_R3])      { set_key(MYKEY_R3,    ev.value);}
++					if (input[MYKEY_QSAVE] != -1 && ev.code == input[MYKEY_QSAVE])      { set_key(MYKEY_QSAVE,    ev.value); }
++					if (input[MYKEY_QLOAD] != -1 && ev.code == input[MYKEY_QLOAD])      { set_key(MYKEY_QLOAD,    ev.value); }
++					if (input[MYKEY_EXIT] != -1 && ev.code == input[MYKEY_EXIT])      { set_key(MYKEY_EXIT,    ev.value); }
++	
++                    if (ev.code == input[MYKEY_START])      { set_key(MYKEY_START,    ev.value); }
++                    if (ev.code == input[MYKEY_SELECT])      { set_key(MYKEY_SELECT,    ev.value); }
++                    if (ev.code == input[MYKEY_MENU])      { set_key(MYKEY_MENU,    ev.value); }					
 +					
++#endif
++
  #ifdef QX1000
                      if (ev.code == L10)     { set_key(MYKEY_L1,    ev.value); }
                      if (ev.code == R10)     { set_key(MYKEY_R1,    ev.value); }
-@@ -454,14 +809,14 @@ int EventUpdate(void *data)
+ #endif
++
++#ifndef RG35XXH
+                     switch (ev.code) {
+                     case START:  set_key(MYKEY_START, ev.value);  break;
+                     case SELECT: set_key(MYKEY_SELECT, ev.value); break;
+@@ -989,14 +1428,21 @@ int EventUpdate(void *data)
                          break;
  #endif
                      }
--
-+				}
-                     hotkey_mask = 1;
-                     if (nds.menu.enable || nds.menu.drastic.enable) {
-                         hotkey_mask = 0;
-                     }
- 
-                     if (hotkey_mask && hit_hotkey(MYKEY_UP)) {
--#if defined(MMIYOO) || defined(QX1000) || defined(A30)
-+#if defined(MMIYOO) || defined(QX1000) || defined(A30) || defined(RG35XXH)
-                         if (evt.mode == MMIYOO_MOUSE_MODE) {
-                             switch (nds.dis_mode) {
-                             case NDS_DIS_MODE_VH_T0:
-@@ -479,7 +834,7 @@ int EventUpdate(void *data)
-                     }
- 
-                     if (hotkey_mask && hit_hotkey(MYKEY_DOWN)) {
--#if defined(MMIYOO) || defined(QX1000) || defined(A30)
-+#if defined(MMIYOO) || defined(QX1000) || defined(A30) || defined(RG35XXH)
-                         if (evt.mode == MMIYOO_MOUSE_MODE) {
-                             switch (nds.dis_mode) {
-                             case NDS_DIS_MODE_VH_T0:
-@@ -497,7 +852,7 @@ int EventUpdate(void *data)
-                     }
- 
-                     if (hotkey_mask && hit_hotkey(MYKEY_LEFT)) {
--#if defined(MMIYOO) || defined(A30)
-+#if defined(MMIYOO) || defined(A30) || defined(RG35XXH)
-                         if (nds.hres_mode == 0) {
-                             if (nds.dis_mode > 0) {
-                                 nds.dis_mode-= 1;
-@@ -522,7 +877,7 @@ int EventUpdate(void *data)
-                     }
- 
-                     if (hotkey_mask && hit_hotkey(MYKEY_RIGHT)) {
--#if defined(MMIYOO) || defined(A30)
-+#if defined(MMIYOO) || defined(A30) || defined(RG35XXH)
-                         if (nds.hres_mode == 0) {
-                             if (nds.dis_mode < NDS_DIS_MODE_LAST) {
-                                 nds.dis_mode+= 1;
-@@ -540,7 +895,7 @@ int EventUpdate(void *data)
-                     }
- 
-                     if (hotkey_mask && hit_hotkey(MYKEY_A)) {
--#if defined(MMIYOO) || defined(A30)
-+#if defined(MMIYOO) || defined(A30) || defined(RG35XXH)
-                         if ((evt.mode == MMIYOO_KEYPAD_MODE) && (nds.hres_mode == 0)) {
-                             uint32_t tmp = nds.alt_mode;
-                             nds.alt_mode = nds.dis_mode;
-@@ -640,7 +995,7 @@ int EventUpdate(void *data)
-                     }
- 
-                     if (hotkey_mask && hit_hotkey(MYKEY_START)) {
--#if defined(MMIYOO) || defined(QX1000) || defined(A30)
-+#if defined(MMIYOO) || defined(QX1000) || defined(A30) || defined(RG35XXH)
-                         if (nds.menu.enable == 0) {
- #ifdef QX1000
-                             update_wayland_res(640, 480);
-@@ -659,7 +1014,7 @@ int EventUpdate(void *data)
-                         set_key(MYKEY_START, 0);
-                     }
- 
--#if defined(MMIYOO) || defined(A30)
-+#if defined(MMIYOO) || defined(A30) || defined(RG35XXH)
-                     if (nds.hotkey == HOTKEY_BIND_MENU) {
-                         if (hotkey_mask && hit_hotkey(MYKEY_SELECT)) {
-                             set_key(MYKEY_MENU_ONION, 1);
-@@ -676,7 +1031,7 @@ int EventUpdate(void *data)
- #endif
- 
-                     if (hotkey_mask && hit_hotkey(MYKEY_R1)) {
--#if defined(MMIYOO) || defined(A30)
-+#if defined(MMIYOO) || defined(A30) || defined(RG35XXH)
-                         static int pre_ff = 0;
- 
-                         if (pre_ff != nds.fast_forward) {
-@@ -693,7 +1048,7 @@ int EventUpdate(void *data)
-                     }
- 
-                     if (hotkey_mask && hit_hotkey(MYKEY_L1)) {
--#if defined(MMIYOO) || defined(A30)
-+#if defined(MMIYOO) || defined(A30) || defined(RG35XXH)
-                         set_key(MYKEY_EXIT, 1);
- #endif
- 
-@@ -703,7 +1058,7 @@ int EventUpdate(void *data)
-                         set_key(MYKEY_L1, 0);
-                     }
- 
--#if defined(MMIYOO) || defined(QX1000) || defined(A30)
-+#if defined(MMIYOO) || defined(QX1000) || defined(A30) || defined(RG35XXH)
-                     if (hotkey_mask && hit_hotkey(MYKEY_R2)) {
-                         set_key(MYKEY_QSAVE, 1);
-                         set_key(MYKEY_R2, 0);
-@@ -730,7 +1085,6 @@ int EventUpdate(void *data)
-                 if (!(evt.keypad.bitmaps & 0x0f)) {
-                     nds.pen.pre_ticks = clock();
++#endif
                  }
+             }
+ #if defined(A30) && USE_MYJOY
+             r |= update_joystick();
+ #endif
++
++#ifndef RG35XXH
+             if (r > 0) {
+                 handle_hotkey();
 -            }
++#endif
++            
++#ifdef RG35XXH
++            handle_hotkey();
++#endif
          }
          SDL_SemPost(event_sem);
          usleep(1000000 / 60);
-@@ -741,7 +1095,7 @@ int EventUpdate(void *data)
+@@ -1007,7 +1453,7 @@ int EventUpdate(void *data)
  
  void MMIYOO_EventInit(void)
  {
@@ -881,8 +1042,28 @@ index 9543922..7fa1370 100644
      DIR *dir = NULL;
  #endif
  
-@@ -830,7 +1184,7 @@ void MMIYOO_PumpEvents(_THIS)
+@@ -1039,7 +1485,14 @@ void MMIYOO_EventInit(void)
+ #endif
+     evt.mode = MMIYOO_KEYPAD_MODE;
+ 
+-    event_fd = open(INPUT_DEV, O_RDONLY | O_NONBLOCK | O_CLOEXEC);
++	if (strlen(nds.input.dev) > 0) {
++		printf(PREFIX"nds.input.dev=%s\n", nds.input.dev);
++		event_fd = open(nds.input.dev, O_RDONLY | O_NONBLOCK | O_CLOEXEC);
++	}
++	else {
++		event_fd = open(INPUT_DEV, O_RDONLY | O_NONBLOCK | O_CLOEXEC);
++	}
++	
+     if(event_fd < 0){
+         printf(PREFIX"Failed to open event0\n");
+     }
+@@ -1094,9 +1547,11 @@ void MMIYOO_EventDeinit(void)
+ 
+ void MMIYOO_PumpEvents(_THIS)
  {
++	//SDL_EVDEV_Poll();
++
      SDL_SemWait(event_sem);
      if (nds.menu.enable) {
 -#if defined(MMIYOO) || defined(QX1000) || defined(A30)
@@ -890,7 +1071,7 @@ index 9543922..7fa1370 100644
          int cc = 0;
          uint32_t bit = 0;
          uint32_t changed = pre_keypad_bitmaps ^ evt.keypad.bitmaps;
-@@ -856,7 +1210,7 @@ void MMIYOO_PumpEvents(_THIS)
+@@ -1122,7 +1577,7 @@ void MMIYOO_PumpEvents(_THIS)
                  for (cc=0; cc<=MYKEY_LAST_BITS; cc++) {
                      bit = 1 << cc;
  
@@ -899,7 +1080,7 @@ index 9543922..7fa1370 100644
                      if ((nds.hotkey == HOTKEY_BIND_MENU) && (cc == MYKEY_MENU)) {
                          continue;
                      }
-@@ -872,6 +1226,12 @@ void MMIYOO_PumpEvents(_THIS)
+@@ -1138,6 +1593,12 @@ void MMIYOO_PumpEvents(_THIS)
                          SDL_SendKeyboardKey((evt.keypad.bitmaps & bit) ? SDL_PRESSED : SDL_RELEASED, SDL_GetScancodeFromKey(code[cc]));
                      }
                  }
@@ -912,7 +1093,7 @@ index 9543922..7fa1370 100644
  
  #if defined(TRIMUI) || defined(PANDORA)
                  if (pre_keypad_bitmaps & (1 << MYKEY_R2)) {
-@@ -914,6 +1274,12 @@ void MMIYOO_PumpEvents(_THIS)
+@@ -1180,6 +1641,12 @@ void MMIYOO_PumpEvents(_THIS)
                      SDL_SendMouseButton(vid.window, 0, (evt.keypad.bitmaps & (1 << MYKEY_A)) ? SDL_PRESSED : SDL_RELEASED, SDL_BUTTON_LEFT);
                  }
  
@@ -925,33 +1106,29 @@ index 9543922..7fa1370 100644
                  for (cc=0; cc<=MYKEY_LAST_BITS; cc++) {
                      bit = 1 << cc;
                      if ((cc == MYKEY_FF) || (cc == MYKEY_QSAVE) || (cc == MYKEY_QLOAD) || (cc == MYKEY_EXIT) || (cc == MYKEY_R2)) {
-@@ -965,15 +1331,16 @@ void MMIYOO_PumpEvents(_THIS)
-                     evt.mouse.x+= get_move_interval(0);
-                 }
-             }
-+			
-             check_mouse_pos();
- 
+@@ -1236,10 +1703,15 @@ void MMIYOO_PumpEvents(_THIS)
              if(updated){
                  int x = 0;
                  int y = 0;
 -
--                x = (evt.mouse.x * 160) / evt.mouse.maxx;
--                y = (evt.mouse.y * 120) / evt.mouse.maxy;
--                SDL_SendMouseMotion(vid.window, 0, 0, x + 80, y + (nds.pen.pos ? 120 : 0));
-+	   
++#ifdef RG35XXH
 +                x = (evt.mouse.x * 320) / evt.mouse.maxx;
 +                y = (evt.mouse.y * 240) / evt.mouse.maxy;
 +               SDL_SendMouseMotion(vid.window, 0, 0, x + 160, y + (nds.pen.pos ? 240 : 0));
++#else
+                 x = (evt.mouse.x * 160) / evt.mouse.maxx;
+                 y = (evt.mouse.y * 120) / evt.mouse.maxy;
+                 SDL_SendMouseMotion(vid.window, 0, 0, x + 80, y + (nds.pen.pos ? 120 : 0));
++#endif
              }
  
  #if defined(TRIMUI) || defined(PANDORA)
-@@ -999,6 +1366,48 @@ void MMIYOO_PumpEvents(_THIS)
+@@ -1265,6 +1737,48 @@ void MMIYOO_PumpEvents(_THIS)
              pre_keypad_bitmaps = evt.keypad.bitmaps;
          }
      }
-+	
 +
++#ifdef RG35XXH
 +	{
 +		// check left analog stick	
 +		 int updated = 0;
@@ -991,24 +1168,92 @@ index 9543922..7fa1370 100644
 +		   SDL_SendMouseMotion(vid.window, 0, 0, x + 160, y + (nds.pen.pos ? 240 : 0));
 +		}	
 +	}
-+	
++#endif
      SDL_SemPost(event_sem);
  }
  
 diff --git a/sdl2/src/video/mmiyoo/SDL_event_mmiyoo.h b/sdl2/src/video/mmiyoo/SDL_event_mmiyoo.h
-index 86a7c03..cb03399 100644
+index 86a7c03..d8a22c7 100644
 --- a/sdl2/src/video/mmiyoo/SDL_event_mmiyoo.h
 +++ b/sdl2/src/video/mmiyoo/SDL_event_mmiyoo.h
-@@ -51,6 +51,8 @@
- #define MYKEY_POWER         20
- #define MYKEY_VOLUP         21
- #define MYKEY_VOLDOWN       22
-+#define MYKEY_L3       23
-+#define MYKEY_R3       24
+@@ -26,8 +26,38 @@
+ #define __SDL_EVENT_MMIYOO_H__
  
- #define MYKEY_LAST_BITS     19 // ignore POWER, VOL-, VOL+ keys
+ #include "../../SDL_internal.h"
+-#include "SDL_event_mmiyoo.h"
++//#include "SDL_event_mmiyoo.h"
++#ifdef RG35XXH
++enum {
++    MYKEY_UP = 0,
++	MYKEY_DOWN,
++    MYKEY_LEFT,
++    MYKEY_RIGHT,
++    MYKEY_A,
++    MYKEY_B,
++    MYKEY_X,
++    MYKEY_Y,
++    MYKEY_L1,
++    MYKEY_R1,
++    MYKEY_L2,
++    MYKEY_R2,
++    MYKEY_L3,
++    MYKEY_R3,	
++    MYKEY_SELECT,
++    MYKEY_START,
++    MYKEY_MENU,
++    MYKEY_QSAVE,
++    MYKEY_QLOAD,
++    MYKEY_FF,
++    MYKEY_EXIT,
++    MYKEY_MENU_ONION,
  
-@@ -70,6 +72,13 @@ typedef struct _MMIYOO_EventInfo {
++	NUM_OF_MYKEY
++};
++
++#define MYKEY_LAST_BITS     21 // ignore POWER, VOL-, VOL+ keys
++
++#else
+ #define MYKEY_UP            0
+ #define MYKEY_DOWN          1
+ #define MYKEY_LEFT          2
+@@ -40,19 +70,23 @@
+ #define MYKEY_R1            9
+ #define MYKEY_L2            10
+ #define MYKEY_R2            11
+-#define MYKEY_SELECT        12
+-#define MYKEY_START         13
+-#define MYKEY_MENU          14
+-#define MYKEY_QSAVE         15
+-#define MYKEY_QLOAD         16
+-#define MYKEY_FF            17
+-#define MYKEY_EXIT          18
+-#define MYKEY_MENU_ONION    19
+-#define MYKEY_POWER         20
+-#define MYKEY_VOLUP         21
+-#define MYKEY_VOLDOWN       22
+-
+-#define MYKEY_LAST_BITS     19 // ignore POWER, VOL-, VOL+ keys
++#define MYKEY_L3       12
++#define MYKEY_R3       13
++#define MYKEY_SELECT        14
++#define MYKEY_START         15
++#define MYKEY_MENU          16
++#define MYKEY_QSAVE         17
++#define MYKEY_QLOAD         18
++#define MYKEY_FF            19
++#define MYKEY_EXIT          20
++#define MYKEY_MENU_ONION    21
++#define MYKEY_POWER         22
++#define MYKEY_VOLUP         23
++#define MYKEY_VOLDOWN       24
++
++
++#define MYKEY_LAST_BITS     21// ignore POWER, VOL-, VOL+ keys
++#endif
+ 
+ #define MMIYOO_KEYPAD_MODE 0
+ #define MMIYOO_MOUSE_MODE  1
+@@ -70,6 +104,13 @@ typedef struct _MMIYOO_EventInfo {
      } mouse;
  
      int mode;
@@ -1023,10 +1268,10 @@ index 86a7c03..cb03399 100644
  
  extern void MMIYOO_EventInit(void);
 diff --git a/sdl2/src/video/mmiyoo/SDL_video_mmiyoo.c b/sdl2/src/video/mmiyoo/SDL_video_mmiyoo.c
-index e9ae232..42df8e7 100644
+index 9a9967d..34d037e 100644
 --- a/sdl2/src/video/mmiyoo/SDL_video_mmiyoo.c
 +++ b/sdl2/src/video/mmiyoo/SDL_video_mmiyoo.c
-@@ -90,6 +90,10 @@ static int is_running = 0;
+@@ -85,6 +85,10 @@ static volatile int is_running = 0;
  static int need_reload_bg = RELOAD_BG_COUNT;
  static SDL_Surface *cvt = NULL;
  
@@ -1035,9 +1280,100 @@ index e9ae232..42df8e7 100644
 +          Uint32 *dst, int dst_w, int dst_h, int dst_pitch);
 +		  
  extern MMIYOO_EventInfo evt;
- extern EGLConfig eglConfig;
- extern EGLDisplay eglDisplay;
-@@ -559,7 +563,7 @@ static int draw_drastic_menu_main(void)
+ 
+ static int MMIYOO_VideoInit(_THIS);
+@@ -104,7 +108,7 @@ int need_restore = 0;
+ int pre_dismode = 0;
+ #endif
+ 
+-#ifdef A30
++#if defined(A30) || defined(RG35XXH_GL)
+ GLfloat bgVertices[] = {
+    -1.0f,  1.0f,  0.0f,  0.0f,  0.0f,
+    -1.0f, -1.0f,  0.0f,  0.0f,  1.0f,
+@@ -120,7 +124,18 @@ GLfloat vVertices[] = {
+ };
+ GLushort indices[] = {0, 1, 2, 0, 2, 3};
+ 
++#ifdef RG35XXH_GL
+ const char *vShaderSrc =
++    "attribute vec4 a_position;   \n"
++    "attribute vec2 a_texCoord;   \n"
++    "varying vec2 v_texCoord;     \n"
++    "void main()                  \n"
++    "{                            \n"
++    "   gl_Position = a_position; \n"
++    "   v_texCoord = a_texCoord;  \n"
++    "}                            \n";
++	
++const char *vShaderDegree90Src =
+     "attribute vec4 a_position;   \n"
+     "attribute vec2 a_texCoord;   \n"
+     "attribute float a_alpha;     \n"
+@@ -132,6 +147,46 @@ const char *vShaderSrc =
+     "    gl_Position = a_position * rot; \n"
+     "    v_texCoord = a_texCoord;        \n"
+     "}                                   \n";
++	
++const char *vShaderDegree180Src =
++    "attribute vec4 a_position;   \n"
++    "attribute vec2 a_texCoord;   \n"
++    "attribute float a_alpha;     \n"
++    "varying vec2 v_texCoord;     \n"
++    "void main()                  \n"
++    "{                            \n"
++    "    const float angle = 180.0 * (3.1415 * 2.0) / 360.0;                                                                            \n"
++    "    mat4 rot = mat4(cos(angle), -sin(angle), 0.0, 0.0, sin(angle), cos(angle), 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0); \n"
++    "    gl_Position = a_position * rot; \n"
++    "    v_texCoord = a_texCoord;        \n"
++    "}                                   \n";
++	
++const char *vShaderDegree270Src =
++    "attribute vec4 a_position;   \n"
++    "attribute vec2 a_texCoord;   \n"
++    "attribute float a_alpha;     \n"
++    "varying vec2 v_texCoord;     \n"
++    "void main()                  \n"
++    "{                            \n"
++    "    const float angle = 270.0 * (3.1415 * 2.0) / 360.0;                                                                            \n"
++    "    mat4 rot = mat4(cos(angle), -sin(angle), 0.0, 0.0, sin(angle), cos(angle), 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0); \n"
++    "    gl_Position = a_position * rot; \n"
++    "    v_texCoord = a_texCoord;        \n"
++    "}                                   \n";
++#else
++const char *vShaderSrc =
++    "attribute vec4 a_position;   \n"
++    "attribute vec2 a_texCoord;   \n"
++    "attribute float a_alpha;     \n"
++    "varying vec2 v_texCoord;     \n"
++    "void main()                  \n"
++    "{                            \n"
++    "    const float angle = 90.0 * (3.1415 * 2.0) / 360.0;                                                                            \n"
++    "    mat4 rot = mat4(cos(angle), -sin(angle), 0.0, 0.0, sin(angle), cos(angle), 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0); \n"
++    "    gl_Position = a_position * rot; \n"
++    "    v_texCoord = a_texCoord;        \n"
++    "}                                   \n";
++#endif
+     
+ const char *fShaderSrc =
+     "precision mediump float;                                  \n"
+@@ -153,6 +208,7 @@ const char *fShaderSrc =
+     "    }                                                     \n"
+     "}                                                         \n";
+ 
++#ifndef RG35XXH_GL
+ static struct _cpu_clock cpu_clock[] = {
+     {96, 0x80000110},
+     {144, 0x80000120},
+@@ -224,6 +280,7 @@ static struct _cpu_clock cpu_clock[] = {
+ 
+ static int max_cpu_item = sizeof(cpu_clock) / sizeof(struct _cpu_clock);
+ #endif
++#endif
+ 
+ #ifdef QX1000
+ static struct _wayland wl = {0};
+@@ -685,7 +742,7 @@ static int draw_drastic_menu_main(void)
          p = &drastic_menu.item[cc];
          if (p->y == 201) {
              draw = 1;
@@ -1046,7 +1382,7 @@ index e9ae232..42df8e7 100644
              sprintf(buf, "NDS %s", &p->msg[8]);
  #else
              sprintf(buf, "%s", &p->msg[8]);
-@@ -643,7 +647,7 @@ static int draw_drastic_menu_main(void)
+@@ -769,7 +826,7 @@ static int draw_drastic_menu_main(void)
      }
  
      y = 10;
@@ -1055,7 +1391,7 @@ index e9ae232..42df8e7 100644
      sprintf(buf, "Rel "NDS_VER" Res %s", "640*480");
  #endif
  
-@@ -692,7 +696,7 @@ static int draw_drastic_menu_main(void)
+@@ -818,7 +875,7 @@ static int draw_drastic_menu_main(void)
              _func((void*)VAR_SYSTEM, slot, top, bottom, 1);
              t = SDL_CreateRGBSurfaceFrom(top, NDS_W, NDS_H, 16, NDS_W * 2, 0, 0, 0, 0);
              if (t) {
@@ -1064,7 +1400,7 @@ index e9ae232..42df8e7 100644
                  rt.x = FB_W - (NDS_W + (nds.enable_752x560 ? 30 : 10));
                  rt.y = nds.enable_752x560 ? h - 20 : 50;
                  rt.w = NDS_W;
-@@ -704,7 +708,7 @@ static int draw_drastic_menu_main(void)
+@@ -830,7 +887,7 @@ static int draw_drastic_menu_main(void)
  
              t = SDL_CreateRGBSurfaceFrom(bottom, NDS_W, NDS_H, 16, NDS_W * 2, 0, 0, 0, 0);
              if (t) {
@@ -1073,9 +1409,23 @@ index e9ae232..42df8e7 100644
                  rt.x = FB_W - (NDS_W + (nds.enable_752x560 ? 30 : 10));
                  rt.y = nds.enable_752x560 ? (h + NDS_H) - 20 : 50 + NDS_H;
                  rt.w = NDS_W;
-@@ -1401,12 +1405,16 @@ static int process_screen(void)
+@@ -1501,7 +1558,7 @@ int process_drastic_menu(void)
+         memset(&drastic_menu, 0, sizeof(drastic_menu));
+         return 0;
+     }
+-#ifdef A30
++#if defined(A30) || defined(RG35XXH_GL)
+     nds.update_menu = 1;
+ #else
+     GFX_Copy(-1, nds.menu.drastic.main->pixels, nds.menu.drastic.main->clip_rect, nds.menu.drastic.main->clip_rect, nds.menu.drastic.main->pitch, 0, E_MI_GFX_ROTATE_180);
+@@ -1531,16 +1588,20 @@ static int process_screen(void)
      int screen_cnt = 0;
      char buf[MAX_PATH] = {0};
+ 
+-#if defined(MMIYOO) || defined(A30)
++#if defined(MMIYOO) || defined(A30) || defined(RG35XXH_GL)
+     int cur_sel = gfx.lcd.cur_sel ^ 1;
+ #endif
  
 -#if defined(MMIYOO) || defined(PANDORA) || defined(QX1000) || defined(A30)
 +#if defined(MMIYOO) || defined(PANDORA) || defined(QX1000) || defined(A30) || defined(RG35XXH)
@@ -1088,14 +1438,25 @@ index e9ae232..42df8e7 100644
 +    vid.window = (SDL_Window *)(*((uint32_t *)VAR_SDL_SCREEN_WINDOW));
 +#endif
 +
- #ifdef A30
-     vid.window = (SDL_Window *)(*((uint32_t *)VAR_SDL_SCREEN_WINDOW));
-     vid.renderer = (SDL_Renderer *)(*((uint32_t *)VAR_SDL_SCREEN_RENDERER));
-@@ -1588,6 +1596,138 @@ static int process_screen(void)
- #elif defined(QX1000)
+     if (nds.auto_state > 0) {
+         if (need_loadstate > 0) {
+             need_loadstate-= 1;
+@@ -1669,7 +1730,7 @@ static int process_screen(void)
+             *((uint8_t *)VAR_SDL_SCREEN1_HRES_MODE):
+             *((uint8_t *)VAR_SDL_SCREEN0_HRES_MODE);
+ 
+-#if defined(MMIYOO) || defined(A30)
++#if defined(MMIYOO) || defined(A30) || defined(RG35XXH_GL)
+         nds.screen.pixels[idx] = gfx.lcd.virAddr[cur_sel][idx];
+ #else
+         nds.screen.pixels[idx] = (idx == 0) ?
+@@ -1713,7 +1774,140 @@ static int process_screen(void)
+ #if defined(QX1000)
  #elif defined(TRIMUI)
  #elif defined(PANDORA)
-+#elif defined(RG35XXH)
+-#elif defined(MMIYOO) || defined(A30)
++#elif defined(RG35XXH) && !defined(RG35XXH_GL) //trngaje
++
 +       switch (nds.dis_mode) {
 +        case NDS_DIS_MODE_VH_T0:
 +            if (screen0) {
@@ -1227,29 +1588,66 @@ index e9ae232..42df8e7 100644
 +            drt.h = FB_H;
 +            break;
 +        }
- #elif defined(MMIYOO)
++#elif defined(MMIYOO) || defined(A30) || defined(RG35XXH_GL)
          switch (nds.dis_mode) {
          case NDS_DIS_MODE_VH_T0:
-@@ -1757,8 +1897,11 @@ static int process_screen(void)
+             if (screen1) {
+@@ -1882,16 +2076,31 @@ static int process_screen(void)
          return 0;
  #endif
  
--        if ((evt.mode == MMIYOO_MOUSE_MODE) && show_pen) {
+-#ifdef A30
++#if defined(A30) || defined(RG35XXH_GL)
+         if (rotate == E_MI_GFX_ROTATE_180) {
+             drt.y = (DEF_FB_H - drt.y) - drt.h;
+             drt.x = (DEF_FB_W - drt.x) - drt.w;
+         }
++#ifdef RG35XXH_GL
++        else if (rotate == E_MI_GFX_ROTATE_270) {
++#else        
+         else if (rotate == E_MI_GFX_ROTATE_90) {
++#endif
+             drt.x = (drt.x == 0) ? 320 : 0;
+         }
+-
++#if defined(RG35XXH)
 +        if ((evt.mode == MMIYOO_MOUSE_MODE || evt.pen_display_cnt > 0) && show_pen) {
-             draw_pen(nds.screen.pixels[idx], srt.w, nds.screen.pitch[idx]);
-+			if (evt.pen_display_cnt > 0) {
-+				evt.pen_display_cnt--;
-+			}
++            if (evt.pen_display_cnt > 0) {
++                evt.pen_display_cnt--;
++            }  
++#else
+         if (show_pen && ((evt.mode == MMIYOO_MOUSE_MODE) || (nds.joy.show_cnt && (nds.joy.mode == MYJOY_MODE_MOUSE)))) {
++#endif
++#elif defined(RG35XXH)
++        if ((evt.mode == MMIYOO_MOUSE_MODE || evt.pen_display_cnt > 0) && show_pen) {
++            if (evt.pen_display_cnt > 0) {
++                evt.pen_display_cnt--;
++            }           
+ #else
+         if (show_pen && (evt.mode == MMIYOO_MOUSE_MODE)) {
+ #endif
+@@ -1904,7 +2113,7 @@ static int process_screen(void)
+ #endif
          }
  
-         if (need_update) {
-@@ -1768,7 +1911,61 @@ static int process_screen(void)
+-#ifdef A30
++#if defined(A30) || defined(RG35XXH_GL)
+         if ((idx == 0) && (nds.alpha.border > 0) && ((nds.dis_mode == NDS_DIS_MODE_VH_T0) || (nds.dis_mode == NDS_DIS_MODE_VH_T1))) {
+             int c0 = 0;
+             uint32_t *p0 = NULL;
+@@ -1945,20 +2154,73 @@ static int process_screen(void)
+             MI_SYS_FlushInvCache(nds.screen.pixels[idx], nds.screen.pitch[idx] * srt.h);
+ #endif
  
-             GFX_Copy(nds.screen.pixels[idx], srt, drt, nds.screen.pitch[idx], 0, rotate);
+-#ifdef A30
++#if defined(A30) || defined(RG35XXH_GL)
+             GFX_Copy(idx, nds.screen.pixels[idx], srt, drt, nds.screen.pitch[idx], 0, rotate);
+ #else
+             GFX_Copy(-1, nds.screen.pixels[idx], srt, drt, nds.screen.pitch[idx], 0, rotate);
+ #endif
  
 -#if defined(MMIYOO) || defined(A30)
-+
-+#ifdef RG35XXH
++#if defined(RG35XXH) && ! defined(RG35XXH_GL)
 +            switch (nds.dis_mode) {
 +            case NDS_DIS_MODE_VH_T0:
 +                drt.y = 0;
@@ -1274,7 +1672,7 @@ index e9ae232..42df8e7 100644
 +		    drt.y = 0;
 +		    break;
 +		}			
-+                GFX_Copy(nds.screen.pixels[1], srt, drt, nds.screen.pitch[1], 1, rotate);
++                GFX_Copy(-1, nds.screen.pixels[1], srt, drt, nds.screen.pitch[1], 1, rotate);
 +                break;
 +            case NDS_DIS_MODE_VH_T1:
 +                drt.y = 0;
@@ -1299,14 +1697,127 @@ index e9ae232..42df8e7 100644
 +		    drt.y = 0;
 +		    break;
 +		}			
-+                GFX_Copy(nds.screen.pixels[1], srt, drt, nds.screen.pitch[1], 1, rotate);
++                GFX_Copy(-1, nds.screen.pixels[1], srt, drt, nds.screen.pitch[1], 1, rotate);
 +                break;
 +            }
-+#elif defined(MMIYOO) || defined(A30)
++#elif defined(MMIYOO) || defined(A30) || defined(RG35XXH_GL)
              switch (nds.dis_mode) {
              case NDS_DIS_MODE_VH_T0:
                  drt.x = 0;
-@@ -2248,7 +2445,7 @@ static int read_config(void)
+                 drt.y = 0;
+                 drt.w = 160;
+                 drt.h = 120;
+-#ifdef A30
++#if defined(A30) || defined(RG35XXH_GL)
+                 switch (nds.alpha.pos) {
+                 case 0:
+                     drt.x = DEF_FB_W - drt.w;
+@@ -1987,7 +2249,7 @@ static int process_screen(void)
+                 drt.y = 0;
+                 drt.w = NDS_W;
+                 drt.h = NDS_H;
+-#ifdef A30
++#if defined(A30) || defined(RG35XXH)
+                 switch (nds.alpha.pos) {
+                 case 0:
+                     drt.x = DEF_FB_W - drt.w;
+@@ -2063,11 +2325,11 @@ void sdl_update_screen(void)
+         prepare_time -= 1;
+     }
+     else if (nds.update_screen == 0) {
+-#if defined(MMIYOO) || defined(A30)
++#if defined(MMIYOO) || defined(A30) || defined(RG35XXH_GL)
+         gfx.lcd.cur_sel ^= 1;
+         *((uint32_t *)VAR_SDL_SCREEN0_PIXELS) = (uint32_t)gfx.lcd.virAddr[gfx.lcd.cur_sel][0];
+         *((uint32_t *)VAR_SDL_SCREEN1_PIXELS) = (uint32_t)gfx.lcd.virAddr[gfx.lcd.cur_sel][1];
+-#ifdef A30
++#if defined(A30) || defined(RG35XXH_GL)
+         nds.menu.drastic.enable = 0;
+ #endif
+ #endif
+@@ -2184,7 +2446,7 @@ static void strip_newline(char *p)
+ 
+ static void *video_handler(void *threadid)
+ {
+-#ifdef A30
++#if defined(A30) || defined(RG35XXH_GL)
+     EGLint egl_major = 0;
+     EGLint egl_minor = 0;
+     EGLint num_configs = 0;
+@@ -2214,7 +2476,20 @@ static void *video_handler(void *threadid)
+     eglMakeCurrent(vid.eglDisplay, vid.eglSurface, vid.eglSurface, vid.eglContext);
+   
+     vid.vShader = glCreateShader(GL_VERTEX_SHADER);
+-    glShaderSource(vid.vShader, 1, &vShaderSrc, NULL);
++
++#ifdef RG35XXH_GL	
++	if (nds.display.rotate == 90)
++		 glShaderSource(vid.vShader, 1, &vShaderDegree90Src, NULL);
++	else if (nds.display.rotate == 180)
++		 glShaderSource(vid.vShader, 1, &vShaderDegree180Src, NULL);
++	else if (nds.display.rotate == 270)
++		 glShaderSource(vid.vShader, 1, &vShaderDegree270Src, NULL);
++	else
++		glShaderSource(vid.vShader, 1, &vShaderSrc, NULL);
++#else
++	glShaderSource(vid.vShader, 1, &vShaderSrc, NULL);
++#endif
++
+     glCompileShader(vid.vShader);
+   
+     vid.fShader = glCreateShader(GL_FRAGMENT_SHADER);
+@@ -2235,7 +2510,14 @@ static void *video_handler(void *threadid)
+ 
+     glGenTextures(TEX_MAX, vid.texID);
+ 
++#ifdef RG35XXH_GL
++	if (nds.display.rotate == 90 || nds.display.rotate == 270)
++		glViewport(0, 0, DEF_FB_H, DEF_FB_W);
++	else 
++		glViewport(0, 0, DEF_FB_W, DEF_FB_H);
++#else
+     glViewport(0, 0, DEF_FB_H, DEF_FB_W);
++#endif
+     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+     glClear(GL_COLOR_BUFFER_BIT);
+ 
+@@ -2256,7 +2538,7 @@ static void *video_handler(void *threadid)
+ #endif
+ 
+     while (is_running) {
+-#ifdef A30
++#if defined(A30) || defined(RG35XXH_GL)
+         if (nds.menu.enable) {
+             if (nds.update_menu) {
+                 nds.update_menu = 0;
+@@ -2284,7 +2566,7 @@ static void *video_handler(void *threadid)
+         }
+     }
+ 
+-#ifdef A30
++#if defined(A30) || defined(RG35XXH_GL)
+     glDeleteTextures(TEX_MAX, vid.texID);
+     eglMakeCurrent(vid.eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+     eglDestroyContext(vid.eglDisplay, vid.eglContext);
+@@ -2397,6 +2679,17 @@ static int read_config(void)
+     struct json_object *jval = NULL;
+     struct json_object *jfile = NULL;
+ 
++#ifdef RG35XXH
++	const char mykey_name[NUM_OF_MYKEY][20]= {
++        "up", "down", "left", "right", "a", "b", "x", "y", "l1", "r1", 
++        "l2", "r2", "l3", "r3","select", "start", "menu", "qsave", "qload", "ff", 
++		"exit", "menu_onion"
++    };
++	
++	char full_mykey_name[100];
++	int i;
++#endif
++
+     jfile = json_object_from_file(nds.cfg.path);
+     if (jfile == NULL) {
+         printf(PREFIX"Failed to read settings from json file (%s)\n", nds.cfg.path);
+@@ -2565,7 +2858,7 @@ static int read_config(void)
          nds.fast_forward = json_object_get_int(jval);
      }
  
@@ -1315,7 +1826,35 @@ index e9ae232..42df8e7 100644
      json_object_object_get_ex(jfile, JSON_NDS_STATES, &jval);
      if (jval) {
          struct stat st = {0};
-@@ -2281,7 +2478,7 @@ static int read_config(void)
+@@ -2595,10 +2888,35 @@ static int read_config(void)
+             nds.menu.sel = 0;
+         }
+     }
++	
++#ifdef RG35XXH
++	json_object_object_get_ex(jfile, "input_dev", &jval);
++	if (jval) {
++        const char *dev = json_object_get_string(jval);
++
++        strcpy(nds.input.dev, dev);		
++	}
++
++	for (i=0; i< NUM_OF_MYKEY; i++) {
++		sprintf(full_mykey_name, "input_%s", mykey_name[i]);
++		json_object_object_get_ex(jfile, full_mykey_name, &jval);
++		if (jval)
++			nds.input.key[i] = json_object_get_int(jval);
++		else
++			nds.input.key[i] =  -1; // not defined
++	}
++	
++	json_object_object_get_ex(jfile, "display_rotate", &jval);
++	if (jval)
++		nds.display.rotate = json_object_get_int(jval);
++	else 
++		nds.display.rotate = 0;
++#endif	
++	
      reload_menu();
  
      reload_pen();
@@ -1324,36 +1863,62 @@ index e9ae232..42df8e7 100644
      reload_overlay();
  #endif
      json_object_put(jfile);
-@@ -2291,7 +2488,9 @@ static int read_config(void)
-     if (fd > 0) {
+@@ -2609,9 +2927,11 @@ static int read_config(void)
          close(fd);
  #endif
+ 
 +#ifndef RG35XXH
+ #ifndef A30
          snd_nds_reload_config();
+ #endif
 +#endif
+ 
  #if defined(TRIMUI) || defined(PANDORA) || defined(A30)
      }
- #endif
-@@ -2686,6 +2885,53 @@ int fb_quit(void)
+@@ -3021,6 +3341,88 @@ int fb_quit(void)
  }
  #endif
  
-+#if  defined(RG35XXH)
++#if  defined(RG35XXH) //&& !defined(RG35XXH_GL)
 +int fb_init(void)
 +{
++#ifdef RG35XXH_GL
++    gfx.fb_dev = open("/dev/fb0", O_RDWR, 0);
++    if (gfx.fb_dev < 0) {
++        printf(PREFIX"Failed to open /dev/fb0\n");
++        return -1;
++    }
++
++    if (ioctl(gfx.fb_dev, FBIOGET_VSCREENINFO, &gfx.vinfo) < 0) {
++        printf(PREFIX"Failed to get fb info\n");
++        return -1;
++    }
++
++    gfx.fb.virAddr = mmap(NULL, FB_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, gfx.fb_dev, 0);
++    if (gfx.fb.virAddr == (void *)-1) {
++        close(gfx.fb_dev);
++        gfx.fb_dev = -1;
++        printf(PREFIX"Failed to mmap fb\n");
++        return -1;
++    }
++    printf(PREFIX"FB virAddr %p (size:%d)\n", gfx.fb.virAddr, FB_SIZE);
++    memset(gfx.fb.virAddr, 0 , FB_SIZE);
++
++    gfx.vinfo.yres_virtual = gfx.vinfo.yres * 2;
++    ioctl(gfx.fb_dev, FBIOPUT_VSCREENINFO, &gfx.vinfo);
++
++#else
 +    gfx.fb_dev = open("/dev/fb0", O_RDWR);
 +    if (gfx.fb_dev < 0) {
 +        printf(PREFIX"Failed to open fb0\n");
 +        return -1;
 +    }
 +
-+#ifdef RG35XXH
 +    ioctl(gfx.fb_dev, FBIOGET_FSCREENINFO, &gfx.finfo);
 +    ioctl(gfx.fb_dev, FBIOGET_VSCREENINFO, &gfx.vinfo);
 +    gfx.vinfo.yoffset = 0;
 +    gfx.vinfo.yres_virtual = gfx.vinfo.yres * 2;
 +    ioctl(gfx.fb_dev, FBIOPUT_VSCREENINFO, &gfx.vinfo);
-+#endif
 +    
 +    gfx.hw.mem = mmap(NULL, FB_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, gfx.fb_dev, 0);
 +    if (gfx.hw.mem == (void *)-1) {
@@ -1363,24 +1928,35 @@ index e9ae232..42df8e7 100644
 +    }
 +    memset(gfx.hw.mem, 0 , FB_SIZE);
 +	
-+#ifdef RG35XXH
-+	gfx.hw.swsurface = SDL_CreateRGBSurface(SDL_SWSURFACE, FB_W, FB_H, 32, 0, 0, 0, 0);
++    gfx.hw.swsurface = SDL_CreateRGBSurface(SDL_SWSURFACE, FB_W, FB_H, 32, 0, 0, 0, 0);
 +#endif
 +    return 0;
 +}
 +
 +int fb_quit(void)
 +{
-+#ifdef RG35XXH
-+	if (gfx.hw.swsurface != NULL)
-+		SDL_FreeSurface(gfx.hw.swsurface);
-+#endif
++#ifdef RG35XXH_GL
++    if (gfx.fb.virAddr) {
++        munmap(gfx.fb.virAddr, FB_SIZE);
++        gfx.fb.virAddr = NULL;
++    }
++
++    if (gfx.fb_dev > 0) {
++        close(gfx.fb_dev);
++        gfx.fb_dev = -1;
++    }
++#else
++    if (gfx.hw.swsurface != NULL)
++        SDL_FreeSurface(gfx.hw.swsurface);
++
 +    gfx.vinfo.yoffset = 0;
 +    ioctl(gfx.fb_dev, FBIOPUT_VSCREENINFO, &gfx.vinfo);
 +    
 +    munmap(gfx.hw.mem, FB_SIZE);
 +    close(gfx.fb_dev);
 +    gfx.fb_dev = -1;
++    
++#endif
 +    return 0;
 +}
 +#endif
@@ -1388,11 +1964,65 @@ index e9ae232..42df8e7 100644
  #ifdef TRIMUI
  static int ion_alloc(int ion_fd, ion_alloc_info_t* info)
  {
-@@ -3625,6 +3871,139 @@ int GFX_Copy(const void *pixels, SDL_Rect srcrect, SDL_Rect dstrect, int pitch,
+@@ -3254,12 +3656,12 @@ int fb_init(void)
+ {
+     gfx.fb_dev = open("/dev/fb0", O_RDWR, 0);
+     if (gfx.fb_dev < 0) {
+-        printf(PREFIX"Failed to open framebuffer device\n");
++        printf(PREFIX"Failed to open /dev/fb0\n");
+         return -1;
+     }
+ 
+     if (ioctl(gfx.fb_dev, FBIOGET_VSCREENINFO, &gfx.vinfo) < 0) {
+-        printf(PREFIX"Failed to get framebuffer information\n");
++        printf(PREFIX"Failed to get fb info\n");
+         return -1;
+     }
+ 
+@@ -3267,7 +3669,7 @@ int fb_init(void)
+     if (gfx.fb.virAddr == (void *)-1) {
+         close(gfx.fb_dev);
+         gfx.fb_dev = -1;
+-        printf(PREFIX"Failed to mmap /dev/fb0\n");
++        printf(PREFIX"Failed to mmap fb\n");
+         return -1;
+     }
+     printf(PREFIX"FB virAddr %p (size:%d)\n", gfx.fb.virAddr, FB_SIZE);
+@@ -3692,10 +4094,14 @@ int draw_pen(void *pixels, int width, int pitch)
+ 
+ int GFX_Copy(int id, const void *pixels, SDL_Rect srcrect, SDL_Rect dstrect, int pitch, int alpha, int rotate)
+ {
+-#ifdef A30
++#if defined(A30) || defined(RG35XXH_GL)
+     int tex = (id >= 0) ? id : TEX_TMP;
+ 
++#ifdef RG35XXH_GL
++    if ((id != -1) && (nds.dis_mode == NDS_DIS_MODE_HH0)) {
++#else
+     if ((id != -1) && (nds.dis_mode == NDS_DIS_MODE_HH1)) {
++#endif
+         vVertices[5] = ((((float)dstrect.x) / 640.0) - 0.5) * 2.0;
+         vVertices[6] = ((((float)dstrect.y) / 480.0) - 0.5) * -2.0;
+ 
+@@ -3708,7 +4114,11 @@ int GFX_Copy(int id, const void *pixels, SDL_Rect srcrect, SDL_Rect dstrect, int
+         vVertices[0] = vVertices[15];
+         vVertices[1] = vVertices[6];
+     }
++#ifdef RG35XXH_GL
++    else if ((id != -1) && (nds.dis_mode == NDS_DIS_MODE_HH1)) {
++#else    
+     else if ((id != -1) && (nds.dis_mode == NDS_DIS_MODE_HH0)) {
++#endif
+         vVertices[15] = ((((float)dstrect.x) / 640.0) - 0.5) * 2.0;
+         vVertices[16] = ((((float)dstrect.y) / 480.0) - 0.5) * -2.0;
+ 
+@@ -4174,6 +4584,88 @@ int GFX_Copy(int id, const void *pixels, SDL_Rect srcrect, SDL_Rect dstrect, int
          }
      }
  #endif
 +#ifdef RG35XXH 
++#ifndef RG35XXH_GL
++{
 +    int x = 0;
 +    int y = 0;
 +    const uint32_t *src = pixels;
@@ -1469,71 +2099,28 @@ index e9ae232..42df8e7 100644
 +	  }
 +	}
 +
-+
++}
 +#endif
-+
-+#ifdef FUNKEYS
-+    if ((srcrect.w == NDS_W) && (srcrect.h == NDS_H)) {
-+        uint16_t *dst = (uint16_t *)gfx.hw.mem + (((FB_H - NDS_H) >> 1) * FB_W);
-+        uint16_t *src = (uint16_t *)pixels;
-+
-+        asm volatile (
-+            "1:  add %0, #16            ;"
-+            "    vldmia %0!, {q0-q7}    ;"
-+            "    vldmia %0!, {q8-q14}   ;"
-+            "    vstmia %1!, {q0-q7}    ;"
-+            "    vstmia %1!, {q8-q14}   ;"
-+            "    vldmia %0!, {q0-q7}    ;"
-+            "    vldmia %0!, {q8-q14}   ;"
-+            "    vstmia %1!, {q0-q7}    ;"
-+            "    vstmia %1!, {q8-q14}   ;"
-+            "    add %0, #16            ;"
-+            "    subs %2, #1            ;"
-+            "    bne 1b                 ;"
-+            :
-+            : "r"(src), "r"(dst), "r"(NDS_H)
-+            : "q0", "q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "q10", "q11", "q12", "q13", "q14", "memory", "cc"
-+        );
-+    }
-+    else if ((srcrect.w == FB_W) && (srcrect.h == FB_H)) {
-+        int x = 0;
-+        int y = 0;
-+        uint32_t v = 0;
-+        uint16_t *dst = (uint16_t *)gfx.hw.mem;
-+        uint32_t *src = (uint32_t *)pixels;
-+
-+        for (y = 0; y < srcrect.h; y++) {
-+            for (x = 0; x < srcrect.w; x++) {
-+                v = *src++;
-+                *dst++ = ((v & 0xf80000) >> 8) | ((v & 0xfc00) >> 5) | ((v & 0xf8) >> 3);
-+            }
-+        }
-+    }
-+    else {
-+        int x = 0;
-+        int y = 0;
-+        uint32_t v = 0;
-+        uint16_t *dst = (uint16_t *)gfx.hw.mem + (((FB_H - NDS_H) >> 1) * FB_W);
-+        uint32_t *src = (uint32_t *)pixels;
-+
-+        for (y = 0; y < srcrect.h; y++) {
-+            for (x = 0; x < srcrect.w; x++) {
-+                v = *src++;
-+                *dst++ = ((v & 0xf80000) >> 8) | ((v & 0xfc00) >> 5) | ((v & 0xf8) >> 3);
-+            }
-+            dst+= (FB_W - srcrect.w);
-+        }
-+    }
 +#endif
  
  #ifdef TRIMUI
      int x = 0;
-@@ -4359,6 +4738,19 @@ void GFX_Flip(void)
+@@ -4899,7 +5391,7 @@ void GFX_Flip(void)
+     gfx.vinfo.yoffset ^= FB_H;
+ #endif
+ 
+-#ifdef A30
++#if defined(A30) || defined(RG35XXH_GL)
+     eglSwapBuffers(vid.eglDisplay, vid.eglSurface);
+ 
+     if (nds.theme.img) {
+@@ -4924,6 +5416,21 @@ void GFX_Flip(void)
      ioctl(gfx.fb_dev, FBIO_WAITFORVSYNC, &r);
      gfx.fb.flip^= 1;
  #endif
 +
 +#ifdef RG35XXH
++#ifndef RG35XXH_GL
 +	//neon_memcpy(gfx.hw.mem, gfx.hw.swsurface->pixels, FB_W * FB_H * 4); 
 +    uint32_t *src = gfx.hw.swsurface->pixels;
 +    uint32_t *dst = (uint32_t *)gfx.hw.mem;
@@ -1545,10 +2132,20 @@ index e9ae232..42df8e7 100644
 +		}
 +	}
 +#endif
++#endif
  }
  
  int get_font_width(const char *info)
-@@ -4548,7 +4940,7 @@ int reload_menu(void)
+@@ -5046,7 +5553,7 @@ int reload_pen(void)
+         if (get_file_path(nds.pen.path, nds.pen.sel, buf, 1) == 0) {
+             t = IMG_Load(buf);
+             if (t) {
+-#ifdef A30
++#if defined(A30) || defined(RG35XXH_GL)
+                 int x = 0;
+                 int y = 0;
+                 uint32_t *p = malloc(t->pitch * t->h);
+@@ -5137,7 +5644,7 @@ int reload_menu(void)
          SDL_FreeSurface(t);
      }
  
@@ -1557,7 +2154,7 @@ index e9ae232..42df8e7 100644
      sprintf(buf, "%s/%s", folder, DRASTIC_MENU_CURSOR_FILE);
      nds.menu.drastic.cursor = IMG_Load(buf);
  #endif
-@@ -4560,7 +4952,7 @@ int reload_menu(void)
+@@ -5149,7 +5656,7 @@ int reload_menu(void)
      sprintf(buf, "%s/%s", folder, DRASTIC_MENU_YES_FILE);
      t = IMG_Load(buf);
      if (t) {
@@ -1566,7 +2163,7 @@ index e9ae232..42df8e7 100644
          SDL_Rect nrt = {0, 0, LINE_H - 2, LINE_H - 2};
  #endif
  #if defined(TRIMUI) || defined(PANDORA)
-@@ -4579,7 +4971,7 @@ int reload_menu(void)
+@@ -5168,7 +5675,7 @@ int reload_menu(void)
      sprintf(buf, "%s/%s", folder, DRASTIC_MENU_NO_FILE);
      t = IMG_Load(buf);
      if (t) {
@@ -1575,16 +2172,49 @@ index e9ae232..42df8e7 100644
          SDL_Rect nrt = {0, 0, LINE_H - 2, LINE_H - 2};
  #endif
  #if defined(TRIMUI) || defined(PANDORA)
-@@ -4608,7 +5000,7 @@ int reload_bg(void)
+@@ -5197,7 +5704,7 @@ int reload_bg(void)
      static int pre_mode = -1;
  #endif
  
--#ifdef MMIYOO
-+#if defined(MMIYOO) || defined(RG35XXH)
+-#if defined(MMIYOO) || defined(A30)
++#if defined(MMIYOO) || defined(A30) || defined(RG35XXH)
      char buf[MAX_PATH] = {0};
      SDL_Surface *t = NULL;
      SDL_Rect srt = {0, 0, IMG_W, IMG_H};
-@@ -4822,7 +5214,7 @@ int reload_bg(void)
+@@ -5274,7 +5781,13 @@ int reload_bg(void)
+                     if (t) {
+                         SDL_BlitSurface(t, NULL, nds.theme.img, NULL);
+                         SDL_FreeSurface(t);
+-#ifndef A30
++#if defined(A30) || defined(RG35XXH_GL)
++		        glBindTexture(GL_TEXTURE_2D, vid.texID[TEX_BG]);
++		        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
++		        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
++		        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
++		        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, nds.theme.img->w, nds.theme.img->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, nds.theme.img->pixels);
++#else
+                         GFX_Copy(-1, nds.theme.img->pixels, nds.theme.img->clip_rect, drt, nds.theme.img->pitch, 0, E_MI_GFX_ROTATE_180);
+ #endif
+                     }
+@@ -5286,14 +5799,14 @@ int reload_bg(void)
+         }
+         else {
+             if (nds.theme.img) {
+-#ifndef A30
+-                GFX_Copy(-1, nds.theme.img->pixels, nds.theme.img->clip_rect, drt, nds.theme.img->pitch, 0, E_MI_GFX_ROTATE_180);
+-#else
++#if defined(A30) || defined(RG35XXH_GL)
+                 glBindTexture(GL_TEXTURE_2D, vid.texID[TEX_BG]);
+                 glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, nds.theme.img->w, nds.theme.img->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, nds.theme.img->pixels);
++#else
++                GFX_Copy(-1, nds.theme.img->pixels, nds.theme.img->clip_rect, drt, nds.theme.img->pitch, 0, E_MI_GFX_ROTATE_180);
+ #endif
+             }
+         }
+@@ -5421,7 +5934,7 @@ int reload_bg(void)
      return 0;
  }
  
@@ -1593,7 +2223,7 @@ index e9ae232..42df8e7 100644
  int reload_overlay(void)
  {
      static int pre_sel = -1;
-@@ -4965,7 +5357,7 @@ VideoBootStrap MMIYOO_bootstrap = {MMIYOO_DRIVER_NAME, "MMIYOO VIDEO DRIVER", MM
+@@ -5528,7 +6041,7 @@ VideoBootStrap MMIYOO_bootstrap = {MMIYOO_DRIVER_NAME, "MMIYOO VIDEO DRIVER", MM
  
  int MMIYOO_VideoInit(_THIS)
  {
@@ -1602,29 +2232,30 @@ index e9ae232..42df8e7 100644
      FILE *fd = NULL;
      char buf[MAX_PATH] = {0};
  #endif
-@@ -4978,13 +5370,20 @@ int MMIYOO_VideoInit(_THIS)
+@@ -5541,6 +6054,14 @@ int MMIYOO_VideoInit(_THIS)
      signal(SIGTERM, sigterm_handler);
  #endif
  
--#ifdef A30
-+#if defined(A30)
-     SDL_zero(mode);
-     mode.format = SDL_PIXELFORMAT_ARGB8888;
-     mode.w = REAL_W;
-     mode.h = REAL_H;
-     mode.refresh_rate = 60;
-     SDL_AddDisplayMode(&display, &mode);
-+#elif defined(RG35XXH)
++#if defined(RG35XXH)
 +    SDL_zero(mode);
 +    mode.format = SDL_PIXELFORMAT_ARGB8888;
 +    mode.w = 640;
 +    mode.h = 480;
 +    mode.refresh_rate = 60;
 +    SDL_AddDisplayMode(&display, &mode);
- #else
++#else
      SDL_zero(mode);
      mode.format = SDL_PIXELFORMAT_RGB565;
-@@ -5194,7 +5593,7 @@ void MMIYOO_VideoQuit(_THIS)
+     mode.w = 800;
+@@ -5595,6 +6116,7 @@ int MMIYOO_VideoInit(_THIS)
+     mode.h = 272;
+     mode.refresh_rate = 60;
+     SDL_AddDisplayMode(&display, &mode);
++#endif
+     SDL_AddVideoDisplay(&display, SDL_FALSE);
+ 
+     LINE_H = 30;
+@@ -5739,7 +6261,7 @@ void MMIYOO_VideoQuit(_THIS)
      lang_unload();
  }
  
@@ -1633,7 +2264,7 @@ index e9ae232..42df8e7 100644
  static const char *DIS_MODE0_640[] = {
      "640*480",
      "640*480",
-@@ -5742,7 +6141,7 @@ int handle_menu(int key)
+@@ -6391,7 +6913,7 @@ int handle_menu(int key)
          case MENU_OVERLAY:
              if (nds.overlay.sel < nds.overlay.max) {
                  get_file_path(nds.overlay.path, nds.overlay.sel, buf, 0);
@@ -1642,11 +2273,38 @@ index e9ae232..42df8e7 100644
                  reload_overlay();
  #endif
              }
+@@ -6795,7 +7317,7 @@ int handle_menu(int key)
+         }
+     }
+ 
+-#ifdef A30
++#if defined(A30) || defined(RG35XXH_GL)
+     nds.update_menu = 1;
+ #else
+     GFX_Copy(-1, cvt->pixels, cvt->clip_rect, cvt->clip_rect, cvt->pitch, 0, E_MI_GFX_ROTATE_180);
 diff --git a/sdl2/src/video/mmiyoo/SDL_video_mmiyoo.h b/sdl2/src/video/mmiyoo/SDL_video_mmiyoo.h
-index c8b1785..d738d19 100644
+index 7397fd2..dd98449 100644
 --- a/sdl2/src/video/mmiyoo/SDL_video_mmiyoo.h
 +++ b/sdl2/src/video/mmiyoo/SDL_video_mmiyoo.h
-@@ -131,6 +131,16 @@
+@@ -32,7 +32,7 @@
+ #include <linux/omapfb.h>
+ #endif
+ 
+-#ifdef A30
++#if defined(A30) || defined(RG35XXH_GL)
+ #include <EGL/egl.h>
+ #include <GLES2/gl2.h>
+ #endif
+@@ -51,7 +51,7 @@
+ #include "SDL_events.h"
+ #include "SDL_video.h"
+ #include "SDL_mouse.h"
+-#include "SDL_video_mmiyoo.h"
++//#include "SDL_video_mmiyoo.h"
+ #include "SDL_event_mmiyoo.h"
+ 
+ #include "detour.h"
+@@ -148,6 +148,16 @@
      #define MAX_PATH                128
  #endif
  
@@ -1663,8 +2321,8 @@ index c8b1785..d738d19 100644
  #ifdef A30
      #define DEF_FB_W                640
      #define DEF_FB_H                480
-@@ -208,7 +218,7 @@
- #define PEN_RB                      3
+@@ -226,7 +236,7 @@
+ #define PEN_CP                      4
  #define FONT_PATH                   "resources/font/font.ttf"
  
 -#if defined(MMIYOO) || defined(A30) || defined(PANDORA) || defined(QX1000)
@@ -1672,7 +2330,48 @@ index c8b1785..d738d19 100644
      #define DEF_FONT_SIZE           24
  #endif
  
-@@ -365,6 +375,12 @@ typedef struct _GFX {
+@@ -334,10 +344,21 @@ enum _TEX_TYPE {
+ };
+ #endif
+ 
++#ifdef RG35XXH_GL
++enum _TEX_TYPE {
++    TEX_SCR0 = 0,
++    TEX_SCR1,
++    TEX_BG,
++    TEX_PEN,
++    TEX_TMP,
++    TEX_MAX
++};
++#endif
++
+ typedef struct MMIYOO_VideoInfo {
+     SDL_Window *window;
+ 
+-#ifdef A30
++#if defined(A30) || defined(RG35XXH_GL)
+     EGLConfig eglConfig;
+     EGLDisplay eglDisplay;
+     EGLContext eglContext;
+@@ -378,7 +399,7 @@ typedef struct _GFX {
+     struct fb_fix_screeninfo finfo;
+ 
+     struct {
+-#ifdef A30
++#if defined(A30) || defined(RG35XXH_GL)
+         void *virAddr;
+ #endif
+ 
+@@ -392,7 +413,7 @@ typedef struct _GFX {
+ #endif
+     } fb, tmp, overlay;
+ 
+-#if defined(MMIYOO) || defined(A30)
++#if defined(MMIYOO) || defined(A30) || defined(RG35XXH_GL)
+     struct {
+         int cur_sel;
+         void *virAddr[2][2];
+@@ -418,6 +439,12 @@ typedef struct _GFX {
          ion_alloc_info_t ion;
  #endif
  
@@ -1685,3 +2384,21 @@ index c8b1785..d738d19 100644
  #ifdef PANDORA
          uint32_t *mem[2];
  #endif
+@@ -548,6 +575,17 @@ typedef struct _NDS {
+         int show_cnt;
+     } joy;
+ #endif
++
++#ifdef RG35XXH
++    struct _INPUT {
++	    char dev[20]; /* ex) /dev/input/event0 */
++		int key[NUM_OF_MYKEY];
++	} input;
++	
++	struct _DISPLAY {
++		int rotate; // 0, 90, 180, 270
++	} display;
++#endif
+ } NDS;
+ 
+ typedef struct _CUST_MENU_SUB {
