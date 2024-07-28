@@ -132,7 +132,7 @@ elif [ $LED_MODE -eq 1 ]; then
   # Ensure right green value is provided for mode 1 and within valid range
   if [ -z $RIGHT_G ] || [ $RIGHT_G -lt 0 ] || [ $RIGHT_G -gt 255 ]; then
     echo "Invalid or missing LED right green - setting LED right green to same as left ($LEFT_G)"
-    RIGHT_R=$LEFT_G
+    RIGHT_G=$LEFT_G
   fi
 
   # Ensure right blue value is provided for mode 1 and within valid range
