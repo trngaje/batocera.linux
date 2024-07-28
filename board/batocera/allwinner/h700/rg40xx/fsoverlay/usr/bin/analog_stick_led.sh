@@ -108,7 +108,7 @@ elif [ $LED_MODE -ge 5 ] && [ $LED_MODE -le 6 ]; then
   # Construct the payload
   PAYLOAD=$(printf '\\x%02X\\x%02X\\x%02X\\x%02X\\x%02X\\x%02X' $LED_MODE $BRIGHTNESS 1 1 $SPEED $CHECKSUM)
 
-elif [ $LED_MODE -eq 1 ]; then
+else
 
   # Ensure left red value is provided for mode 1 and within valid range
   if [ -z $LEFT_R ] || [ $LEFT_R -lt 0 ] || [ $LEFT_R -gt 255 ]; then
@@ -169,41 +169,6 @@ elif [ $LED_MODE -eq 1 ]; then
   CHECKSUM=$(calculate_checksum "${PAYLOAD_BYTES[@]}")
   PAYLOAD+=$(printf '\\x%02X' $CHECKSUM)
 
-else
-  # Ensure left red value is provided for mode 1 and within valid range
-  if [ -z $LEFT_R ] || [ $LEFT_R -lt 0 ] || [ $LEFT_R -gt 255 ]; then
-    echo "Invalid or missing LED left red - setting LED left red to default ($DEFAULT_RED)"
-    batocera-settings-set $KEY_LEFT_RED $DEFAULT_RED
-    LEFT_R=$(batocera-settings-get $KEY_LEFT_RED)
-  fi
-
-  # Ensure left green value is provided for mode 1 and within valid range
-  if [ -z $LEFT_G ] || [ $LEFT_G -lt 0 ] || [ $LEFT_G -gt 255 ]; then
-    echo "Invalid or missing LED left green - setting LED left green to default ($DEFAULT_GREEN)"
-    batocera-settings-set $KEY_LEFT_GREEN $DEFAULT_GREEN
-    LEFT_G=$(batocera-settings-get $KEY_LEFT_GREEN)
-  fi
-
-  # Ensure left blue value is provided for mode 1 and within valid range
-  if [ -z $LEFT_B ] || [ $LEFT_B -lt 0 ] || [ $LEFT_B -gt 255 ]; then
-    echo "Invalid or missing LED left green - setting LED left green to default ($DEFAULT_BLUE)"
-    batocera-settings-set $KEY_LEFT_BLUE $DEFAULT_BLUE
-    LEFT_B=$(batocera-settings-get $KEY_LEFT_BLUE)
-  fi
-
-  # Construct the payload for RGB values
-  PAYLOAD=$(printf '\\x%02X\\x%02X' $LED_MODE $BRIGHTNESS)
-  for ((i = 0; i < 16; i++)); do
-    PAYLOAD+=$(printf '\\x%02X\\x%02X\\x%02X' $LEFT_R $LEFT_G $LEFT_B)
-  done
-
-  # Calculate checksum for the payload
-  PAYLOAD_BYTES=($LED_MODE $BRIGHTNESS)
-  for ((i = 0; i < 16; i++)); do
-    PAYLOAD_BYTES+=($LEFT_R $LEFT_G $LEFT_B)
-  done
-  CHECKSUM=$(calculate_checksum "${PAYLOAD_BYTES[@]}")
-  PAYLOAD+=$(printf '\\x%02X' $CHECKSUM)
 fi
 
 # Debugging output
