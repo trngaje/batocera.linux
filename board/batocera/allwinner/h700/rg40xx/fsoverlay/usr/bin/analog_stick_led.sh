@@ -67,16 +67,6 @@ calculate_checksum() {
   echo $((sum & 0xFF))
 }
 
-# Function to generate random RGB values
-generate_random_rgb() {
-  echo $((RANDOM % 256)) $((RANDOM % 256)) $((RANDOM % 256))
-}
-
-# Function to read key press
-key_pressed() {
-  read -t 0.001 -n 1 && return 0 || return 1
-}
-
 # Construct payload based on LED mode
 if [ $# -eq 1 ]; then
 
