@@ -77,28 +77,44 @@ calculate_checksum() {
 if [ $# -eq 1 ]; then
 
   if [ "$1" == "off" ]; then
-
     # Does this case have to be so complicated? I just set everything to 0 for now.
     echo "Turning RGB LEDs off."
-
-    # Construct the payload for RGB values
-    PAYLOAD=$(printf '\\x%02X\\x%02X' 1 0)
-    for ((i = 0; i < 16; i++)); do
-      PAYLOAD+=$(printf '\\x%02X\\x%02X\\x%02X' 0 0 0)
-    done
-
-    # Calculate checksum for the payload
-    PAYLOAD_BYTES=(1 0)
-    for ((i = 0; i < 16; i++)); do
-      PAYLOAD_BYTES+=(0 0 0)
-    done
-    CHECKSUM=$(calculate_checksum "${PAYLOAD_BYTES[@]}")
-    PAYLOAD+=$(printf '\\x%02X' $CHECKSUM)
-
+    LED_MODE=1
+    BRIGHTNESS=0
+    R=0
+    G=0
+    B=0
+  elif [ "$1" == "warn" ]; then
+    echo "Switching RGB to warning mode."
+    LED_MODE=2
+    R=255
+    G=255
+    B=0
+  elif [ "$1" == "danger" ]; then
+    echo "Switching RGB to danger mode."
+    LED_MODE=2
+    R=255
+    G=0
+    B=0
   else 
-    echo "Usage: $0 [off]"
+    echo "Usage: $0 [off|warn|danger]"
 	exit 1
   fi
+
+  # Construct the payload for RGB values
+  PAYLOAD=$(printf '\\x%02X\\x%02X' $LED_MODE $BRIGHTNESS)
+  for ((i = 0; i < 16; i++)); do
+    PAYLOAD+=$(printf '\\x%02X\\x%02X\\x%02X' $R $G $B)
+  done
+
+  # Calculate checksum for the payload
+  PAYLOAD_BYTES=($LED_MODE $BRIGHTNESS)
+  for ((i = 0; i < 16; i++)); do
+    PAYLOAD_BYTES+=($R $G $B)
+  done
+  CHECKSUM=$(calculate_checksum "${PAYLOAD_BYTES[@]}")
+  PAYLOAD+=$(printf '\\x%02X' $CHECKSUM)
+  
 elif [ $LED_MODE -ge 5 ] && [ $LED_MODE -le 6 ]; then
 
   # Ensure speed is provided for modes 5 and 6 and within the valid range (0-255)
