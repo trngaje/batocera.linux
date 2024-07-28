@@ -46,12 +46,12 @@ daemon() {
 start() {
   daemon &
   PID=$!
-  echo $PID > /var/run/$0.pid
+  echo $PID > /var/run/analog_stick_led_daemon.pid
   echo "Started analog stick RGB LED daemon."
 }
 
 stop() {
-  kill $(cat /var/run/$0.pid)
+  kill $(cat /var/run/analog_stick_led_daemon.pid)
   analog_stick_led.sh off
   echo "Stopped analog stick RGB LED daemon."
 }
