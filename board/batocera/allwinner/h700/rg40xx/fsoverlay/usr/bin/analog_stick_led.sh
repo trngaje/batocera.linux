@@ -116,29 +116,26 @@ elif [ $LED_MODE -ge 5 ] && [ $LED_MODE -le 6 ]; then
 
 else
 
-
   # Ensure red value is provided for mode 1-4 and within valid range, set to default if not
-  if [ -z $R ] || [ $R -lt 0 ] || [ $R -gt 255 ]; then
+  if ([ -z $R ] || [ $R -lt 0 ] || [ $R -gt 255 ]) && ([ -z $LEFT_R ] || [ $LEFT_R -lt 0 ] || [ $LEFT_R -gt 255 ] || [ -z $RIGHT_R ] || [ $RIGHT_R -lt 0 ] || [ $RIGHT_R -gt 255 ]); then
     echo "Invalid or missing LED left red - setting LED left red to default ($DEFAULT_RED)"
     batocera-settings-set $KEY_RED $DEFAULT_RED
     R=$(batocera-settings-get $KEY_RED)
   fi
 
   # Ensure green value is provided for mode 1-4 and within valid range, set to default if not
-  if [ -z $G ] || [ $G -lt 0 ] || [ $G -gt 255 ]; then
+  if ([ -z $G ] || [ $G -lt 0 ] || [ $G -gt 255 ]) && ([ -z $LEFT_G ] || [ $LEFT_G -lt 0 ] || [ $LEFT_G -gt 255 ] || [ -z $RIGHT_G ] || [ $RIGHT_G -lt 0 ] || [ $RIGHT_G -gt 255 ]); then
     echo "Invalid or missing LED left green - setting LED left green to default ($DEFAULT_GREEN)"
     batocera-settings-set $KEY_GREEN $DEFAULT_GREEN
     G=$(batocera-settings-get $KEY_GREEN)
   fi
 
   # Ensure blue value is provided for mode 1-4 and within valid range, set to default if not
-  if [ -z $B ] || [ $B -lt 0 ] || [ $B -gt 255 ]; then
+  if ([ -z $B ] || [ $B -lt 0 ] || [ $B -gt 255 ]) && ([ -z $LEFT_B ] || [ $LEFT_B -lt 0 ] || [ $LEFT_B -gt 255 ] || [ -z $RIGHT_B ] || [ $RIGHT_B -lt 0 ] || [ $RIGHT_B -gt 255 ]); then
     echo "Invalid or missing LED left green - setting LED left green to default ($DEFAULT_BLUE)"
     batocera-settings-set $KEY_BLUE $DEFAULT_BLUE
     B=$(batocera-settings-get $KEY_BLUE)
   fi
-
-
 
   # Ensure left red value is provided for mode 1-4 and within valid range
   if [ -z $LEFT_R ] || [ $LEFT_R -lt 0 ] || [ $LEFT_R -gt 255 ]; then
