@@ -58,9 +58,6 @@ if [ -z $BRIGHTNESS ] || [ $BRIGHTNESS -lt 0 ] || [ $BRIGHTNESS -gt 255 ]; then
   BRIGHTNESS=$(batocera-settings-get $KEY_BRIGHTNESS)
 fi
 
-echo "Selected analog sticks LED mode: $LED_MODE"
-echo "Selected analog sticks LED brightness: $BRIGHTNESS"
-
 # Function to calculate checksum
 calculate_checksum() {
   local sum=0
@@ -80,12 +77,33 @@ key_pressed() {
   read -t 0.001 -n 1 && return 0 || return 1
 }
 
-
-#### ACME MAGIC STARTS HERE:
-
-
 # Construct payload based on LED mode
-if [ $LED_MODE -ge 5 ] && [ $LED_MODE -le 6 ]; then
+if [ $# -eq 1 ]; then
+
+  if [ "$1" == "off" ]; then
+
+    # Does this case have to be so complicated? I just set everything to 0 for now.
+    echo "Turning RGB LEDs off."
+
+    # Construct the payload for RGB values
+    PAYLOAD=$(printf '\\x%02X\\x%02X' 1 0)
+    for ((i = 0; i < 16; i++)); do
+      PAYLOAD+=$(printf '\\x%02X\\x%02X\\x%02X' 0 0 0)
+    done
+
+    # Calculate checksum for the payload
+    PAYLOAD_BYTES=(1 0)
+    for ((i = 0; i < 16; i++)); do
+      PAYLOAD_BYTES+=(0 0 0)
+    done
+    CHECKSUM=$(calculate_checksum "${PAYLOAD_BYTES[@]}")
+    PAYLOAD+=$(printf '\\x%02X' $CHECKSUM)
+
+  else 
+    echo "Usage: $0 [off]"
+	exit 1
+  fi
+elif [ $LED_MODE -ge 5 ] && [ $LED_MODE -le 6 ]; then
 
   # Ensure speed is provided for modes 5 and 6 and within the valid range (0-255)
   if [ -z $SPEED ] || [ $SPEED -lt 0 ] || [ $SPEED -gt 255 ]; then
