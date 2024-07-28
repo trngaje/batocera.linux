@@ -4,12 +4,15 @@
 KEY_LED_MODE="rg40xxh.rgb.mode"
 KEY_BRIGHTNESS="rg40xxh.rgb.brightness"
 KEY_SPEED="rg40xxh.rgb.speed"
-KEY_LEFT_RED="rg40xxh.rgb.left.r"
-KEY_LEFT_GREEN="rg40xxh.rgb.left.g"
-KEY_LEFT_BLUE="rg40xxh.rgb.left.b"
-KEY_RIGHT_RED="rg40xxh.rgb.right.r"
-KEY_RIGHT_GREEN="rg40xxh.rgb.right.g"
-KEY_RIGHT_BLUE="rg40xxh.rgb.right.b"
+KEY_RED="rg40xxh.rgb.r"
+KEY_GREEN="rg40xxh.rgb.g"
+KEY_BLUE="rg40xxh.rgb.b"
+KEY_LEFT_RED="rg40xxh.rgb.r.left"
+KEY_LEFT_GREEN="rg40xxh.rgb.g.left"
+KEY_LEFT_BLUE="rg40xxh.rgb.b.left"
+KEY_RIGHT_RED="rg40xxh.rgb.r.right"
+KEY_RIGHT_GREEN="rg40xxh.rgb.g.right"
+KEY_RIGHT_BLUE="rg40xxh.rgb.b.right"
 
 # Define some default values
 DEFAULT_LED_MODE=1
@@ -23,6 +26,9 @@ DEFAULT_BLUE=25
 LED_MODE=$(batocera-settings-get $KEY_LED_MODE)
 BRIGHTNESS=$(batocera-settings-get $KEY_BRIGHTNESS)
 SPEED=$(batocera-settings-get $KEY_SPEED)
+R=$(batocera-settings-get $KEY_RED)
+G=$(batocera-settings-get $KEY_GREEN)
+B=$(batocera-settings-get $KEY_BLUE)
 LEFT_R=$(batocera-settings-get $KEY_LEFT_RED)
 LEFT_G=$(batocera-settings-get $KEY_LEFT_GREEN)
 LEFT_B=$(batocera-settings-get $KEY_LEFT_BLUE)
@@ -110,43 +116,64 @@ elif [ $LED_MODE -ge 5 ] && [ $LED_MODE -le 6 ]; then
 
 else
 
-  # Ensure left red value is provided for mode 1 and within valid range
-  if [ -z $LEFT_R ] || [ $LEFT_R -lt 0 ] || [ $LEFT_R -gt 255 ]; then
+
+  # Ensure red value is provided for mode 1-4 and within valid range, set to default if not
+  if [ -z $R ] || [ $R -lt 0 ] || [ $R -gt 255 ]; then
     echo "Invalid or missing LED left red - setting LED left red to default ($DEFAULT_RED)"
-    batocera-settings-set $KEY_LEFT_RED $DEFAULT_RED
-    LEFT_R=$(batocera-settings-get $KEY_LEFT_RED)
+    batocera-settings-set $KEY_RED $DEFAULT_RED
+    R=$(batocera-settings-get $KEY_RED)
   fi
 
-  # Ensure left green value is provided for mode 1 and within valid range
-  if [ -z $LEFT_G ] || [ $LEFT_G -lt 0 ] || [ $LEFT_G -gt 255 ]; then
+  # Ensure green value is provided for mode 1-4 and within valid range, set to default if not
+  if [ -z $G ] || [ $G -lt 0 ] || [ $G -gt 255 ]; then
     echo "Invalid or missing LED left green - setting LED left green to default ($DEFAULT_GREEN)"
-    batocera-settings-set $KEY_LEFT_GREEN $DEFAULT_GREEN
-    LEFT_G=$(batocera-settings-get $KEY_LEFT_GREEN)
+    batocera-settings-set $KEY_GREEN $DEFAULT_GREEN
+    G=$(batocera-settings-get $KEY_GREEN)
   fi
 
-  # Ensure left blue value is provided for mode 1 and within valid range
-  if [ -z $LEFT_B ] || [ $LEFT_B -lt 0 ] || [ $LEFT_B -gt 255 ]; then
+  # Ensure blue value is provided for mode 1-4 and within valid range, set to default if not
+  if [ -z $B ] || [ $B -lt 0 ] || [ $B -gt 255 ]; then
     echo "Invalid or missing LED left green - setting LED left green to default ($DEFAULT_BLUE)"
-    batocera-settings-set $KEY_LEFT_BLUE $DEFAULT_BLUE
-    LEFT_B=$(batocera-settings-get $KEY_LEFT_BLUE)
+    batocera-settings-set $KEY_BLUE $DEFAULT_BLUE
+    B=$(batocera-settings-get $KEY_BLUE)
   fi
 
-  # Ensure right red value is provided for mode 1 and within valid range
+
+
+  # Ensure left red value is provided for mode 1-4 and within valid range
+  if [ -z $LEFT_R ] || [ $LEFT_R -lt 0 ] || [ $LEFT_R -gt 255 ]; then
+    echo "No LED left red override found - using regular red ($R)"
+    LEFT_R=$R
+  fi
+
+  # Ensure left green value is provided for mode 1-4 and within valid range
+  if [ -z $LEFT_G ] || [ $LEFT_G -lt 0 ] || [ $LEFT_G -gt 255 ]; then
+    echo "No LED left green override found - using regular green ($G)"
+    LEFT_G=$G
+  fi
+
+  # Ensure left blue value is provided for mode 1-4 and within valid range
+  if [ -z $LEFT_B ] || [ $LEFT_B -lt 0 ] || [ $LEFT_B -gt 255 ]; then
+    echo "No LED left blue override found - using regular blue ($B)"
+    LEFT_B=$B
+  fi
+
+  # Ensure right red value is provided for mode 1-4 and within valid range
   if [ -z $RIGHT_R ] || [ $RIGHT_R -lt 0 ] || [ $RIGHT_R -gt 255 ]; then
-    echo "Invalid or missing LED right red - setting LED right red to same as left ($LEFT_R)"
-    RIGHT_R=$LEFT_R
+    echo "No LED right red override found - using regular red ($R)"
+    RIGHT_R=$R
   fi
 
-  # Ensure right green value is provided for mode 1 and within valid range
+  # Ensure right green value is provided for mode 1-4 and within valid range
   if [ -z $RIGHT_G ] || [ $RIGHT_G -lt 0 ] || [ $RIGHT_G -gt 255 ]; then
-    echo "Invalid or missing LED right green - setting LED right green to same as left ($LEFT_G)"
-    RIGHT_G=$LEFT_G
+    echo "No LED right green override found - using regular green ($G)"
+    RIGHT_G=$G
   fi
 
-  # Ensure right blue value is provided for mode 1 and within valid range
+  # Ensure right blue value is provided for mode 1-4 and within valid range
   if [ -z $RIGHT_B ] || [ $RIGHT_B -lt 0 ] || [ $RIGHT_B -gt 255 ]; then
-    echo "Invalid or missing LED right blue - setting LED right blue to same as left ($LEFT_B)"
-    RIGHT_B=$LEFT_B
+    echo "No LED right blue override found - using regular blue ($B)"
+    RIGHT_B=$B
   fi
 
   # Construct the payload for jeft and right joystick values
