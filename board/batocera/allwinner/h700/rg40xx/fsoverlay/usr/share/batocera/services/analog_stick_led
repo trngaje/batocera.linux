@@ -8,7 +8,7 @@ case "$1" in
         ;;
     stop)
         # Code in here will only be executed on shutdown.
-		echo "Not implemented, yet."
+		analog_stick_led.sh off
         ;;
     *)
         # Code in here will be executed in all other conditions.
