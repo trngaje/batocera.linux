@@ -23,17 +23,17 @@ daemon() {
     # Go to LED mode "warning" if not set to warning but battery charge is equal or below warning threshold (and still above danger threshold)
     if [ $CURRENT_MODE -ne $MODE_WARNING ] && ([ $BATTERY_CHARGE -eq $THRESHOLD_WARNING ] || ([ $BATTERY_CHARGE -lt $THRESHOLD_WARNING ] && [ $BATTERY_CHARGE -gt $THRESHOLD_DANGER ])); then
       echo "Battery charge at $BATTERY_CHARGE - going to LED mode 'warning'"
-      analog_stick_led.sh warn
+      /usr/bin/analog_stick_led.sh warn
       CURRENT_MODE=$MODE_WARNING
     # Go to LED mode "danger" if not set to danger but battery charge is equal or below danger threshold
     elif [ $CURRENT_MODE -ne $MODE_DANGER ] && ([ $BATTERY_CHARGE -eq $THRESHOLD_DANGER ] || [ $BATTERY_CHARGE -lt $THRESHOLD_DANGER ]); then
       echo "Battery charge at $BATTERY_CHARGE - Going to LED mode 'danger'"
-      analog_stick_led.sh danger
+      /usr/bin/analog_stick_led.sh danger
       CURRENT_MODE=$MODE_DANGER
     # Go back to normal LED mode if set to either warning or danger but battery status is above warning threshold
     elif [ $CURRENT_MODE -ne $MODE_DEFAULT ] && [ $BATTERY_CHARGE -gt $THRESHOLD_WARNING ]; then
       echo "Battery charge at $BATTERY_CHARGE - Going to normal LED mode"
-      analog_stick_led.sh
+      /usr/bin/analog_stick_led.sh
       CURRENT_MODE=$MODE_DEFAULT
     fi
   
@@ -52,7 +52,7 @@ start() {
 
 stop() {
   kill $(cat /var/run/analog_stick_led_daemon.pid)
-  analog_stick_led.sh off
+  /usr/bin/analog_stick_led.sh off
   echo "Stopped analog stick RGB LED daemon."
 }
 

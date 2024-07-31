@@ -4,12 +4,12 @@ case "$1" in
   start)
   # Code in here will only be executed on start.
     echo -n "Enabling analog stick LEDs"
-    analog_stick_led_daemon.sh start
+    /usr/bin/analog_stick_led_daemon.sh start
     ;;
   stop)
     echo -n "Disabling analog stick LEDs"
     # Code in here will only be executed on shutdown.
-    analog_stick_led_daemon.sh stop
+    /usr/bin/analog_stick_led_daemon.sh stop
     ;;
   *)
     # Code in here will be executed in all other conditions.
