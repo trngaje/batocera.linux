@@ -1619,6 +1619,12 @@ libretro:
                     "2":           2
                     "3":           3
                     "4":           4
+            fbneo-hhtate:
+                prompt: HANDHELD TATE MODE
+                description: Rotates the display and remaps inputs for device to be used sideways.
+                choices:
+                    "Off":    "False"
+                    "On":     "True"
             fbneo-lightgun-hide-crosshair:
                 group: LIGHT GUN
                 prompt:      SHOW LIGHT GUN CROSSHAIRS
@@ -2551,6 +2557,12 @@ libretro:
                     "Neo Geo CD Pad":               "neocd"
                     "Twin Stick with Triggers":     "twinstick"
                     "Rotated 4-Way Stick (Q*Bert)": "qbert"
+            mame-hhtate:
+                prompt: HANDHELD TATE MODE
+                description: Rotates the display and remaps inputs for device to be used sideways.
+                choices:
+                    "Off":    "False"
+                    "On":     "True"
             hiscoreplugin:
                 group: ADVANCED OPTIONS
                 prompt:      HIGH SCORE PLUGIN
@@ -4792,6 +4804,13 @@ libretro:
                     "1":                1
                     "2":                2
                     "3":                3
+            neon_enhancement:
+                prompt:      ENHANCED RENDERING RESOLUTION
+                description: Double the rendering resolution.
+                choices:
+                    "Off":              disabled
+                    "On":               enabled
+                    "On (Speed hack)":  enabled_with_speedhack           
             pcsx_rearmed_multitap:
                 prompt:      MULTITAP
                 description: Allows up to 5 or 8 controllers in supported games.
@@ -11145,6 +11164,11 @@ drastic:
                 "Vertical": 0
                 "Horizontal": 1
                 "Single": 3
+
+drastic_steward:
+  shared: []
+  
+
 
 xemu:
   shared: [powermode, tdp, videomode, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo]
