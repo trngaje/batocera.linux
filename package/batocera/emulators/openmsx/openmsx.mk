@@ -5,6 +5,7 @@
 ################################################################################
 
 OPENMSX_VERSION = RELEASE_19_1
+#OPENMSX_VERSION = 763507b917cbc351d8a5bddff142258aedeeb759
 OPENMSX_SITE = $(call github,openMSX,openMSX,$(OPENMSX_VERSION))
 OPENMSX_LICENSE = GPLv2
 OPENMSX_DEPENDENCIES = zlib sdl2 sdl2_ttf libpng tcl freetype
@@ -18,7 +19,7 @@ OPENMSX_CONF_ENV += $(TARGET_CONFIGURE_OPTS) \
                 PKG_CONFIG="$(STAGING_DIR)/usr/bin/pkg-config" \
                 PATH="$(HOST_DIR)/bin:$(HOST_DIR)/sbin:$(PATH):$(STAGING_DIR)/usr/bin" \
                 TCL_CONFIG="$(STAGING_DIR)/usr/lib" LD_FOR_BUILD="$(TARGET_CROSS)ld" \
-				COMPILER=${CXX} OPENMSX_TARGET_CPU="arm" OPENMSX_TARGET_OS="linux"
+				COMPILER=${CXX} OPENMSX_TARGET_CPU="aarch64" OPENMSX_TARGET_OS="linux"
 
 # additional config options
 #linux

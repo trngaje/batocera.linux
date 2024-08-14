@@ -35,7 +35,7 @@ systemToBluemsx = {'msx': '"MSX2"', 'msx1': '"MSX2"', 'msx2': '"MSX2"', 'colecov
 
 # Define Retroarch Core compatible with retroachievements
 # List taken from https://docs.libretro.com/guides/retroachievements/#cores-compatibility
-coreToRetroachievements = {'arduous', 'beetle-saturn', 'blastem', 'bluemsx', 'bsnes', 'bsnes_hd', 'cap32', 'desmume', 'duckstation', 'fbneo', 'fceumm', 'flycast', 'flycastvl', 'freechaf', 'freeintv', 'gambatte', 'genesisplusgx', 'genesisplusgx-wide', 'handy', 'kronos', 'mednafen_lynx', 'mednafen_ngp', 'mednafen_psx', 'mednafen_supergrafx', 'mednafen_wswan', 'melonds', 'mesen', 'mesens', 'mgba', 'mupen64plus-next', 'neocd', 'o2em', 'opera', 'parallel_n64', 'pce', 'pce_fast', 'pcfx', 'pcsx_rearmed', 'picodrive', 'pokemini', 'potator', 'ppsspp', 'prosystem', 'quasi88', 'snes9x', 'sameduck', 'snes9x_next', 'stella', 'stella2014', 'swanstation', 'uzem', 'vb', 'vba-m', 'vecx', 'virtualjaguar', 'wasm4'}
+coreToRetroachievements = {'arduous', 'beetle-saturn', 'blastem', 'bluemsx', 'bsnes', 'bsnes_hd', 'cap32', 'desmume', 'duckstation', 'fbneo', 'fceumm', 'flycast', 'flycastvl', 'flycast-xtreme', 'freechaf', 'freeintv', 'gambatte', 'genesisplusgx', 'genesisplusgx-wide', 'handy', 'kronos', 'mednafen_lynx', 'mednafen_ngp', 'mednafen_psx', 'mednafen_supergrafx', 'mednafen_wswan', 'melonds', 'mesen', 'mesens', 'mgba', 'morpheuscast', 'mupen64plus-next', 'neocd', 'o2em', 'opera', 'parallel_n64', 'pce', 'pce_fast', 'pcfx', 'pcsx_rearmed', 'picodrive', 'pokemini', 'potator', 'ppsspp', 'prosystem', 'quasi88', 'snes9x', 'sameduck', 'snes9x_next', 'stella', 'stella2014', 'swanstation', 'uzem', 'vb', 'vba-m', 'vecx', 'virtualjaguar', 'wasm4', 'gpsp', 'melondsds'}
 
 # Define systems NOT compatible with rewind option
 systemNoRewind = {'sega32x', 'psx', 'zxspectrum', 'n64', 'dreamcast', 'atomiswave', 'naomi', 'saturn'};
@@ -565,43 +565,14 @@ def createLibretroConfig(generator, system, controllers, metadata, guns, wheels,
                 update_n64_controller_config(i)
     
     ## TATE mode remap for handhelds
-    if system.config['core'] in ['fbneo', 'mame']:                     
-        path = Path(rom)
-        folder_name = path.parent.name   
-            
-        handhelds = {
-            ('19000000010000000100000000010000', 'Deeplay-keys', 'rg35xx-plus'): {  # rg35xx/h(only for H model since it has joysticks)
-                'rotation': 'left', 
-                'remap': {
-                    'stk_r_x+': '18', 'stk_r_x-': '19', 'stk_r_y+': '17', 'stk_r_y-': '16',
-                    'btn_a': '0', 'btn_b': '1', 'btn_x': '8', 'btn_y': '-1',
-                }
-            },
-            ('19000000010000000100000000010000', 'Deeplay-keys', 'rg28xx'): {  # rg28xx
-                'rotation': 'right', 
-                'remap': {
-                    'btn_down': '7', 'btn_left': '5', 'btn_right': '4', 'btn_up': '6',
-                    'btn_start': '0', 'btn_select': '8', 'btn_l2': '1', 'btn_r': '2',
-                    'btn_r2': '3', 'btn_a': '-1', 'btn_b': '-1', 'btn_x': '-1', 'btn_y': '-1',
-                }
-            },
-            ('030000005e0400008e02000014010000', 'TRIMUI Player1', 'trimui-smart-pro'): {  # trimui-smartpro
-                'rotation': 'left', 
-                'remap': {
-                    'stk_r_x+': '18', 'stk_r_x-': '19', 'stk_r_y+': '17', 'stk_r_y-': '16',
-                    'btn_a': '0', 'btn_b': '1', 'btn_x': '8', 'btn_y': '-1',
-                }
-            },
-        }
-        
+    if system.config['core'] in ['fbneo', 'mame']:                       
+
         def get_board_info():
-            result = subprocess.run(['batocera-info'], stdout=subprocess.PIPE, text=True)
-            output = result.stdout
-            for line in output.splitlines():
-                if line.startswith("Board:"):
-                    return line.split(":")[1].strip()
-            return None
-        
+            file_path = "/boot/boot/batocera.board"
+            with open(file_path, 'r') as file:
+                board = file.read().strip()
+            return board
+
         def update_handheld_config(guid, name, board):
             if (guid, name, board) in handhelds:
                 settings = handhelds[(guid, name, board)]
@@ -620,14 +591,54 @@ def createLibretroConfig(generator, system, controllers, metadata, guns, wheels,
                 for btn, value in settings['remap'].items():
                     retroarchConfig[f'input_player1_{btn}'] = value    
         
-        board_name = get_board_info()    
-        controller, pad = sorted(controllers.items())[0] 
-        if (system.isOptSet(f"{systemCore}-hhtate") and system.config[f"{systemCore}-hhtate"] == "True" or folder_name == "tate"):
+        def check_vertical(path, rom):
+            rom_id = os.path.splitext(os.path.basename(rom))[0]
+            tree = ET.parse(path)
+            root = tree.getroot()
+            rom_element = root.find(f".//rom[@id='{rom_id}']")
+            if rom_element is not None and rom_element.get('vert') == 'true':
+                return True
+            return False
+
+        common_remap = {
+            'stk_r_x+': '18', 'stk_r_x-': '19', 'stk_r_y+': '17', 'stk_r_y-': '16',
+            'btn_down': '6', 'btn_left': '4', 'btn_right': '5', 'btn_up': '7',
+            'btn_a': '0', 'btn_b': '1', 'btn_x': '8', 'btn_y': '-1'
+        }
+
+        handhelds = {
+            ('19000000010000000100000000010000', 'Deeplay-keys', 'rg35xx-plus'): {  # rg35xx-plus
+                'rotation': 'left', 'remap': common_remap
+            },
+            ('19000000010000000100000000010000', 'Deeplay-keys', 'rg35xx-h'): {  # rg35xx-h
+                'rotation': 'left', 'remap': common_remap
+            },
+            ('19000000010000000100000000010000', 'ANBERNIC-keys', 'rg40xx'): {  # rg40xx
+                'rotation': 'left', 'remap': common_remap
+            },
+            ('19000000010000000100000000010000', 'Deeplay-keys', 'rg28xx'): {  # rg28xx
+                'rotation': 'right', 
+                'remap': {
+                    'btn_down': '7', 'btn_left': '5', 'btn_right': '4', 'btn_up': '6',
+                    'btn_start': '0', 'btn_select': '8', 'btn_l2': '1', 'btn_r': '2',
+                    'btn_r2': '3', 'btn_a': '-1', 'btn_b': '-1', 'btn_x': '-1', 'btn_y': '-1',
+                }
+            },
+            ('030000005e0400008e02000014010000', 'TRIMUI Player1', 'trimui-smart-pro'): {  # trimui-smartpro
+                'rotation': 'left', 'remap': common_remap
+            },
+        }
+        
+        board_name = get_board_info()
+        db_path = "/usr/share/emulationstation/resources/arcaderoms.xml"
+        controller, pad = sorted(controllers.items())[0]
+        
+        if system.isOptSet(f"{systemCore}-hhtate") and system.config[f"{systemCore}-hhtate"] == "True" and check_vertical(db_path, rom):
             update_handheld_config(pad.guid, pad.configName, board_name)
-        elif (system.config['core'] == 'fbneo'):
-            coreSettings.save('fbneo-vertical-mode', '"' + 'disabled' + '"')
-        elif (system.config['core'] == 'mame'):
-            coreSettings.save('mame_rotation_mode', '"' + 'libretro' + '"')               
+        elif system.config['core'] == 'fbneo':
+            coreSettings.save('fbneo-vertical-mode', '"disabled"')
+        elif system.config['core'] == 'mame':
+            coreSettings.save('mame_rotation_mode', '"libretro"')
 
     ## PORTS
     ## Quake
@@ -710,11 +721,15 @@ def createLibretroConfig(generator, system, controllers, metadata, guns, wheels,
 
     # Run-ahead option (latency reduction)
     retroarchConfig['run_ahead_enabled'] = 'false'
+    retroarchConfig['preemptive_frames_enable'] = 'false'
     retroarchConfig['run_ahead_frames'] = '0'
     retroarchConfig['run_ahead_secondary_instance'] = 'false'
     if system.isOptSet('runahead') and int(system.config['runahead']) >0:
        if (not system.name in systemNoRunahead):
-          retroarchConfig['run_ahead_enabled'] = 'true'
+          if system.isOptSet('preemptiveframes') and system.getOptBoolean('preemptiveframes') == True:
+            retroarchConfig['preemptive_frames_enable'] = 'true'
+          else:
+            retroarchConfig['run_ahead_enabled'] = 'true'
           retroarchConfig['run_ahead_frames'] = system.config['runahead']
           if system.isOptSet('secondinstance') and system.getOptBoolean('secondinstance') == True:
               retroarchConfig['run_ahead_secondary_instance'] = 'true'
@@ -947,6 +962,8 @@ def createLibretroConfig(generator, system, controllers, metadata, guns, wheels,
         "mame0139"      : { "default" : { "device":   4, "p1": 0, "p2": 1 } },
         "flycast"       : { "default" : { "device":   4, "p1": 0, "p2": 1 } },
         "flycastvl"     : { "default" : { "device":   4, "p1": 0, "p2": 1 } },
+        "flycast-xtreme": { "default" : { "device":   4, "p1": 0, "p2": 1 } },
+        "morpheuscast"  : { "default" : { "device":   4, "p1": 0, "p2": 1 } },
         "mednafen_psx"  : { "default" : { "device": 260, "p1": 0, "p2": 1 } },
         "pcsx_rearmed"  : { "default" : { "device": 260, "p1": 0, "p2": 1,
                                           "gameDependant": [ { "key": "type", "value": "justifier", "mapkey": "device", "mapvalue": "516" } ]} },
