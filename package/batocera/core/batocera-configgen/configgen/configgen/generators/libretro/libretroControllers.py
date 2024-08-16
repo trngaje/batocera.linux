@@ -32,15 +32,13 @@ systemToSwapDisable = {'amigacd32', 'amigacdtv', 'naomi', 'atomiswave', 'megadri
 def writeControllersConfig(retroconfig, system, controllers, lightgun):
     # Map buttons to the corresponding retroarch specials keys
     retroarchspecials = {'x': 'load_state', 'y': 'save_state', 'a': 'reset', 'start': 'exit_emulator', \
-                         'up': 'state_slot_increase', 'down': 'state_slot_decrease', 'left': 'rewind', \
+                         'up': 'state_slot_increase', 'down': 'state_slot_decrease', 'left': 'rewind', 'right': 'hold_fast_forward', \
                          'pageup': 'screenshot', 'pagedown': 'ai_service', 'l2': 'shader_prev', 'r2': 'shader_next'}
     retroarchspecials["b"] = "menu_toggle"
 
-    # Assign hotkey + right to either toggle fast forward or hold fast forward
+    # Assign hotkey + right to toggle fast forward if the option is set
     if system.isOptSet('toggle_fast_forward') and system.getOptBoolean("toggle_fast_forward") == True:
         retroarchspecials["right"] = "toggle_fast_forward"
-    else:
-        retroarchspecials["right"] = "hold_fast_forward"
 
     # Some input adaptations for some systems with swap Disc/CD
     if (system.config['core'] in coreWithSwapSupport) and (system.name not in systemToSwapDisable):
