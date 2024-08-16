@@ -36,14 +36,10 @@ def writeControllersConfig(retroconfig, system, controllers, lightgun):
                          'pageup': 'screenshot', 'pagedown': 'ai_service', 'l2': 'shader_prev', 'r2': 'shader_next'}
     retroarchspecials["b"] = "menu_toggle"
 
-    # Toggle or hold special key to fast forward
-    if system.isOptSet('fast_forward'):
-        if system.config['fast_forward'] == 'toggle':
-            retroarchspecials["right"] = "toggle_fast_forward"
-        if system.config['fast_forward'] == 'hold':
-            retroarchspecials["right"] = "hold_fast_forward"
+    # toggle or hold to fast forward
+    if system.isOptSet('fast_forward') and system.config['fast_forward'] == 'toggle':
+        retroarchspecials["right"] = "toggle_fast_forward"
     else:
-        # If unclear, default to hold
         retroarchspecials["right"] = "hold_fast_forward"
 
     # Some input adaptations for some systems with swap Disc/CD
