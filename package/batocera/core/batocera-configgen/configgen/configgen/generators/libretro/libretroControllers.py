@@ -32,12 +32,12 @@ systemToSwapDisable = {'amigacd32', 'amigacdtv', 'naomi', 'atomiswave', 'megadri
 def writeControllersConfig(retroconfig, system, controllers, lightgun):
     # Map buttons to the corresponding retroarch specials keys
     retroarchspecials = {'x': 'load_state', 'y': 'save_state', 'a': 'reset', 'start': 'exit_emulator', \
-                         'up': 'state_slot_increase', 'down': 'state_slot_decrease', 'left': 'rewind', 'right': 'hold_fast_forward', \
+                         'up': 'state_slot_increase', 'down': 'state_slot_decrease', 'left': 'rewind', \
                          'pageup': 'screenshot', 'pagedown': 'ai_service', 'l2': 'shader_prev', 'r2': 'shader_next'}
     retroarchspecials["b"] = "menu_toggle"
 
-    # toggle or hold to fast forward
-    if system.isOptSet('fast_forward') and system.config['fast_forward'] == 'toggle':
+    # Replace hold fast forward with toggle fast forward
+    if system.isOptSet('toggle_fast_forward') and system.getOptBoolean("toggle_fast_forward") == True:
         retroarchspecials["right"] = "toggle_fast_forward"
     else:
         retroarchspecials["right"] = "hold_fast_forward"

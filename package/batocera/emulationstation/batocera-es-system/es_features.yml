@@ -70,12 +70,10 @@ shared:
       choices:
         "On":  1
         "Off": 0
-    fast_forward:
-      prompt: FAST FORWARD
-      description: Switch between holding fast forward and toggling fast forward, if the core supports it.
-      choices:
-        "Toggle":  toggle
-        "Hold": hold
+    toggle_fast_forward:
+      prompt: TOGGLE FAST FORWARD
+      description: Enable to toggle fast forward instead of holding it down.
+      preset: switch
     autosave:
       prompt: AUTO SAVE/LOAD ON GAME LAUNCH
       description: Load latest save state on game launch and save state when exiting game.
@@ -335,7 +333,7 @@ shared:
         "hidden": "hidden"
 
 global:
-  shared: [powermode, tdp, videomode, ratio, shaderset, smooth, integerscale, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo, ai_service_enabled, ai_target_lang, ai_service_url, ai_service_pause, rewind, fast_forward, runahead, preemptiveframes, secondinstance, video_frame_delay_auto, vrr_runloop_enable, video_threaded, rumble_gain]
+  shared: [powermode, tdp, videomode, ratio, shaderset, smooth, integerscale, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo, ai_service_enabled, ai_target_lang, ai_service_url, ai_service_pause, rewind, toggle_fast_forward, runahead, preemptiveframes, secondinstance, video_frame_delay_auto, vrr_runloop_enable, video_threaded, rumble_gain]
 
 libretro:
   shared: [powermode, tdp, videomode, ratio, shaderset, smooth, integerscale, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo, ai_service_enabled, ai_target_lang, ai_service_url, ai_service_pause, runahead, preemptiveframes, secondinstance, video_frame_delay_auto, vrr_runloop_enable, video_threaded, rumble_gain, audio_volume, bordersmode]
