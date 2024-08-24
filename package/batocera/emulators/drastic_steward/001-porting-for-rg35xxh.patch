@@ -1940,6 +1940,168 @@ index 0000000..1162470
 +
 +
 +#endif
+diff --git a/drastic/resources/lang/chinese_cn b/drastic/resources/lang/chinese_cn
+index e6344f2..0169224 100644
+--- a/drastic/resources/lang/chinese_cn
++++ b/drastic/resources/lang/chinese_cn
+@@ -6,6 +6,7 @@ Border=小画边框色
+ Position=小画位置
+ Alt. Display=快捷切换显示
+ Volume=音量
++Disable=禁用
+ Disabled=禁用
+ Touchpad=触控位置
+ Wallpaper=壁纸
+@@ -106,3 +107,9 @@ Blur=模糊风格
+ Cursor=菜单鼠标
+ Show=显示
+ Hide=隐藏
++CPU Clock=CPU频率
++CPU Core=CPU核心
++Joy Mode=摇杆模式
++Joy DZone=摇杆死区
++D-Pad=十字键
++Stylus=触控笔
+diff --git a/drastic/resources/lang/chinese_tw b/drastic/resources/lang/chinese_tw
+index c9481b9..5cec504 100644
+--- a/drastic/resources/lang/chinese_tw
++++ b/drastic/resources/lang/chinese_tw
+@@ -6,6 +6,7 @@ Border=小視窗邊框色
+ Position=小視窗位置
+ Alt. Display=熱鍵切換顯示
+ Volume=音量
++Disable=禁用
+ Disabled=禁用
+ Touchpad=觸控位置
+ Wallpaper=背景
+@@ -106,3 +107,9 @@ Blur=模糊風格
+ Cursor=菜單游標
+ Show=顯示
+ Hide=隱藏
++CPU Clock=CPU頻率
++CPU Core=CPU核心
++Joy Mode=搖桿模式
++Joy DZone=搖桿死區
++D-Pad=十字鍵
++Stylus=觸控筆
+diff --git a/drastic/resources/lang/korean_kr b/drastic/resources/lang/korean_kr
+new file mode 100644
+index 0000000..9dc31c9
+--- /dev/null
++++ b/drastic/resources/lang/korean_kr
+@@ -0,0 +1,108 @@
++CPU=CPU
++Overlay=오버레이
++Display=화면
++Alpha=알파값 
++Border=테두리
++Position=위치
++Alt. Display=대체 화면
++Volume=소리 크기
++Disabled=비활성화
++Touchpad=터치패드
++Wallpaper=바탕화면
++Quick Save=빠른 저장하기
++Quick Load=빠른 불러오기
++Fast Forward=빠르게 플레이
++Top-Right=우측 상단
++Top-Left=좌측 상단
++Bottom-Left=좌측 하단
++Bottom-Right=우측 하단
++White=흰색
++Red=붉은색
++Green=녹색
++Blue=파란색
++Black=검정색
++Yellow=노란색
++Cyan=하늘색
++Version=버젼
++Change Options=옵션 변경
++Configure Controls=입력 설정
++Configure Firmware=펌웨어 설정
++Configure Cheats=치트 설정
++Load state=상태 불러오기
++Save state=상태 저장하기
++Load new game=새로운 게임 불러오기
++Restart game=게임 재 시작하기
++Return to game=게임으로 돌아가기
++Exit DraStic=DraStic 끝내기
++Keys=키
++Frame skip type=프레임 스킵 타입
++automatic=자동
++manual=수동
++yes=네
++no=아니오
++Yes=네
++No=아니오
++none=없음
++None=없음
++Frame skip value=프레임 스킵 값
++Screen orientation=화면 회전
++vertical=수직
++horizontal=수평
++single=단일
++Screen swap=화면 교환
++Show speed=표시 속도
++Enable sound=소리 활성화
++Fast forward=빠른 진행
++Mirror touchscreen=터치스크린 반전
++Compress savestates=savestates 압축하기
++Snapshot in savestates=Snapshot in savestates
++Enable cheats=치트 활성화
++Uncompress ROMs=ROMs 압축 풀기
++Backup in savestates=savestates 백업하기
++Speed override=Speed override
++Fix main 2D screen=Fix main 2D screen
++Disable edge marking=edge marking 비활성화
++High-resolution 3D=고해상도 3D
++Threaded 3D=Threaded 3D
++Delete game-specific config=게임 지정 설정 값 제거
++Exit: save for all games=끝내기: 모든게임을 위한 설정 값 저장
++Exit: save for this game=끝내기: 에 게임에만 설정 값 저장
++Exit without saving=저장 없이 끝내기
++Username=사용자 이름
++Language=언어
++Favorite Color=좋아하는 색
++Birthday Month=태어난 달
++Birthday Day=태어난 날
++English=영어
++French=프랑스어
++German=독일어
++Italian=이탈리아어
++Spanish=스페인어
++Chinese=중국어
++Japanese=일본어
++January=1월
++February=2월
++March=3월
++April=4월
++May=5월
++June=6월
++July=7월
++August=8월
++September=9월
++October=10월
++November=11월
++December=12월
++Extra Controls=기타 제어
++Restore default controls=기본 설정값으로 복구
++Unmapped=설정 안함
++Hotkey=핫키
++Swap L1-L2=L1과 L2 교환
++Swap R1-R2=R1과 R2 교환
++Mode=모드
++Pen X Speed=펜 X축 속도
++Pen Y Speed=펜 Y축 속도
++Pixel=펙셀
++Blur=블러
++Cursor=커서
++Show=표시
++Hide=감추기
+diff --git a/drastic/resources/pen/6_cp.png b/drastic/resources/pen/6_cp.png
+new file mode 100644
+index 0000000..a58b0de
+Binary files /dev/null and b/drastic/resources/pen/6_cp.png differ
 diff --git a/sdl2/configure.ac b/sdl2/configure.ac
 index e5a7647..fe3a511 100644
 --- a/sdl2/configure.ac
@@ -2753,7 +2915,7 @@ index e95b19b..13e5ad6 100644
 -#endif
 -
 diff --git a/sdl2/src/render/mmiyoo/SDL_render_mmiyoo.c b/sdl2/src/render/mmiyoo/SDL_render_mmiyoo.c
-index d154a51..e849307 100644
+index d154a51..7ae6fec 100644
 --- a/sdl2/src/render/mmiyoo/SDL_render_mmiyoo.c
 +++ b/sdl2/src/render/mmiyoo/SDL_render_mmiyoo.c
 @@ -1,9 +1,9 @@
@@ -2790,7 +2952,36 @@ index d154a51..e849307 100644
  
  typedef struct MMIYOO_TextureData {
      void *data;
-@@ -333,10 +331,8 @@ SDL_RenderDriver MMIYOO_RenderDriver = {
+@@ -179,8 +177,12 @@ static int MMIYOO_QueueCopy(SDL_Renderer *renderer, SDL_RenderCommand *cmd, SDL_
+     }
+ #endif
+     show_fps = 0;
++
++    // acquire a lock
++    pthread_mutex_lock(&lock);
+     nds.menu.drastic.enable = 1;
+-    usleep(100000);
++
++    //usleep(100000);
+ 
+ #ifdef TRIMUI
+     if (nds.dis_mode != NDS_DIS_MODE_S0) {
+@@ -192,6 +194,14 @@ static int MMIYOO_QueueCopy(SDL_Renderer *renderer, SDL_RenderCommand *cmd, SDL_
+ #endif
+ 
+     process_drastic_menu();
++
++    pthread_cond_signal(&request_update_screen_cond);
++
++    pthread_cond_wait(&response_update_screen_cond, &lock);
++
++    // release lock
++    pthread_mutex_unlock(&lock);
++
+     return 0;
+ }
+ 
+@@ -333,10 +343,8 @@ SDL_RenderDriver MMIYOO_RenderDriver = {
      }
  };
  
@@ -2845,7 +3036,7 @@ index 31dcb83..946a882 100644
          const char *driver_attempt = driver_name;
          while(driver_attempt != NULL && *driver_attempt != 0 && video == NULL) {
 diff --git a/sdl2/src/video/mmiyoo/SDL_event_mmiyoo.c b/sdl2/src/video/mmiyoo/SDL_event_mmiyoo.c
-index 9ce76ee..e1de59e 100644
+index 9ce76ee..0d73cbd 100644
 --- a/sdl2/src/video/mmiyoo/SDL_event_mmiyoo.c
 +++ b/sdl2/src/video/mmiyoo/SDL_event_mmiyoo.c
 @@ -1,9 +1,9 @@
@@ -2944,22 +3135,8 @@ index 9ce76ee..e1de59e 100644
      #define MENU    1
 +    #define VOLUP   115
 +    #define VOLDOWN 114
- #endif
- 
--#ifdef FUNKEYS
--    #define UP      22
--    #define DOWN    32
--    #define LEFT    38
--    #define RIGHT   19
--    #define A       30
--    #define B       48
--    #define X       45
--    #define Y       21
--    #define L1      50
--    #define R1      49
--    #define START   31
--    #define SELECT  37
--    #define MENU    16
++#endif
++
 +#ifdef MMIYOO
 +    #define UP      103
 +    #define DOWN    108
@@ -2979,8 +3156,22 @@ index 9ce76ee..e1de59e 100644
 +    #define POWER   116
 +    #define VOLUP   115
 +    #define VOLDOWN 114
-+#endif
-+
+ #endif
+ 
+-#ifdef FUNKEYS
+-    #define UP      22
+-    #define DOWN    32
+-    #define LEFT    38
+-    #define RIGHT   19
+-    #define A       30
+-    #define B       48
+-    #define X       45
+-    #define Y       21
+-    #define L1      50
+-    #define R1      49
+-    #define START   31
+-    #define SELECT  37
+-    #define MENU    16
 +#ifdef TRIMUI
 +    #define UP      103
 +    #define DOWN    108
@@ -3031,7 +3222,7 @@ index 9ce76ee..e1de59e 100644
      uint32_t mask = (1 << bit) | (1 << ((nds.hotkey == HOTKEY_BIND_SELECT) ? MYKEY_SELECT : MYKEY_MENU));
  #endif
  
-@@ -260,52 +313,537 @@ static int hit_hotkey(uint32_t bit)
+@@ -260,61 +313,558 @@ static int hit_hotkey(uint32_t bit)
      uint32_t mask = (1 << bit) | (1 << MYKEY_MENU);
  #endif
  
@@ -3088,9 +3279,9 @@ index 9ce76ee..e1de59e 100644
 -        evt.keypad.bitmaps&= ~(1 << bit);
 +        cur_keypad_bitmaps &= ~(1 << bit);
 +        evt.keypad.bitmaps &= ~(1 << bit);
-+    }
-+}
-+
+     }
+ }
+ 
 +#if defined(A30) && USE_MYJOY
 +static int update_joystick(void)
 +{
@@ -3278,7 +3469,7 @@ index 9ce76ee..e1de59e 100644
 +            }
 +            nds.joy.show_cnt = MYJOY_SHOW_CNT;
 +        }
-     }
++    }
 +    return r;
 +}
 +#endif
@@ -3490,9 +3681,21 @@ index 9ce76ee..e1de59e 100644
 +#ifdef QX1000
 +            update_wayland_res(640, 480);
 +#endif
++            // acquire a lock
++            pthread_mutex_lock(&lock);
++
 +            nds.menu.enable = 1;
-+            usleep(100000);
 +            handle_menu(-1);
++
++            pthread_cond_signal(&request_update_screen_cond);
++
++            pthread_cond_wait(&response_update_screen_cond, &lock);
++
++            // release lock
++            pthread_mutex_unlock(&lock);
++//            nds.menu.enable = 1;
++//            usleep(100000);
++//            handle_menu(-1);
 +            cur_keypad_bitmaps = 0;
 +            pre_keypad_bitmaps = evt.keypad.bitmaps = 0;
 +        }
@@ -3584,10 +3787,11 @@ index 9ce76ee..e1de59e 100644
 +    }
 +
 +    return 0;
- }
- 
++}
++
  int EventUpdate(void *data)
-@@ -314,7 +852,7 @@ int EventUpdate(void *data)
+ {
+     struct input_event ev = {0};
  
      uint32_t l1 = L1;
      uint32_t r1 = R1;
@@ -3596,7 +3800,7 @@ index 9ce76ee..e1de59e 100644
      uint32_t l2 = L2;
      uint32_t r2 = R2;
  #endif
-@@ -329,14 +867,59 @@ int EventUpdate(void *data)
+@@ -329,14 +879,59 @@ int EventUpdate(void *data)
      uint32_t left = LEFT;
      uint32_t right = RIGHT;
  
@@ -3659,13 +3863,12 @@ index 9ce76ee..e1de59e 100644
          if ((nds.menu.enable == 0) && (nds.menu.drastic.enable == 0) && nds.keys_rotate) {
              if (nds.keys_rotate == 1) {
                  up = LEFT;
-@@ -372,8 +955,27 @@ int EventUpdate(void *data)
+@@ -372,8 +967,27 @@ int EventUpdate(void *data)
              x = X;
              y = Y;
          }
 +#endif
- 
--#if defined(MMIYOO) || defined(QX1000)
++
 +#if defined(RG35XXH)
 +        if (nds.swap_l1l2) {
 +            l1 = input[MYKEY_L2];
@@ -3675,7 +3878,8 @@ index 9ce76ee..e1de59e 100644
 +            l1 = input[MYKEY_L1];
 +            l2 = input[MYKEY_L2];
 +        }
-+
+ 
+-#if defined(MMIYOO) || defined(QX1000)
 +        if (nds.swap_r1r2) {
 +            r1 = input[MYKEY_R2];
 +            r2 = input[MYKEY_R1];
@@ -3688,7 +3892,7 @@ index 9ce76ee..e1de59e 100644
          if (nds.swap_l1l2) {
              l1 = L2;
              l2 = L1;
-@@ -406,27 +1008,375 @@ int EventUpdate(void *data)
+@@ -406,27 +1020,375 @@ int EventUpdate(void *data)
  #endif
  
          if (event_fd > 0) {
@@ -4071,7 +4275,7 @@ index 9ce76ee..e1de59e 100644
                      switch (ev.code) {
                      case START:  set_key(MYKEY_START, ev.value);  break;
                      case SELECT: set_key(MYKEY_SELECT, ev.value); break;
-@@ -461,296 +1411,37 @@ int EventUpdate(void *data)
+@@ -461,296 +1423,37 @@ int EventUpdate(void *data)
                          }
                          break;
  #endif
@@ -4129,7 +4333,7 @@ index 9ce76ee..e1de59e 100644
 -                            nds.dis_mode = NDS_DIS_MODE_HRES0;
 -                        }
 -#endif
- 
+-
 -#if defined(TRIMUI) || defined(FUNKEYS) || defined(PANDORA)
 -                        if ((nds.menu.enable == 0) && (nds.menu.drastic.enable == 0)) {
 -                            evt.mode = (evt.mode == MMIYOO_KEYPAD_MODE) ? MMIYOO_MOUSE_MODE : MMIYOO_KEYPAD_MODE;
@@ -4169,7 +4373,7 @@ index 9ce76ee..e1de59e 100644
 -                            nds.dis_mode = tmp;
 -                        }
 -#endif
--
+ 
 -#ifdef TRIMUI
 -                        nds.dis_mode = (nds.dis_mode == NDS_DIS_MODE_S0) ? NDS_DIS_MODE_S1 : NDS_DIS_MODE_S0;
 -                        disp_resize();
@@ -4351,7 +4555,7 @@ index 9ce76ee..e1de59e 100644
  #endif
 -                        set_key(MYKEY_L1, 0);
 -                    }
--
+ 
 -#if defined(MMIYOO) || defined(QX1000)
 -                    if (hotkey_mask && hit_hotkey(MYKEY_R2)) {
 -                        set_key(MYKEY_QSAVE, 1);
@@ -4366,7 +4570,7 @@ index 9ce76ee..e1de59e 100644
 -                        if ((nds.menu.enable == 0) && (nds.menu.drastic.enable == 0)) {
 -                            evt.mode = (evt.mode == MMIYOO_KEYPAD_MODE) ? MMIYOO_MOUSE_MODE : MMIYOO_KEYPAD_MODE;
 -                            set_key(MYKEY_L2, 0);
- 
+-
 -                            if (evt.mode == MMIYOO_MOUSE_MODE) {
 -                                release_all_keys();
 -                            }
@@ -4389,7 +4593,7 @@ index 9ce76ee..e1de59e 100644
          }
          SDL_SemPost(event_sem);
          usleep(1000000 / 60);
-@@ -761,7 +1452,7 @@ int EventUpdate(void *data)
+@@ -761,7 +1464,7 @@ int EventUpdate(void *data)
  
  void MMIYOO_EventInit(void)
  {
@@ -4398,7 +4602,7 @@ index 9ce76ee..e1de59e 100644
      DIR *dir = NULL;
  #endif
  
-@@ -793,7 +1484,14 @@ void MMIYOO_EventInit(void)
+@@ -793,7 +1496,14 @@ void MMIYOO_EventInit(void)
  #endif
      evt.mode = MMIYOO_KEYPAD_MODE;
  
@@ -4414,7 +4618,7 @@ index 9ce76ee..e1de59e 100644
      if(event_fd < 0){
          printf(PREFIX"Failed to open event0\n");
      }
-@@ -850,7 +1548,7 @@ void MMIYOO_PumpEvents(_THIS)
+@@ -850,7 +1560,7 @@ void MMIYOO_PumpEvents(_THIS)
  {
      SDL_SemWait(event_sem);
      if (nds.menu.enable) {
@@ -4423,7 +4627,23 @@ index 9ce76ee..e1de59e 100644
          int cc = 0;
          uint32_t bit = 0;
          uint32_t changed = pre_keypad_bitmaps ^ evt.keypad.bitmaps;
-@@ -876,7 +1574,7 @@ void MMIYOO_PumpEvents(_THIS)
+@@ -859,7 +1569,15 @@ void MMIYOO_PumpEvents(_THIS)
+             bit = 1 << cc;
+             if (changed & bit) {
+                 if ((evt.keypad.bitmaps & bit) == 0) {
++                    // acquire a lock
++                    pthread_mutex_lock(&lock);
+                     handle_menu(cc);
++                    pthread_cond_signal(&request_update_screen_cond);
++
++                    pthread_cond_wait(&response_update_screen_cond, &lock);
++
++                    // release lock
++                    pthread_mutex_unlock(&lock);
+                 }
+             }
+         }
+@@ -876,7 +1594,7 @@ void MMIYOO_PumpEvents(_THIS)
                  for (cc=0; cc<=MYKEY_LAST_BITS; cc++) {
                      bit = 1 << cc;
  
@@ -4432,7 +4652,7 @@ index 9ce76ee..e1de59e 100644
                      if ((nds.hotkey == HOTKEY_BIND_MENU) && (cc == MYKEY_MENU)) {
                          continue;
                      }
-@@ -892,8 +1590,14 @@ void MMIYOO_PumpEvents(_THIS)
+@@ -892,8 +1610,14 @@ void MMIYOO_PumpEvents(_THIS)
                          SDL_SendKeyboardKey((evt.keypad.bitmaps & bit) ? SDL_PRESSED : SDL_RELEASED, SDL_GetScancodeFromKey(code[cc]));
                      }
                  }
@@ -4448,7 +4668,7 @@ index 9ce76ee..e1de59e 100644
                  if (pre_keypad_bitmaps & (1 << MYKEY_R2)) {
                      set_key(MYKEY_R2, 0);
                  }
-@@ -934,6 +1638,12 @@ void MMIYOO_PumpEvents(_THIS)
+@@ -934,6 +1658,12 @@ void MMIYOO_PumpEvents(_THIS)
                      SDL_SendMouseButton(vid.window, 0, (evt.keypad.bitmaps & (1 << MYKEY_A)) ? SDL_PRESSED : SDL_RELEASED, SDL_BUTTON_LEFT);
                  }
  
@@ -4461,7 +4681,7 @@ index 9ce76ee..e1de59e 100644
                  for (cc=0; cc<=MYKEY_LAST_BITS; cc++) {
                      bit = 1 << cc;
                      if ((cc == MYKEY_FF) || (cc == MYKEY_QSAVE) || (cc == MYKEY_QLOAD) || (cc == MYKEY_EXIT) || (cc == MYKEY_R2)) {
-@@ -990,13 +1700,18 @@ void MMIYOO_PumpEvents(_THIS)
+@@ -990,13 +1720,18 @@ void MMIYOO_PumpEvents(_THIS)
              if(updated){
                  int x = 0;
                  int y = 0;
@@ -4482,7 +4702,7 @@ index 9ce76ee..e1de59e 100644
                  if (pre_keypad_bitmaps & (1 << MYKEY_R2)) {
                      set_key(MYKEY_R2, 0);
                  }
-@@ -1019,13 +1734,53 @@ void MMIYOO_PumpEvents(_THIS)
+@@ -1019,13 +1754,53 @@ void MMIYOO_PumpEvents(_THIS)
              pre_keypad_bitmaps = evt.keypad.bitmaps;
          }
      }
@@ -4649,7 +4869,7 @@ index 873780a..d8a22c7 100644
  
  extern void MMIYOO_EventInit(void);
 diff --git a/sdl2/src/video/mmiyoo/SDL_video_mmiyoo.c b/sdl2/src/video/mmiyoo/SDL_video_mmiyoo.c
-index 73c1528..8c13ad6 100644
+index 73c1528..fece3ab 100644
 --- a/sdl2/src/video/mmiyoo/SDL_video_mmiyoo.c
 +++ b/sdl2/src/video/mmiyoo/SDL_video_mmiyoo.c
 @@ -1,9 +1,9 @@
@@ -4675,7 +4895,13 @@ index 73c1528..8c13ad6 100644
  
  #include <time.h>
  #include <dirent.h>
-@@ -42,11 +39,14 @@
+@@ -37,16 +34,20 @@
+ #include <fcntl.h>
+ #include <string.h>
+ #include <pthread.h>
++#include <errno.h>
+ #include <sys/mman.h>
+ #include <sys/ioctl.h>
  #include <sys/time.h>
  #include <time.h>
  #include <json-c/json.h>
@@ -4691,7 +4917,7 @@ index 73c1528..8c13ad6 100644
  
  #include "SDL_image.h"
  #include "SDL_version.h"
-@@ -67,7 +67,7 @@
+@@ -67,7 +68,7 @@
  
  NDS nds = {0};
  GFX gfx = {0};
@@ -4700,7 +4926,7 @@ index 73c1528..8c13ad6 100644
  
  int FB_W = 0;
  int FB_H = 0;
-@@ -76,15 +76,21 @@ int LINE_H = 0;
+@@ -76,15 +77,31 @@ int LINE_H = 0;
  int TMP_SIZE = 0;
  int FONT_SIZE = 0;
  int show_fps = 0;
@@ -4709,7 +4935,17 @@ index 73c1528..8c13ad6 100644
  int savestate_busy = 0;
  SDL_Surface *fps_info = NULL;
  
++// add by trngaje begin ---------------------------------------------------------
 +unsigned int g_save_slot = 0;
++
++// Declaration of thread condition variable
++pthread_cond_t request_update_screen_cond = PTHREAD_COND_INITIALIZER;
++pthread_cond_t response_update_screen_cond = PTHREAD_COND_INITIALIZER;
++
++// declaring mutex
++pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
++// add by trngaje end ---------------------------------------------------------
++
 +
  static pthread_t thread;
 -static int is_running = 0;
@@ -4724,7 +4960,7 @@ index 73c1528..8c13ad6 100644
  extern MMIYOO_EventInfo evt;
  
  static int MMIYOO_VideoInit(_THIS);
-@@ -104,6 +110,180 @@ int need_restore = 0;
+@@ -104,6 +121,180 @@ int need_restore = 0;
  int pre_dismode = 0;
  #endif
  
@@ -4905,7 +5141,7 @@ index 73c1528..8c13ad6 100644
  #ifdef QX1000
  static struct _wayland wl = {0};
  
-@@ -382,6 +562,7 @@ void egl_create(void)
+@@ -382,6 +573,7 @@ void egl_create(void)
      glViewport(0, 0, LCD_W, LCD_H);
      glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
      glClear(GL_COLOR_BUFFER_BIT);
@@ -4913,7 +5149,7 @@ index 73c1528..8c13ad6 100644
      glVertexAttribPointer(wl.egl.positionLoc, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), egl_bg_vertices);
      glVertexAttribPointer(wl.egl.texCoordLoc, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), &egl_bg_vertices[3]);
      glEnableVertexAttribArray(wl.egl.positionLoc);
-@@ -419,7 +600,7 @@ static void* draw_thread(void *pParam)
+@@ -419,7 +611,7 @@ static void* draw_thread(void *pParam)
  }
  #endif
  
@@ -4922,7 +5158,7 @@ index 73c1528..8c13ad6 100644
  static void* sdl_malloc(size_t size)
  {
      static int idx = 0;
-@@ -430,7 +611,7 @@ static void* sdl_malloc(size_t size)
+@@ -430,7 +622,7 @@ static void* sdl_malloc(size_t size)
      if ((size == (NDS_W * NDS_H * bpp)) ||
          (size == (NDS_Wx2 * NDS_Hx2 * bpp)))
      {
@@ -4931,7 +5167,7 @@ index 73c1528..8c13ad6 100644
          idx += 1;
          idx %= 2;
      }
-@@ -442,7 +623,20 @@ static void* sdl_malloc(size_t size)
+@@ -442,7 +634,20 @@ static void* sdl_malloc(size_t size)
  
  static void sdl_free(void *ptr)
  {
@@ -4953,7 +5189,7 @@ index 73c1528..8c13ad6 100644
          free(ptr);
      }
  }
-@@ -532,7 +726,7 @@ static int draw_drastic_menu_main(void)
+@@ -532,7 +737,7 @@ static int draw_drastic_menu_main(void)
      CUST_MENU_SUB *p = NULL;
      char buf[MAX_PATH << 1] = {0};
  
@@ -4962,7 +5198,7 @@ index 73c1528..8c13ad6 100644
      div = 2;
  #endif
  
-@@ -542,7 +736,7 @@ static int draw_drastic_menu_main(void)
+@@ -542,7 +747,7 @@ static int draw_drastic_menu_main(void)
          w = LINE_H / div;
          h = nds.enable_752x560 ? (115 / div) : (100 / div);
  
@@ -4971,7 +5207,7 @@ index 73c1528..8c13ad6 100644
          x = 30 / div;
  #endif
  
-@@ -550,19 +744,13 @@ static int draw_drastic_menu_main(void)
+@@ -550,19 +755,13 @@ static int draw_drastic_menu_main(void)
          p = &drastic_menu.item[cc];
          if (p->y == 201) {
              draw = 1;
@@ -4993,7 +5229,7 @@ index 73c1528..8c13ad6 100644
          }
          else if (p->y == 280) {
              draw = 1;
-@@ -640,6 +828,10 @@ static int draw_drastic_menu_main(void)
+@@ -640,6 +839,10 @@ static int draw_drastic_menu_main(void)
      }
  
      y = 10;
@@ -5004,7 +5240,7 @@ index 73c1528..8c13ad6 100644
  #ifdef MMIYOO
      sprintf(buf, "Rel "NDS_VER" Res %s", nds.enable_752x560 ? "752*560" : "640*480");
  #endif
-@@ -648,11 +840,6 @@ static int draw_drastic_menu_main(void)
+@@ -648,11 +851,6 @@ static int draw_drastic_menu_main(void)
      sprintf(buf, "Rel "NDS_VER" Res %s", "320*240");
  #endif
  
@@ -5016,7 +5252,7 @@ index 73c1528..8c13ad6 100644
  #ifdef PANDORA
      sprintf(buf, "Rel "NDS_VER" Res %s", "800*480");
  #endif
-@@ -670,23 +857,18 @@ static int draw_drastic_menu_main(void)
+@@ -670,23 +868,18 @@ static int draw_drastic_menu_main(void)
  
          if (top && bottom) {
              SDL_Surface *t = NULL;
@@ -5043,7 +5279,7 @@ index 73c1528..8c13ad6 100644
              sm = SDL_CreateRGBSurface(0, SM_W, SM_H, 16, 0, 0, 0, 0);
  #endif
  
-@@ -695,7 +877,7 @@ static int draw_drastic_menu_main(void)
+@@ -695,7 +888,7 @@ static int draw_drastic_menu_main(void)
              _func((void*)VAR_SYSTEM, slot, top, bottom, 1);
              t = SDL_CreateRGBSurfaceFrom(top, NDS_W, NDS_H, 16, NDS_W * 2, 0, 0, 0, 0);
              if (t) {
@@ -5052,7 +5288,7 @@ index 73c1528..8c13ad6 100644
                  rt.x = FB_W - (NDS_W + (nds.enable_752x560 ? 30 : 10));
                  rt.y = nds.enable_752x560 ? h - 20 : 50;
                  rt.w = NDS_W;
-@@ -707,7 +889,7 @@ static int draw_drastic_menu_main(void)
+@@ -707,7 +900,7 @@ static int draw_drastic_menu_main(void)
  
              t = SDL_CreateRGBSurfaceFrom(bottom, NDS_W, NDS_H, 16, NDS_W * 2, 0, 0, 0, 0);
              if (t) {
@@ -5061,7 +5297,7 @@ index 73c1528..8c13ad6 100644
                  rt.x = FB_W - (NDS_W + (nds.enable_752x560 ? 30 : 10));
                  rt.y = nds.enable_752x560 ? (h + NDS_H) - 20 : 50 + NDS_H;
                  rt.w = NDS_W;
-@@ -724,20 +906,10 @@ static int draw_drastic_menu_main(void)
+@@ -724,20 +917,10 @@ static int draw_drastic_menu_main(void)
                  rt.h = SM_H;
                  SDL_BlitSurface(sm, NULL, nds.menu.drastic.main, &rt);
  #endif
@@ -5083,7 +5319,7 @@ index 73c1528..8c13ad6 100644
              if (sm) {
                  SDL_FreeSurface(sm);
              }
-@@ -774,7 +946,7 @@ static char* find_menu_string_tail(char *p)
+@@ -774,7 +957,7 @@ static char* find_menu_string_tail(char *p)
      int cc = 0;
  
      for (cc=strlen(p) - 1; cc>=0; cc--) {
@@ -5092,7 +5328,7 @@ index 73c1528..8c13ad6 100644
              return &p[cc + 1];
          }
      }
-@@ -796,7 +968,7 @@ static int draw_drastic_menu_option(void)
+@@ -796,7 +979,7 @@ static int draw_drastic_menu_option(void)
      CUST_MENU_SUB *p = NULL;
      char buf[MAX_PATH] = {0};
  
@@ -5101,7 +5337,7 @@ index 73c1528..8c13ad6 100644
      div = 2;
  #endif
  
-@@ -868,7 +1040,7 @@ static int draw_drastic_menu_controller(void)
+@@ -868,7 +1051,7 @@ static int draw_drastic_menu_controller(void)
      CUST_MENU_SUB *p = NULL;
      char buf[MAX_PATH] = {0};
  
@@ -5110,7 +5346,7 @@ index 73c1528..8c13ad6 100644
      div = 2;
  #endif
  
-@@ -972,13 +1144,13 @@ static int draw_drastic_menu_controller2(void)
+@@ -972,13 +1155,13 @@ static int draw_drastic_menu_controller2(void)
      CUST_MENU_SUB *p = NULL;
      char buf[MAX_PATH] = {0};
  
@@ -5126,7 +5362,7 @@ index 73c1528..8c13ad6 100644
              if ((drastic_menu.item[cc + 1].bg > 0) || (drastic_menu.item[cc + 2].bg > 0)) {
                  break;
              }
-@@ -1019,7 +1191,7 @@ static int draw_drastic_menu_controller2(void)
+@@ -1019,7 +1202,7 @@ static int draw_drastic_menu_controller2(void)
          if ((cnt >= s0) && (cnt < s1)) {
              y = (25 / div) + ((cnt - s0) * w);
  
@@ -5135,7 +5371,7 @@ index 73c1528..8c13ad6 100644
                  if (drastic_menu.item[cc + 1].bg || drastic_menu.item[cc + 2].bg) {
                      int sum = drastic_menu.item[cc + 1].bg + drastic_menu.item[cc + 2].bg;
                      uint32_t c = sum > 500 ? 0xff0000 : nds.menu.c2;
-@@ -1031,7 +1203,7 @@ static int draw_drastic_menu_controller2(void)
+@@ -1031,7 +1214,7 @@ static int draw_drastic_menu_controller2(void)
                      SDL_FillRect(nds.menu.drastic.main, &rt, SDL_MapRGB(nds.menu.drastic.main->format, (c >> 16) & 0xff, (c >> 8) & 0xff, c & 0xff));
                  }
                  draw_info(nds.menu.drastic.main, p->msg, 20 / div, y, p->bg ? nds.menu.c0 : nds.menu.c1, 0);
@@ -5144,7 +5380,7 @@ index 73c1528..8c13ad6 100644
                      if (nds.enable_752x560) {
                          draw_info(nds.menu.drastic.main, to_lang(drastic_menu.item[cc + 1].msg), 320 / div, y, drastic_menu.item[cc + 1].bg ? nds.menu.c0 : nds.menu.c1, 0);
                          draw_info(nds.menu.drastic.main, to_lang(drastic_menu.item[cc + 2].msg), 550 / div, y, drastic_menu.item[cc + 2].bg ? nds.menu.c0 : nds.menu.c1, 0);
-@@ -1056,7 +1228,7 @@ static int draw_drastic_menu_controller2(void)
+@@ -1056,7 +1239,7 @@ static int draw_drastic_menu_controller2(void)
          }
  
          cnt+= 1;
@@ -5153,7 +5389,7 @@ index 73c1528..8c13ad6 100644
              cc+= 2;
          }
      }
-@@ -1077,7 +1249,7 @@ static int draw_drastic_menu_firmware(void)
+@@ -1077,7 +1260,7 @@ static int draw_drastic_menu_firmware(void)
      char buf[MAX_PATH] = {0};
      char name[MAX_PATH] = {0};
  
@@ -5162,7 +5398,7 @@ index 73c1528..8c13ad6 100644
      div = 2;
  #endif
  
-@@ -1155,7 +1327,7 @@ static int draw_drastic_menu_cheat(void)
+@@ -1155,7 +1338,7 @@ static int draw_drastic_menu_cheat(void)
      CUST_MENU_SUB *p = NULL;
      char buf[MAX_PATH] = {0};
  
@@ -5171,7 +5407,7 @@ index 73c1528..8c13ad6 100644
      div = 2;
  #endif
      for (cc=0; cc<drastic_menu.cnt; cc++) {
-@@ -1259,7 +1431,7 @@ static int draw_drastic_menu_rom(void)
+@@ -1259,7 +1442,7 @@ static int draw_drastic_menu_rom(void)
      int s0 = 0, s1 = 0;
      CUST_MENU_SUB *p = NULL;
  
@@ -5180,7 +5416,7 @@ index 73c1528..8c13ad6 100644
      div = 2;
  #endif
  
-@@ -1388,10 +1560,14 @@ int process_drastic_menu(void)
+@@ -1388,10 +1571,14 @@ int process_drastic_menu(void)
          memset(&drastic_menu, 0, sizeof(drastic_menu));
          return 0;
      }
@@ -5197,7 +5433,16 @@ index 73c1528..8c13ad6 100644
      memset(&drastic_menu, 0, sizeof(drastic_menu));
      return 0;
  }
-@@ -1409,17 +1585,28 @@ static int process_screen(void)
+@@ -1400,7 +1587,7 @@ static int process_screen(void)
+ {
+     static int need_loadstate = 15;
+     static int show_info_cnt = 0;
+-    static int cur_fb_w = 0;
++    //static int cur_fb_w = 0;
+     static int cur_volume = 0;
+     static int cur_dis_mode = 0;
+     static int cur_touchpad = 0;
+@@ -1409,17 +1596,28 @@ static int process_screen(void)
      static int pre_dis_mode = NDS_DIS_MODE_VH_S0;
      static int pre_hres_mode = NDS_DIS_MODE_HRES0;
      static char show_info_buf[MAX_PATH << 1] = {0};
@@ -5228,16 +5473,27 @@ index 73c1528..8c13ad6 100644
      if (nds.auto_state > 0) {
          if (need_loadstate > 0) {
              need_loadstate-= 1;
-@@ -1444,7 +1631,7 @@ static int process_screen(void)
+@@ -1442,26 +1640,29 @@ static int process_screen(void)
+ #endif
+     }
  
-     if ((cur_fb_w != FB_W) ||
+-    if ((cur_fb_w != FB_W) ||
++    if (//(cur_fb_w != FB_W) ||
          (nds.shot.take) ||
 -        (cur_touchpad != nds.pen.pos) ||
 +        /*(cur_touchpad != nds.pen.pos) ||*/
          (cur_dis_mode != nds.dis_mode) ||
          (cur_theme_sel != nds.theme.sel) ||
          (cur_pixel_filter != pixel_filter) ||
-@@ -1458,10 +1645,12 @@ static int process_screen(void)
+         (cur_volume != nds.volume))
+     {
++/*
+         if (cur_fb_w != FB_W) {
+             show_info_cnt = 150;
+             sprintf(show_info_buf, " %d x %d ", FB_W, FB_H);
+         }
+-        else if (cur_volume != nds.volume) {
++        else */if (cur_volume != nds.volume) {
              show_info_cnt = 50;
              sprintf(show_info_buf, " %s %d ", to_lang("Volume"), nds.volume);
          }
@@ -5250,7 +5506,12 @@ index 73c1528..8c13ad6 100644
          else if (cur_theme_sel != nds.theme.sel) {
              show_info_cnt = 50;
              if ((nds.theme.max > 0) && (nds.theme.sel < nds.theme.max)) {
-@@ -1491,7 +1680,7 @@ static int process_screen(void)
+@@ -1487,11 +1688,11 @@ static int process_screen(void)
+             sprintf(show_info_buf, " %s ", to_lang("Take Screenshot"));
+         }
+ 
+-        cur_fb_w = FB_W;
++       // cur_fb_w = FB_W;
          cur_theme_sel = nds.theme.sel;
          cur_volume = nds.volume;
          cur_dis_mode = nds.dis_mode;
@@ -5259,7 +5520,7 @@ index 73c1528..8c13ad6 100644
          cur_pixel_filter = pixel_filter;
          need_reload_bg = RELOAD_BG_COUNT;
      }
-@@ -1528,8 +1717,11 @@ static int process_screen(void)
+@@ -1528,8 +1729,11 @@ static int process_screen(void)
      }
  
      nds.screen.bpp = *((uint32_t *)VAR_SDL_SCREEN_BPP);
@@ -5271,7 +5532,7 @@ index 73c1528..8c13ad6 100644
      if (need_reload_bg) {
          reload_bg();
          need_reload_bg -= 1;
-@@ -1548,12 +1740,18 @@ static int process_screen(void)
+@@ -1548,12 +1752,18 @@ static int process_screen(void)
              *((uint8_t *)VAR_SDL_SCREEN1_HRES_MODE):
              *((uint8_t *)VAR_SDL_SCREEN0_HRES_MODE);
  
@@ -5293,7 +5554,7 @@ index 73c1528..8c13ad6 100644
          if (nds.screen.hres_mode[idx]) {
              srt.w = NDS_Wx2;
              srt.h = NDS_Hx2;
-@@ -1574,9 +1772,7 @@ static int process_screen(void)
+@@ -1574,9 +1784,7 @@ static int process_screen(void)
              nds.screen.pitch[idx] = nds.screen.bpp * srt.w;
  
              drt.y = idx * 120;
@@ -5304,7 +5565,7 @@ index 73c1528..8c13ad6 100644
              if (nds.hres_mode == 1) {
                  nds.hres_mode = 0;
                  pre_hres_mode = nds.dis_mode;
-@@ -1590,8 +1786,140 @@ static int process_screen(void)
+@@ -1590,8 +1798,140 @@ static int process_screen(void)
  #if defined(QX1000)
  #elif defined(TRIMUI)
  #elif defined(PANDORA)
@@ -5447,7 +5708,7 @@ index 73c1528..8c13ad6 100644
          switch (nds.dis_mode) {
          case NDS_DIS_MODE_VH_T0:
              if (screen1) {
-@@ -1599,11 +1927,11 @@ static int process_screen(void)
+@@ -1599,11 +1939,11 @@ static int process_screen(void)
                  drt.y = 0;
                  drt.w = FB_W;
                  drt.h = FB_H;
@@ -5462,7 +5723,7 @@ index 73c1528..8c13ad6 100644
                  need_update = 0;
              }
              break;
-@@ -1613,11 +1941,11 @@ static int process_screen(void)
+@@ -1613,11 +1953,11 @@ static int process_screen(void)
                  drt.y = 0;
                  drt.w = FB_W;
                  drt.h = FB_H;
@@ -5477,7 +5738,7 @@ index 73c1528..8c13ad6 100644
                  need_update = 0;
              }
              break;
-@@ -1627,11 +1955,11 @@ static int process_screen(void)
+@@ -1627,11 +1967,11 @@ static int process_screen(void)
                  drt.h = NDS_H * 2;
                  drt.x = (FB_W - drt.w) / 2;
                  drt.y = (FB_H - drt.h) / 2;
@@ -5492,7 +5753,7 @@ index 73c1528..8c13ad6 100644
                  need_update = 0;
              }
              break;
-@@ -1641,11 +1969,11 @@ static int process_screen(void)
+@@ -1641,11 +1981,11 @@ static int process_screen(void)
                  drt.y = 0;
                  drt.w = FB_W;
                  drt.h = FB_H;
@@ -5507,7 +5768,7 @@ index 73c1528..8c13ad6 100644
                  need_update = 0;
              }
              break;
-@@ -1760,32 +2088,204 @@ static int process_screen(void)
+@@ -1760,32 +2100,204 @@ static int process_screen(void)
          return 0;
  #endif
  
@@ -5717,7 +5978,7 @@ index 73c1528..8c13ad6 100644
                  break;
              }
  #endif
-@@ -1807,7 +2307,7 @@ static int process_screen(void)
+@@ -1807,7 +2319,7 @@ static int process_screen(void)
          rt.y = 0;
          rt.w = fps_info->w;
          rt.h = fps_info->h;
@@ -5726,7 +5987,7 @@ index 73c1528..8c13ad6 100644
      }
  
  #ifdef TRIMUI
-@@ -1822,7 +2322,9 @@ static int process_screen(void)
+@@ -1822,7 +2334,9 @@ static int process_screen(void)
          nds_set_screen_menu_off _func = (nds_set_screen_menu_off)FUN_SET_SCREEN_MENU_OFF;
          _func();
      }
@@ -5736,29 +5997,29 @@ index 73c1528..8c13ad6 100644
      return 0;
  }
  
-@@ -1830,56 +2332,156 @@ void sdl_blit_screen_menu(uint16_t *src, uint32_t x, uint32_t y, uint32_t w, uin
+@@ -1830,56 +2344,167 @@ void sdl_blit_screen_menu(uint16_t *src, uint32_t x, uint32_t y, uint32_t w, uin
  {
  }
  
 -void sdl_update_screen(void)
 +void sdl_update_screen(ulong param_1)
- {
--    static int prepare_time = 30;
- 
--    if (prepare_time) {
--        process_screen();
--        prepare_time -= 1;
++{
++
 +}
 +
 +// [trngaje] save_state_num=0x47b9c0
 +void sdl_draw_menu_bg(unsigned long *param_1) // draw_menu_bg(&local_578); 이라 어드레스 접근이 어려움
-+{
+ {
+-    static int prepare_time = 30;
 +    void *__s;
 +    void *__s_00;
 +    char *pcVar1;
 +    unsigned int uVar2;
 +    long local_10;
-+
+ 
+-    if (prepare_time) {
+-        process_screen();
+-        prepare_time -= 1;
 +    nds_savestate_index_timestamp savestate_index_timestamp;
 +    
 +    //printf("[trngaje] sdl_draw_menu_bg:param_1=%p\n", param_1 - base_addr_rx);
@@ -5806,11 +6067,11 @@ index 73c1528..8c13ad6 100644
 +        //free(__s_00);
 +        //set_font_wide();
 +      }
-+    }
+     }
 +    else {
 +      //blit_screen_menu(param_1[5],0x1d8,0x30,0x100,0xc0);
 +      //blit_screen_menu(param_1[6],0x1d8,0xf0,0x100,0xc0);
-     }
++    }
 +  }
 +      
 +}
@@ -5867,7 +6128,18 @@ index 73c1528..8c13ad6 100644
 +// 여긴 계속 호출되고 있음
 +void sdl_update_screens(void)
 +{
-+    static int prepare_time = 30;
++    // acquire a lock
++    pthread_mutex_lock(&lock);
++    
++    nds.update_screen = 1;
++    nds.menu.drastic.enable = 0;
++    pthread_cond_signal(&request_update_screen_cond);
++    
++    pthread_cond_wait(&response_update_screen_cond, &lock);
++    
++    // release lock 
++    pthread_mutex_unlock(&lock);     
++//    static int prepare_time = 30;
 +    
 +    
 +/*
@@ -5931,12 +6203,12 @@ index 73c1528..8c13ad6 100644
          nds.update_screen = 1;
      }
 +    */
-+    nds.update_screen = 1;
-+    nds.menu.drastic.enable = 0;
++ //   nds.update_screen = 1;
++ //   nds.menu.drastic.enable = 0;
  }
  
  void sdl_print_string(char *p, uint32_t fg, uint32_t bg, uint32_t x, uint32_t y)
-@@ -1940,7 +2542,7 @@ void sdl_print_string(char *p, uint32_t fg, uint32_t bg, uint32_t x, uint32_t y)
+@@ -1940,7 +2565,7 @@ void sdl_print_string(char *p, uint32_t fg, uint32_t bg, uint32_t x, uint32_t y)
  
  void sdl_savestate_pre(void)
  {
@@ -5945,7 +6217,7 @@ index 73c1528..8c13ad6 100644
      asm volatile (
          "mov r1, %0                 \n"
          "mov r2, #1                 \n"
-@@ -1954,7 +2556,7 @@ void sdl_savestate_pre(void)
+@@ -1954,7 +2579,7 @@ void sdl_savestate_pre(void)
  
  void sdl_savestate_post(void)
  {
@@ -5954,10 +6226,11 @@ index 73c1528..8c13ad6 100644
      asm volatile (
          "mov r1, %0                 \n"
          "mov r2, #0                 \n"
-@@ -1991,8 +2593,121 @@ static void strip_newline(char *p)
+@@ -1991,15 +2616,154 @@ static void strip_newline(char *p)
  
  static void *video_handler(void *threadid)
  {
++    int result;
 +#if defined(A30) || defined(RG35XXH_GL)
 +    EGLint egl_major = 0;
 +    EGLint egl_minor = 0;
@@ -6051,8 +6324,14 @@ index 73c1528..8c13ad6 100644
 +*/
 +#endif
 +
++    // acquire a lock
++    pthread_mutex_lock(&lock);
++
      while (is_running) {
 +#if defined(A30) || defined(RG35XXH_GL)
++        result = pthread_cond_wait(&request_update_screen_cond, &lock);
++        //result = pthread_cond_timedwait(&request_update_screen_cond, &lock, &t); // 프로그램 종료시 loop를 빠져나갈 수 있도록 추가
++        if (result != ETIMEDOUT && result != EINTR && is_running != 0) {         
 +        if (nds.menu.enable) {
 +            if (nds.update_menu) {
 +                nds.update_menu = 0;
@@ -6076,10 +6355,15 @@ index 73c1528..8c13ad6 100644
              process_screen();
              nds.update_screen = 0;
          }
-@@ -2000,6 +2715,20 @@ static void *video_handler(void *threadid)
+         else {
              usleep(0);
          }
++        pthread_cond_signal(&response_update_screen_cond);
++        }
      }
++
++    // release lock 
++    pthread_mutex_unlock(&lock); 
 +
 +#if defined(A30) || defined(RG35XXH_GL)
 +    glDeleteTextures(TEX_MAX, vid.texID);
@@ -6097,7 +6381,7 @@ index 73c1528..8c13ad6 100644
      pthread_exit(NULL);
  }
  
-@@ -2094,13 +2823,24 @@ static void lang_enum(void)
+@@ -2094,13 +2858,24 @@ static void lang_enum(void)
  
  static int read_config(void)
  {
@@ -6123,7 +6407,7 @@ index 73c1528..8c13ad6 100644
      jfile = json_object_from_file(nds.cfg.path);
      if (jfile == NULL) {
          printf(PREFIX"Failed to read settings from json file (%s)\n", nds.cfg.path);
-@@ -2111,12 +2851,12 @@ static int read_config(void)
+@@ -2111,12 +2886,12 @@ static int read_config(void)
      if (jval) {
          nds.pen.sel = json_object_get_int(jval);
      }
@@ -6138,7 +6422,7 @@ index 73c1528..8c13ad6 100644
      json_object_object_get_ex(jfile, JSON_NDS_THEME_SEL, &jval);
      if (jval) {
          nds.theme.sel = json_object_get_int(jval);
-@@ -2126,7 +2866,9 @@ static int read_config(void)
+@@ -2126,7 +2901,9 @@ static int read_config(void)
      if (jval) {
          nds.dis_mode = json_object_get_int(jval);
      }
@@ -6149,7 +6433,7 @@ index 73c1528..8c13ad6 100644
      json_object_object_get_ex(jfile, JSON_NDS_ALT_MODE, &jval);
      if (jval) {
          nds.alt_mode = json_object_get_int(jval);
-@@ -2168,6 +2910,16 @@ static int read_config(void)
+@@ -2168,6 +2945,16 @@ static int read_config(void)
          nds.mincpu = json_object_get_int(jval);
      }
  
@@ -6166,7 +6450,7 @@ index 73c1528..8c13ad6 100644
      json_object_object_get_ex(jfile, JSON_NDS_OVERLAY, &jval);
      if (jval) {
          nds.overlay.sel = json_object_get_int(jval);
-@@ -2188,6 +2940,18 @@ static int read_config(void)
+@@ -2188,6 +2975,18 @@ static int read_config(void)
          nds.keys_rotate = json_object_get_int(jval) % 3;
      }
  
@@ -6185,7 +6469,7 @@ index 73c1528..8c13ad6 100644
      nds.menu.c0 = 0xffffff;
      json_object_object_get_ex(jfile, JSON_NDS_MENU_C0, &jval);
      if (jval) {
-@@ -2247,7 +3011,7 @@ static int read_config(void)
+@@ -2247,7 +3046,7 @@ static int read_config(void)
          nds.fast_forward = json_object_get_int(jval);
      }
  
@@ -6194,7 +6478,7 @@ index 73c1528..8c13ad6 100644
      json_object_object_get_ex(jfile, JSON_NDS_STATES, &jval);
      if (jval) {
          struct stat st = {0};
-@@ -2263,12 +3027,12 @@ static int read_config(void)
+@@ -2263,12 +3062,12 @@ static int read_config(void)
          }
      }
  #endif
@@ -6209,7 +6493,7 @@ index 73c1528..8c13ad6 100644
      nds.menu.sel = 0;
      json_object_object_get_ex(jfile, JSON_NDS_MENU_BG, &jval);
      if (jval) {
-@@ -2277,21 +3041,62 @@ static int read_config(void)
+@@ -2277,21 +3076,62 @@ static int read_config(void)
              nds.menu.sel = 0;
          }
      }
@@ -6275,7 +6559,7 @@ index 73c1528..8c13ad6 100644
      }
  #endif
  
-@@ -2302,13 +3107,18 @@ static int read_config(void)
+@@ -2302,13 +3142,18 @@ static int read_config(void)
      disp_resize();
  #endif
  
@@ -6298,7 +6582,7 @@ index 73c1528..8c13ad6 100644
      return 0;
  }
  
-@@ -2327,12 +3137,12 @@ static int write_config(void)
+@@ -2327,12 +3172,12 @@ static int write_config(void)
          nds.dis_mode = pre_dismode;
      }
  #endif
@@ -6313,7 +6597,7 @@ index 73c1528..8c13ad6 100644
      json_object_object_add(jfile, JSON_NDS_PEN_SEL, json_object_new_int(nds.pen.sel));
      json_object_object_add(jfile, JSON_NDS_THEME_SEL, json_object_new_int(nds.theme.sel));
      json_object_object_add(jfile, JSON_NDS_DIS_MODE, json_object_new_int(nds.dis_mode));
-@@ -2352,6 +3162,15 @@ static int write_config(void)
+@@ -2352,6 +3197,15 @@ static int write_config(void)
      json_object_object_add(jfile, JSON_NDS_MENU_CURSOR, json_object_new_int(nds.menu.show_cursor));
      json_object_object_add(jfile, JSON_NDS_FAST_FORWARD, json_object_new_int(nds.fast_forward));
  
@@ -6329,7 +6613,7 @@ index 73c1528..8c13ad6 100644
      json_object_to_file_ext(nds.cfg.path, jfile, JSON_C_TO_STRING_PRETTY);
      json_object_put(jfile);
      printf(PREFIX"Wrote changed settings back !\n");
-@@ -2689,15 +3508,47 @@ int fb_quit(void)
+@@ -2689,15 +3543,47 @@ int fb_quit(void)
  }
  #endif
  
@@ -6378,7 +6662,7 @@ index 73c1528..8c13ad6 100644
      gfx.hw.mem = mmap(NULL, FB_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, gfx.fb_dev, 0);
      if (gfx.hw.mem == (void *)-1) {
          close(gfx.fb_dev);
-@@ -2705,14 +3556,37 @@ int fb_init(void)
+@@ -2705,14 +3591,37 @@ int fb_init(void)
          return -1;
      }
      memset(gfx.hw.mem, 0 , FB_SIZE);
@@ -6416,7 +6700,7 @@ index 73c1528..8c13ad6 100644
      return 0;
  }
  #endif
-@@ -2873,12 +3747,168 @@ void disp_resize(void)
+@@ -2873,12 +3782,168 @@ void disp_resize(void)
  }
  #endif
  
@@ -6588,7 +6872,7 @@ index 73c1528..8c13ad6 100644
      MI_SYS_Init();
      MI_GFX_Open();
  
-@@ -2900,24 +3930,23 @@ int fb_init(void)
+@@ -2900,24 +3965,23 @@ int fb_init(void)
      MI_SYS_MMA_Alloc(NULL, TMP_SIZE, &gfx.overlay.phyAddr);
      MI_SYS_Mmap(gfx.overlay.phyAddr, TMP_SIZE, &gfx.overlay.virAddr, TRUE);
  
@@ -6625,7 +6909,7 @@ index 73c1528..8c13ad6 100644
      MI_SYS_Munmap(gfx.fb.virAddr, TMP_SIZE);
  
      MI_SYS_Munmap(gfx.tmp.virAddr, TMP_SIZE);
-@@ -2926,13 +3955,14 @@ int fb_quit(void)
+@@ -2926,13 +3990,14 @@ int fb_quit(void)
      MI_SYS_Munmap(gfx.overlay.virAddr, TMP_SIZE);
      MI_SYS_MMA_Free(gfx.overlay.phyAddr);
  
@@ -6647,7 +6931,7 @@ index 73c1528..8c13ad6 100644
  
      MI_GFX_Close();
      MI_SYS_Exit();
-@@ -2941,7 +3971,6 @@ int fb_quit(void)
+@@ -2941,7 +4006,6 @@ int fb_quit(void)
      ioctl(gfx.fb_dev, FBIOPUT_VSCREENINFO, &gfx.vinfo);
      close(gfx.fb_dev);
      gfx.fb_dev = -1;
@@ -6655,12 +6939,20 @@ index 73c1528..8c13ad6 100644
      return 0;
  }
  #endif
-@@ -3084,9 +4113,12 @@ void GFX_Quit(void)
+@@ -3084,9 +4148,20 @@ void GFX_Quit(void)
  {
      void *ret = NULL;
  
 +    printf(PREFIX"Wait for video_handler exit\n");
++
++    // acquire a lock
++    pthread_mutex_lock(&lock);
      is_running = 0;
++    //pthread_cond_destory(&request_update_screen_cond);    // build error
++    pthread_cond_signal(&request_update_screen_cond);
++    
++    pthread_mutex_unlock(&lock);  
++    
      pthread_join(thread, &ret);
 +
      GFX_Clear();
@@ -6668,7 +6960,7 @@ index 73c1528..8c13ad6 100644
      fb_quit();
  
      if (cvt) {
-@@ -3097,21 +4129,18 @@ void GFX_Quit(void)
+@@ -3097,21 +4172,18 @@ void GFX_Quit(void)
  
  void GFX_Clear(void)
  {
@@ -6695,7 +6987,7 @@ index 73c1528..8c13ad6 100644
      int c0 = 0;
      int c1 = 0;
      int w = 28;
-@@ -3150,21 +4179,50 @@ int draw_pen(void *pixels, int width, int pitch)
+@@ -3150,21 +4222,50 @@ int draw_pen(void *pixels, int width, int pitch)
      case PEN_LT:
          break;
      case PEN_LB:
@@ -6753,7 +7045,7 @@ index 73c1528..8c13ad6 100644
          for (c0=0; c0<w; c0++) {
              x0 = x1 = (c0 * scale) + x;
              y0 = y1 = (c1 * scale) + (y - sub);
-@@ -3199,12 +4257,93 @@ int draw_pen(void *pixels, int width, int pitch)
+@@ -3199,12 +4300,93 @@ int draw_pen(void *pixels, int width, int pitch)
              s+= 1;
          }
      }
@@ -6849,7 +7141,7 @@ index 73c1528..8c13ad6 100644
  #ifdef QX1000
      int x = 0;
      int y = 0;
-@@ -3613,59 +4752,87 @@ int GFX_Copy(const void *pixels, SDL_Rect srcrect, SDL_Rect dstrect, int pitch,
+@@ -3613,59 +4795,87 @@ int GFX_Copy(const void *pixels, SDL_Rect srcrect, SDL_Rect dstrect, int pitch,
          }
      }
  #endif
@@ -6989,7 +7281,7 @@ index 73c1528..8c13ad6 100644
  #endif
  
  #ifdef TRIMUI
-@@ -3793,7 +4960,6 @@ int GFX_Copy(const void *pixels, SDL_Rect srcrect, SDL_Rect dstrect, int pitch,
+@@ -3793,7 +5003,6 @@ int GFX_Copy(const void *pixels, SDL_Rect srcrect, SDL_Rect dstrect, int pitch,
  #ifdef MMIYOO
      int cc = 0;
      int copy_it = 1;
@@ -6997,7 +7289,7 @@ index 73c1528..8c13ad6 100644
      MI_U16 u16Fence = 0;
      int is_rgb565 = (pitch / srcrect.w) == 2 ? 1 : 0;
  
-@@ -3801,13 +4967,6 @@ int GFX_Copy(const void *pixels, SDL_Rect srcrect, SDL_Rect dstrect, int pitch,
+@@ -3801,13 +5010,6 @@ int GFX_Copy(const void *pixels, SDL_Rect srcrect, SDL_Rect dstrect, int pitch,
          return -1;
      }
  
@@ -7011,7 +7303,7 @@ index 73c1528..8c13ad6 100644
      if (alpha != 0) {
          if (nds.alpha.val > NDS_ALPHA_MAX) {
              nds.alpha.val = 0;
-@@ -4308,10 +5467,22 @@ int GFX_Copy(const void *pixels, SDL_Rect srcrect, SDL_Rect dstrect, int pitch,
+@@ -4308,10 +5510,22 @@ int GFX_Copy(const void *pixels, SDL_Rect srcrect, SDL_Rect dstrect, int pitch,
      }
  
      if (copy_it) {
@@ -7037,7 +7329,7 @@ index 73c1528..8c13ad6 100644
              neon_memcpy(gfx.tmp.virAddr, pixels, srcrect.h * pitch);
              gfx.hw.src.surf.phyAddr = gfx.tmp.phyAddr;
              MI_SYS_FlushInvCache(gfx.tmp.virAddr, pitch * srcrect.h);
-@@ -4388,6 +5559,18 @@ void GFX_Flip(void)
+@@ -4388,6 +5602,18 @@ void GFX_Flip(void)
      gfx.vinfo.yoffset ^= FB_H;
  #endif
  
@@ -7056,7 +7348,7 @@ index 73c1528..8c13ad6 100644
  #ifdef MMIYOO
      ioctl(gfx.fb_dev, FBIOPAN_DISPLAY, &gfx.vinfo);
      gfx.vinfo.yoffset ^= FB_H;
-@@ -4401,6 +5584,21 @@ void GFX_Flip(void)
+@@ -4401,6 +5627,21 @@ void GFX_Flip(void)
      ioctl(gfx.fb_dev, FBIO_WAITFORVSYNC, &r);
      gfx.fb.flip^= 1;
  #endif
@@ -7078,7 +7370,7 @@ index 73c1528..8c13ad6 100644
  }
  
  int get_font_width(const char *info)
-@@ -4488,7 +5686,7 @@ int draw_info(SDL_Surface *dst, const char *info, int x, int y, uint32_t fgcolor
+@@ -4488,7 +5729,7 @@ int draw_info(SDL_Surface *dst, const char *info, int x, int y, uint32_t fgcolor
                      rt.y = y;
                      rt.w = t2->w;
                      rt.h = t2->h;
@@ -7087,7 +7379,7 @@ index 73c1528..8c13ad6 100644
                      SDL_FreeSurface(t2);
                  }
                  SDL_FreeSurface(t1);
-@@ -4523,6 +5721,27 @@ int reload_pen(void)
+@@ -4523,6 +5764,27 @@ int reload_pen(void)
          if (get_file_path(nds.pen.path, nds.pen.sel, buf, 1) == 0) {
              t = IMG_Load(buf);
              if (t) {
@@ -7115,7 +7407,7 @@ index 73c1528..8c13ad6 100644
                  nds.pen.img = SDL_ConvertSurface(t, cvt->format, 0);
                  SDL_FreeSurface(t);
  
-@@ -4535,9 +5754,12 @@ int reload_pen(void)
+@@ -4535,9 +5797,12 @@ int reload_pen(void)
                  else if (strstr(buf, "_rb")) {
                      nds.pen.type = PEN_RB;
                  }
@@ -7129,7 +7421,7 @@ index 73c1528..8c13ad6 100644
              }
              else {
                  printf(PREFIX"Failed to load pen (%s)\n", buf);
-@@ -4590,7 +5812,7 @@ int reload_menu(void)
+@@ -4590,7 +5855,7 @@ int reload_menu(void)
          SDL_FreeSurface(t);
      }
  
@@ -7138,7 +7430,7 @@ index 73c1528..8c13ad6 100644
      sprintf(buf, "%s/%s", folder, DRASTIC_MENU_CURSOR_FILE);
      nds.menu.drastic.cursor = IMG_Load(buf);
  #endif
-@@ -4602,10 +5824,10 @@ int reload_menu(void)
+@@ -4602,10 +5867,10 @@ int reload_menu(void)
      sprintf(buf, "%s/%s", folder, DRASTIC_MENU_YES_FILE);
      t = IMG_Load(buf);
      if (t) {
@@ -7151,7 +7443,7 @@ index 73c1528..8c13ad6 100644
          SDL_Rect nrt = {0, 0, t->w >> 1, t->h >> 1};
  #endif
          if (nds.menu.drastic.yes) {
-@@ -4621,10 +5843,10 @@ int reload_menu(void)
+@@ -4621,10 +5886,10 @@ int reload_menu(void)
      sprintf(buf, "%s/%s", folder, DRASTIC_MENU_NO_FILE);
      t = IMG_Load(buf);
      if (t) {
@@ -7164,7 +7456,7 @@ index 73c1528..8c13ad6 100644
          SDL_Rect nrt = {0, 0, t->w >> 1, t->h >> 1};
  #endif
          if (nds.menu.drastic.no) {
-@@ -4642,15 +5864,15 @@ int reload_menu(void)
+@@ -4642,15 +5907,15 @@ int reload_menu(void)
  
  int reload_bg(void)
  {
@@ -7183,7 +7475,7 @@ index 73c1528..8c13ad6 100644
      char buf[MAX_PATH] = {0};
      SDL_Surface *t = NULL;
      SDL_Rect srt = {0, 0, IMG_W, IMG_H};
-@@ -4727,7 +5949,15 @@ int reload_bg(void)
+@@ -4727,7 +5992,15 @@ int reload_bg(void)
                      if (t) {
                          SDL_BlitSurface(t, NULL, nds.theme.img, NULL);
                          SDL_FreeSurface(t);
@@ -7200,7 +7492,7 @@ index 73c1528..8c13ad6 100644
                      }
                      else {
                          printf(PREFIX"Failed to load wallpaper (%s)\n", buf);
-@@ -4737,7 +5967,15 @@ int reload_bg(void)
+@@ -4737,7 +6010,15 @@ int reload_bg(void)
          }
          else {
              if (nds.theme.img) {
@@ -7217,7 +7509,7 @@ index 73c1528..8c13ad6 100644
              }
          }
      }
-@@ -4745,7 +5983,7 @@ int reload_bg(void)
+@@ -4745,7 +6026,7 @@ int reload_bg(void)
          t = SDL_CreateRGBSurface(SDL_SWSURFACE, IMG_W, IMG_H, 32, 0, 0, 0, 0);
          if (t) {
              SDL_FillRect(t, &t->clip_rect, SDL_MapRGB(t->format, 0x00, 0x00, 0x00));
@@ -7226,7 +7518,7 @@ index 73c1528..8c13ad6 100644
              SDL_FreeSurface(t);
          }
      }
-@@ -4813,56 +6051,6 @@ int reload_bg(void)
+@@ -4813,56 +6094,6 @@ int reload_bg(void)
      }
  #endif
  
@@ -7283,7 +7575,7 @@ index 73c1528..8c13ad6 100644
  #ifdef PANDORA
      SDL_Surface *t = NULL;
      char buf[MAX_PATH] = {0};
-@@ -4914,7 +6102,7 @@ int reload_bg(void)
+@@ -4914,7 +6145,7 @@ int reload_bg(void)
      return 0;
  }
  
@@ -7292,7 +7584,7 @@ index 73c1528..8c13ad6 100644
  int reload_overlay(void)
  {
      static int pre_sel = -1;
-@@ -4939,7 +6127,8 @@ int reload_overlay(void)
+@@ -4939,7 +6170,8 @@ int reload_overlay(void)
                  if (t) {
                      SDL_BlitSurface(t, NULL, nds.overlay.img, NULL);
                      SDL_FreeSurface(t);
@@ -7302,7 +7594,7 @@ index 73c1528..8c13ad6 100644
                      gfx.hw.overlay.surf.phyAddr = gfx.overlay.phyAddr;
                      gfx.hw.overlay.surf.eColorFmt = E_MI_GFX_FMT_ARGB8888;
                      gfx.hw.overlay.surf.u32Width = FB_W;
-@@ -4979,9 +6168,10 @@ static void MMIYOO_DeleteDevice(SDL_VideoDevice *device)
+@@ -4979,9 +6211,10 @@ static void MMIYOO_DeleteDevice(SDL_VideoDevice *device)
  
  int MMIYOO_CreateWindow(_THIS, SDL_Window *window)
  {
@@ -7315,7 +7607,7 @@ index 73c1528..8c13ad6 100644
      return 0;
  }
  
-@@ -5008,44 +6198,57 @@ static SDL_VideoDevice *MMIYOO_CreateDevice(int devindex)
+@@ -5008,44 +6241,57 @@ static SDL_VideoDevice *MMIYOO_CreateDevice(int devindex)
      device->VideoInit = MMIYOO_VideoInit;
      device->VideoQuit = MMIYOO_VideoQuit;
      device->SetDisplayMode = MMIYOO_SetDisplayMode;
@@ -7385,7 +7677,7 @@ index 73c1528..8c13ad6 100644
      SDL_zero(mode);
      mode.format = SDL_PIXELFORMAT_RGB565;
      mode.w = 800;
-@@ -5100,7 +6303,7 @@ int MMIYOO_VideoInit(_THIS)
+@@ -5100,7 +6346,7 @@ int MMIYOO_VideoInit(_THIS)
      mode.h = 272;
      mode.refresh_rate = 60;
      SDL_AddDisplayMode(&display, &mode);
@@ -7394,7 +7686,7 @@ index 73c1528..8c13ad6 100644
      SDL_AddVideoDisplay(&display, SDL_FALSE);
  
      LINE_H = 30;
-@@ -5111,10 +6314,6 @@ int MMIYOO_VideoInit(_THIS)
+@@ -5111,10 +6357,6 @@ int MMIYOO_VideoInit(_THIS)
      FB_SIZE = FB_W * FB_H * FB_BPP * 2;
      TMP_SIZE = FB_W * FB_H * FB_BPP;
  
@@ -7405,7 +7697,7 @@ index 73c1528..8c13ad6 100644
  #ifdef MMIYOO
      fd = popen("fbset | grep \"mode \"", "r");
      if (fd) {
-@@ -5138,14 +6337,19 @@ int MMIYOO_VideoInit(_THIS)
+@@ -5138,14 +6380,19 @@ int MMIYOO_VideoInit(_THIS)
      read_config();
      MMIYOO_EventInit();
  
@@ -7430,7 +7722,7 @@ index 73c1528..8c13ad6 100644
      printf(PREFIX"Installed hooking for libc functions\n");
      detour_hook(FUN_MALLOC, (intptr_t)sdl_malloc);
      detour_hook(FUN_REALLOC, (intptr_t)sdl_realloc);
-@@ -5240,7 +6444,7 @@ void MMIYOO_VideoQuit(_THIS)
+@@ -5240,7 +6487,7 @@ void MMIYOO_VideoQuit(_THIS)
      lang_unload();
  }
  
@@ -7439,7 +7731,7 @@ index 73c1528..8c13ad6 100644
  static const char *DIS_MODE0_640[] = {
      "640*480",
      "640*480",
-@@ -5325,6 +6529,12 @@ static const char *HOTKEY[] = {
+@@ -5325,6 +6572,12 @@ static const char *HOTKEY[] = {
      "MENU", "SELECT"
  };
  
@@ -7452,7 +7744,7 @@ index 73c1528..8c13ad6 100644
  static int lang_next(void)
  {
      int cc = 0;
-@@ -5357,7 +6567,12 @@ static int lang_prev(void)
+@@ -5357,7 +6610,12 @@ static int lang_prev(void)
  
  enum {
      MENU_LANG = 0,
@@ -7465,7 +7757,7 @@ index 73c1528..8c13ad6 100644
      MENU_OVERLAY,
      MENU_DIS,
      MENU_DIS_ALPHA,
-@@ -5372,12 +6587,21 @@ enum {
+@@ -5372,12 +6630,21 @@ enum {
      MENU_PEN_YV,
      MENU_CURSOR,
      MENU_FAST_FORWARD,
@@ -7487,7 +7779,7 @@ index 73c1528..8c13ad6 100644
      "Overlay",
      "Display",
      "Alpha",
-@@ -5391,15 +6615,26 @@ static const char *MENU_ITEM[] = {
+@@ -5391,15 +6658,26 @@ static const char *MENU_ITEM[] = {
      "Pen X Speed",
      "Pen Y Speed",
      "Cursor",
@@ -7515,7 +7807,7 @@ index 73c1528..8c13ad6 100644
      static char pre_lang[LANG_FILE_LEN] = {0};
  
      const int SX = nds.enable_752x560 ? 200 : 150;
-@@ -5447,11 +6682,24 @@ int handle_menu(int key)
+@@ -5447,11 +6725,24 @@ int handle_menu(int key)
          case MENU_LANG:
              lang_prev();
              break;
@@ -7540,7 +7832,7 @@ index 73c1528..8c13ad6 100644
          case MENU_HOTKEY:
              nds.hotkey = HOTKEY_BIND_MENU;
              break;
-@@ -5525,6 +6773,18 @@ int handle_menu(int key)
+@@ -5525,6 +6816,18 @@ int handle_menu(int key)
                  nds.fast_forward -= 1;
              }
              break;
@@ -7559,7 +7851,7 @@ index 73c1528..8c13ad6 100644
          default:
              break;
          }
-@@ -5534,11 +6794,24 @@ int handle_menu(int key)
+@@ -5534,11 +6837,24 @@ int handle_menu(int key)
          case MENU_LANG:
              lang_next();
              break;
@@ -7584,7 +7876,7 @@ index 73c1528..8c13ad6 100644
          case MENU_HOTKEY:
              nds.hotkey = HOTKEY_BIND_SELECT;
              break;
-@@ -5612,6 +6885,21 @@ int handle_menu(int key)
+@@ -5612,6 +6928,21 @@ int handle_menu(int key)
                  nds.fast_forward += 1;
              }
              break;
@@ -7606,7 +7898,7 @@ index 73c1528..8c13ad6 100644
          default:
              break;
          }
-@@ -5621,9 +6909,20 @@ int handle_menu(int key)
+@@ -5621,9 +6952,20 @@ int handle_menu(int key)
  #ifdef MMIYOO
              set_cpuclock(cur_cpuclock);
  #endif
@@ -7627,7 +7919,7 @@ index 73c1528..8c13ad6 100644
          if (strcmp(pre_lang, nds.lang.trans[DEF_LANG_SLOT])) {
              lang_unload();
              lang_load(nds.lang.trans[DEF_LANG_SLOT]);
-@@ -5631,7 +6930,7 @@ int handle_menu(int key)
+@@ -5631,7 +6973,7 @@ int handle_menu(int key)
          }
  
          if (pre_ff != nds.fast_forward) {
@@ -7636,7 +7928,7 @@ index 73c1528..8c13ad6 100644
              pre_ff = nds.fast_forward;
          }
          nds.menu.enable = 0;
-@@ -5773,9 +7072,18 @@ int handle_menu(int key)
+@@ -5773,9 +7115,18 @@ int handle_menu(int key)
          case MENU_LANG:
              sprintf(buf, "%s", nds.lang.trans[DEF_LANG_SLOT]);
              break;
@@ -7655,7 +7947,7 @@ index 73c1528..8c13ad6 100644
          case MENU_HOTKEY:
              sprintf(buf, "%s", to_lang(HOTKEY[nds.hotkey]));
              break;
-@@ -5788,7 +7096,7 @@ int handle_menu(int key)
+@@ -5788,7 +7139,7 @@ int handle_menu(int key)
          case MENU_OVERLAY:
              if (nds.overlay.sel < nds.overlay.max) {
                  get_file_path(nds.overlay.path, nds.overlay.sel, buf, 0);
@@ -7664,7 +7956,7 @@ index 73c1528..8c13ad6 100644
                  reload_overlay();
  #endif
              }
-@@ -5839,10 +7147,18 @@ int handle_menu(int key)
+@@ -5839,10 +7190,18 @@ int handle_menu(int key)
              sprintf(buf, "%s", DPAD[nds.keys_rotate % 3]);
              break;
          case MENU_PEN_XV:
@@ -7683,7 +7975,7 @@ index 73c1528..8c13ad6 100644
              break;
          case MENU_CURSOR:
              sprintf(buf, "%s", to_lang(nds.menu.show_cursor ? "Show" : "Hide"));
-@@ -5850,6 +7166,14 @@ int handle_menu(int key)
+@@ -5850,6 +7209,14 @@ int handle_menu(int key)
          case MENU_FAST_FORWARD:
              sprintf(buf, "%d (6)", nds.fast_forward);
              break;
@@ -7698,7 +7990,7 @@ index 73c1528..8c13ad6 100644
          }
          draw_info(cvt, buf, SSX + sx, SY + (h * idx), col1, 0);
          idx+= 1;
-@@ -6052,10 +7376,10 @@ int handle_menu(int key)
+@@ -6052,10 +7419,10 @@ int handle_menu(int key)
              rt.y = sy;
              SDL_FillRect(cvt, &rt, SDL_MapRGB(cvt->format, 0x80, 0x00, 0x00));
              
@@ -7713,7 +8005,7 @@ index 73c1528..8c13ad6 100644
              SDL_FillRect(cvt, &rt, SDL_MapRGB(cvt->format, 0x00, 0x00, 0x80));
              break;
          case NDS_DIS_MODE_VH_S2:
-@@ -6067,14 +7391,14 @@ int handle_menu(int key)
+@@ -6067,14 +7434,14 @@ int handle_menu(int key)
              
              rt.w = 96;
              rt.h = 72;
@@ -7730,7 +8022,7 @@ index 73c1528..8c13ad6 100644
              SDL_FillRect(cvt, &rt, SDL_MapRGB(cvt->format, 0x00, 0x00, 0x80));
              break;
          case NDS_DIS_MODE_VH_C0:
-@@ -6176,36 +7500,16 @@ int handle_menu(int key)
+@@ -6176,36 +7543,16 @@ int handle_menu(int key)
          }
      }
  
@@ -7773,7 +8065,7 @@ index 73c1528..8c13ad6 100644
 -#endif
  
 diff --git a/sdl2/src/video/mmiyoo/SDL_video_mmiyoo.h b/sdl2/src/video/mmiyoo/SDL_video_mmiyoo.h
-index 36fb185..d0e2074 100644
+index 36fb185..1370eeb 100644
 --- a/sdl2/src/video/mmiyoo/SDL_video_mmiyoo.h
 +++ b/sdl2/src/video/mmiyoo/SDL_video_mmiyoo.h
 @@ -1,9 +1,9 @@
@@ -7797,7 +8089,7 @@ index 36fb185..d0e2074 100644
  
  #ifndef __SDL_VIDEO_MMIYOO_H__
  #define __SDL_VIDEO_MMIYOO_H__
-@@ -29,14 +28,20 @@
+@@ -29,14 +28,22 @@
  #include <stdint.h>
  #include <stdbool.h>
  #include <linux/fb.h>
@@ -7811,6 +8103,8 @@ index 36fb185..d0e2074 100644
 +#include <GLES2/gl2.h>
 +#endif
 +
++#include <pthread.h>
++
 +#include "../../SDL_internal.h"
 +#include "../../events/SDL_events_c.h"
  #include "../SDL_sysvideo.h"
@@ -7820,7 +8114,7 @@ index 36fb185..d0e2074 100644
  
  #include "SDL_ttf.h"
  #include "SDL_image.h"
-@@ -46,11 +51,28 @@
+@@ -46,11 +53,28 @@
  #include "SDL_events.h"
  #include "SDL_video.h"
  #include "SDL_mouse.h"
@@ -7850,7 +8144,7 @@ index 36fb185..d0e2074 100644
  #if defined(MMIYOO)
  #include "mi_sys.h"
  #include "mi_gfx.h"
-@@ -69,8 +91,10 @@
+@@ -69,8 +93,10 @@
  
  #if !defined(MMIYOO)
      #define E_MI_GFX_ROTATE_90      0
@@ -7863,7 +8157,7 @@ index 36fb185..d0e2074 100644
  #endif
  
  #ifdef QX1000
-@@ -126,6 +150,26 @@
+@@ -126,6 +152,26 @@
      #define MAX_PATH                128
  #endif
  
@@ -7890,7 +8184,7 @@ index 36fb185..d0e2074 100644
  #ifdef MMIYOO
      #define DEF_FB_W                640
      #define DEF_FB_H                480
-@@ -147,15 +191,6 @@
+@@ -147,15 +193,6 @@
      #define RELOAD_BG_COUNT         1
  #endif
  
@@ -7906,7 +8200,7 @@ index 36fb185..d0e2074 100644
  #ifdef PANDORA
      #define DEF_FB_W                800
      #define DEF_FB_H                480
-@@ -177,26 +212,14 @@
+@@ -177,26 +214,14 @@
  #endif
  
  #define PREFIX                      "[SDL] "
@@ -7935,7 +8229,7 @@ index 36fb185..d0e2074 100644
  #define MENU_BG_FILE                "bg.png"
  #define MENU_CURSOR_FILE            "cursor.png"
  #define DRASTIC_MENU_BG0_FILE       "drastic_bg0.png"
-@@ -212,24 +235,17 @@
+@@ -212,24 +237,17 @@
  #define PEN_LB                      1
  #define PEN_RT                      2
  #define PEN_RB                      3
@@ -7963,7 +8257,7 @@ index 36fb185..d0e2074 100644
  #define NDS_DIS_MODE_VH_T0          0
  #define NDS_DIS_MODE_VH_T1          1
  #define NDS_DIS_MODE_S0             2
-@@ -265,6 +281,8 @@
+@@ -265,6 +283,8 @@
  #define JSON_NDS_ALPHA_VALUE        "alpha"
  #define JSON_NDS_ALPHA_POSITION     "position"
  #define JSON_NDS_ALPHA_BORDER       "border"
@@ -7972,7 +8266,7 @@ index 36fb185..d0e2074 100644
  #define JSON_NDS_MAX_CPU            "maxcpu"
  #define JSON_NDS_MIN_CPU            "mincpu"
  #define JSON_NDS_OVERLAY            "overlay"
-@@ -283,6 +301,9 @@
+@@ -283,6 +303,9 @@
  #define JSON_NDS_MENU_BG            "menu_bg"
  #define JSON_NDS_MENU_CURSOR        "menu_cursor"
  #define JSON_NDS_FAST_FORWARD       "fast_forward"
@@ -7982,7 +8276,7 @@ index 36fb185..d0e2074 100644
  
  #define DEF_LANG_SLOT               0
  #define DEF_LANG_LANG               "english"
-@@ -311,8 +332,55 @@
+@@ -311,8 +334,55 @@
  #define PEN_YV_INC                      1000
  #define PEN_YV_MAX                      500000
  
@@ -8038,7 +8332,7 @@ index 36fb185..d0e2074 100644
  } MMIYOO_VideoInfo;
  
  typedef struct _GFX {
-@@ -334,6 +402,10 @@ typedef struct _GFX {
+@@ -334,6 +404,10 @@ typedef struct _GFX {
      struct fb_fix_screeninfo finfo;
  
      struct {
@@ -8049,7 +8343,7 @@ index 36fb185..d0e2074 100644
  #ifdef MMIYOO
          void *virAddr;
          MI_PHY phyAddr;
-@@ -344,11 +416,14 @@ typedef struct _GFX {
+@@ -344,11 +418,14 @@ typedef struct _GFX {
  #endif
      } fb, tmp, overlay;
  
@@ -8068,7 +8362,7 @@ index 36fb185..d0e2074 100644
  #endif
  
      struct _HW {
-@@ -367,10 +442,12 @@ typedef struct _GFX {
+@@ -367,10 +444,12 @@ typedef struct _GFX {
          ion_alloc_info_t ion;
  #endif
  
@@ -8082,7 +8376,7 @@ index 36fb185..d0e2074 100644
  #ifdef PANDORA
          uint32_t *mem[2];
  #endif
-@@ -378,11 +455,14 @@ typedef struct _GFX {
+@@ -378,11 +457,14 @@ typedef struct _GFX {
  } GFX;
  
  typedef struct _NDS {
@@ -8097,7 +8391,7 @@ index 36fb185..d0e2074 100644
      int alt_mode;
      int hres_mode;
      int swap_l1l2;
-@@ -390,6 +470,7 @@ typedef struct _NDS {
+@@ -390,6 +472,7 @@ typedef struct _NDS {
      int auto_slot;
      int auto_state;
      int keys_rotate;
@@ -8105,7 +8399,7 @@ index 36fb185..d0e2074 100644
      int update_screen;
      int enable_752x560;
      int defer_update_bg;
-@@ -482,6 +563,33 @@ typedef struct _NDS {
+@@ -482,6 +565,33 @@ typedef struct _NDS {
          clock_t pre_ticks;
          char path[MAX_PATH];
      } pen;
@@ -8139,7 +8433,7 @@ index 36fb185..d0e2074 100644
  } NDS;
  
  typedef struct _CUST_MENU_SUB {
-@@ -499,13 +607,20 @@ typedef struct _CUST_MENU {
+@@ -499,13 +609,20 @@ typedef struct _CUST_MENU {
      CUST_MENU_SUB item[MAX_MENU_LINE];
  } CUST_MENU;
  
@@ -8161,13 +8455,21 @@ index 36fb185..d0e2074 100644
  
  int draw_pen(void *pixels, int width, int pitch);
  int draw_info(SDL_Surface *dst, const char *info, int x, int y, uint32_t fgcolor, uint32_t bgcolor);
-@@ -531,5 +646,9 @@ const void* get_pixels(void *chk);
+@@ -531,5 +648,17 @@ const void* get_pixels(void *chk);
  const char *to_lang(const char *p);
  void update_wayland_res(int w, int h);
  
 +void render_scanline_tiled_4bpp(void);
 +void render_polygon_setup_perspective_steps(void);
 +void MMIYOO_JoystickUpdate(SDL_Joystick *joystick);
++
++
++// Declaration of thread condition variable
++extern pthread_cond_t request_update_screen_cond;
++extern pthread_cond_t response_update_screen_cond;
++
++// declaring mutex
++extern pthread_mutex_t lock;
 +
  #endif
  

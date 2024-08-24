@@ -1,0 +1,7 @@
+config BR2_PACKAGE_DRASTIC_STEWARD
+	bool "drastic_steward"
+	help
+          Drastic Steward
+          Is a NDS emulateur for linux.
+
+           https://github.com/steward-fu/nds
