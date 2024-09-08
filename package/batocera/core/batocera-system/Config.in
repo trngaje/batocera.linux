@@ -933,6 +933,9 @@ config BR2_PACKAGE_BATOCERA_HANDHELD_SYSTEMS
 	select BR2_PACKAGE_LIBRETRO_SAMEDUCK		# ALL
 
 	select BR2_PACKAGE_ADVANCEMAME_BIN		# ALL
+
+	select BR2_PACKAGE_SDL_FLIP_CLOCK		# ALL
+
     help
         Handheld cores/emulators
 

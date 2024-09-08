@@ -66,6 +66,10 @@ define OPENMSX_INSTALL_TARGET_CMDS
     mkdir -p $(TARGET_DIR)/usr/share/evmapy
     cp -f $(BR2_EXTERNAL_BATOCERA_PATH)/package/batocera/emulators/openmsx/*.keys $(TARGET_DIR)/usr/share/evmapy/
     cp -f $(BR2_EXTERNAL_BATOCERA_PATH)/package/batocera/emulators/openmsx/settings.xml $(TARGET_DIR)/usr/share/openmsx
+    
+    wget https://www.msxarchive.nl/pub/msx/emulator/openMSX/systemroms.zip -P $(TARGET_DIR)/usr/share/openmsx
+    unzip $(TARGET_DIR)/usr/share/openmsx/systemroms.zip -d $(TARGET_DIR)/usr/share/openmsx
+    rm $(TARGET_DIR)/usr/share/openmsx/systemroms.zip
 endef
 
 define OPENMSX_POST_INSTALL_CLEANUP

@@ -1,7 +1,7 @@
 {
   "pen":0,
   "theme":0,
-  "mode":0,
+  "mode":1,
   "xv":30000,
   "yv":35000,
   "alpha":7,
@@ -25,7 +25,7 @@
   "auto_slot":10,
   "half_vol":0,
   "splash":3,
-  "hotkey":0,
+  "hotkey":1,
   "states":"",
   "menu_bg":0,
   "menu_cursor":1,

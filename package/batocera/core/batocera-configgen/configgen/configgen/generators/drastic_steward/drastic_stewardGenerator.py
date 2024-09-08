@@ -22,9 +22,13 @@ class Drastic_stewardGenerator(Generator):
         drastic_steward_bin = "/userdata/system/drastic/launch.sh"
         drastic_steward_conf = "/userdata/system/drastic/config/drastic.cfg"
 
+        board = os.popen("cat /boot/boot/batocera.board").read()
+        board=board.rstrip("\n\r ")
+
         if not os.path.exists(drastic_steward_root):
             os.makedirs(drastic_steward_root, exist_ok = True)
             os.system("cp -rv /usr/share/drastic_steward/* /userdata/system/drastic")
+            os.system("cp -rv /usr/share/drastic_steward/devices/" + board + "/* /userdata/system/drastic")
 
         if not os.path.exists("/userdata/saves/nds/drastic/backup"):
             os.makedirs("/userdata/saves/nds/drastic/backup", exist_ok = True)

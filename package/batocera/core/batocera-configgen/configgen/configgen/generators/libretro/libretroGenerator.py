@@ -287,7 +287,8 @@ class LibretroGenerator(Generator):
             commandArray = [batoceraFiles.batoceraBins[system.config['emulator']], "-L", retroarchCore, "--config", system.config['configfile']]
         elif system.name == 'pc98':
             romPC98Name, romExtension = os.path.splitext(romName)
-            shutil.copyfile(os.path.dirname(os.path.abspath(rom)) + "/" + romPC98Name + ".bmp", "/userdata/bios/np2kai/font.bmp")
+            if os.path.isfile(os.path.dirname(os.path.abspath(rom)) + "/" + romPC98Name + ".bmp"):
+                shutil.copyfile(os.path.dirname(os.path.abspath(rom)) + "/" + romPC98Name + ".bmp", "/userdata/bios/np2kai/font.bmp")
             retroarchCore = batoceraFiles.retroarchCores + system.config['core'] + "_libretro.so"
             commandArray = [batoceraFiles.batoceraBins[system.config['emulator']], "-L", retroarchCore, "--config", system.config['configfile']]
         else:

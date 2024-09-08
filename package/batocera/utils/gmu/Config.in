@@ -1,0 +1,5 @@
+config BR2_PACKAGE_GMU
+	bool "gmu"
+	help
+	  Gmu is a music player application.
+	  https://github.com/trngaje/gmu

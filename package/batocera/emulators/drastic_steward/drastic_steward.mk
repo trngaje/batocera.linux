@@ -48,6 +48,7 @@ define DRASTIC_STEWARD_INSTALL_TARGET_CMDS
 	chmod a+x $(TARGET_DIR)/usr/share/drastic_steward/launch.sh
 	cp $(BR2_EXTERNAL_BATOCERA_PATH)/package/batocera/emulators/drastic_steward/drastic $(TARGET_DIR)/usr/share/drastic_steward/
 	chmod a+x $(TARGET_DIR)/usr/share/drastic_steward/drastic
+	cp -rv $(BR2_EXTERNAL_BATOCERA_PATH)/package/batocera/emulators/drastic_steward/devices $(TARGET_DIR)/usr/share/drastic_steward/
 	
 	#ln -s -f /userdata/saves/nds/drastic/backup $(TARGET_DIR)/usr/share/drastic_steward/backup
 	#ln -s -f /userdata/saves/nds/drastic/savestates  $(TARGET_DIR)/usr/share/drastic_steward/savestates

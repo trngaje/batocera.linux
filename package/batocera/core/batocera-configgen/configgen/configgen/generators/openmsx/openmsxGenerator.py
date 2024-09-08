@@ -13,7 +13,8 @@ from utils.logger import get_logger
 
 eslog = get_logger(__name__)
 
-openMSX_Homedir = '/userdata/system/configs/openmsx'
+#openMSX_Homedir = '/userdata/system/configs/openmsx'
+openMSX_Homedir = '/userdata/system/.openMSX'
 openMSX_Config = '/usr/share/openmsx/'
 
 class OpenmsxGenerator(Generator):
