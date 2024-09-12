@@ -13,12 +13,21 @@ DEFAULT_BRIGHTNESS=100
 DEFAULT_SPEED=1
 DEFAULT_COLOUR=(80 120 10)
 
-# Colours and mode for low battery modes
+# Paths to battery values
+KEY_BATTERY_CAPACITY="/sys/class/power_supply/axp2202-battery/capacity"
+KEY_BATTERY_STATUS="/sys/class/power_supply/axp2202-battery/status"
+
+# Battery status names
+BATTERY_CHARGING="Charging"
+BATTERY_DISCHARGING="Discharging"
+BATTERY_FULL="Full"
+
+# Colours and mode for low battery
 BATTERY_WARNING_MODE=2
 BATTERY_WARNING_COLOUR=(255 255 0)
 BATTERY_DANGER_COLOUR=(255 0 0)
 
-# Battery charge thresholds (inclusive) for warning/danger
+# Low battery charge thresholds (inclusive) for warning/danger
 THRESHOLD_WARNING=20
 THRESHOLD_DANGER=5
 
@@ -36,6 +45,7 @@ LAST_CHANGE_DATE=-1
 UPDATE_INTERVAL_SECONDS=1
 
 # Constants for different modes
+MODE_CHARGING=3
 MODE_WARNING=2
 MODE_DANGER=1
 MODE_DEFAULT=0
@@ -125,21 +135,30 @@ daemon() {
     # Detect RGB changes
     detectRgbChanges
   
-    # Determine current battery charge
-    BATTERY_CHARGE=$(batocera-info | grep "Battery" | sed -e "s/^Battery: //" -e "s/%$//")
-  
+    # Determine current battery status
+    BATTERY_CHARGE=$(cat $KEY_BATTERY_CAPACITY)
+    BATTERY_STATUS=$(cat $KEY_BATTERY_STATUS)
+
+    # Go to LED mode "charging" if the battery is currently charging.
+    if [ $CURRENT_MODE -ne $MODE_CHARGING ] && [ $BATTERY_STATUS == $BATTERY_CHARGING ] && [ $BATTERY_CHARGE -lt 100 ]; then
+      echo "Battery charge at $BATTERY_CHARGE - going to LED mode 'warning'"
+      /usr/bin/analog_stick_led.sh $BATTERY_WARNING_MODE $LAST_BRIGHTNESS ${DEFAULT_COLOUR[0]} ${DEFAULT_COLOUR[1]} ${DEFAULT_COLOUR[2]} ${DEFAULT_COLOUR[0]} ${DEFAULT_COLOUR[1]} ${DEFAULT_COLOUR[2]}
+      CURRENT_MODE=$MODE_CHARGING
+
     # Go to LED mode "warning" if not set to warning but battery charge is equal or below warning threshold (and still above danger threshold)
-    if [ $CURRENT_MODE -ne $MODE_WARNING ] && ([ $BATTERY_CHARGE -eq $THRESHOLD_WARNING ] || ([ $BATTERY_CHARGE -lt $THRESHOLD_WARNING ] && [ $BATTERY_CHARGE -gt $THRESHOLD_DANGER ])); then
+    elif [ $CURRENT_MODE -ne $MODE_WARNING ] && [ $BATTERY_STATUS == $BATTERY_DISCHARGING ] && ([ $BATTERY_CHARGE -eq $THRESHOLD_WARNING ] || ([ $BATTERY_CHARGE -lt $THRESHOLD_WARNING ] && [ $BATTERY_CHARGE -gt $THRESHOLD_DANGER ])); then
       echo "Battery charge at $BATTERY_CHARGE - going to LED mode 'warning'"
       /usr/bin/analog_stick_led.sh $BATTERY_WARNING_MODE $LAST_BRIGHTNESS ${BATTERY_WARNING_COLOUR[0]} ${BATTERY_WARNING_COLOUR[1]} ${BATTERY_WARNING_COLOUR[2]} ${BATTERY_WARNING_COLOUR[0]} ${BATTERY_WARNING_COLOUR[1]} ${BATTERY_WARNING_COLOUR[2]}
       CURRENT_MODE=$MODE_WARNING
+
     # Go to LED mode "danger" if not set to danger but battery charge is equal or below danger threshold
-    elif [ $CURRENT_MODE -ne $MODE_DANGER ] && ([ $BATTERY_CHARGE -eq $THRESHOLD_DANGER ] || [ $BATTERY_CHARGE -lt $THRESHOLD_DANGER ]); then
+    elif [ $CURRENT_MODE -ne $MODE_DANGER ] && [ $BATTERY_STATUS == $BATTERY_DISCHARGING ] && ([ $BATTERY_CHARGE -eq $THRESHOLD_DANGER ] || [ $BATTERY_CHARGE -lt $THRESHOLD_DANGER ]); then
       echo "Battery charge at $BATTERY_CHARGE - Going to LED mode 'danger'"
       /usr/bin/analog_stick_led.sh $BATTERY_WARNING_MODE $LAST_BRIGHTNESS ${BATTERY_DANGER_COLOUR[0]} ${BATTERY_DANGER_COLOUR[1]} ${BATTERY_DANGER_COLOUR[2]} ${BATTERY_DANGER_COLOUR[0]} ${BATTERY_DANGER_COLOUR[1]} ${BATTERY_DANGER_COLOUR[2]}
       CURRENT_MODE=$MODE_DANGER
+
     # Go back to normal LED mode if set to either warning or danger but battery status is above warning threshold
-    elif ($LED_SETTINGS_CHANGE_DETECTED || [ $CURRENT_MODE -ne $MODE_DEFAULT ]) && [ $BATTERY_CHARGE -gt $THRESHOLD_WARNING ]; then
+    elif ($LED_SETTINGS_CHANGE_DETECTED || [ $CURRENT_MODE -ne $MODE_DEFAULT ]) && ([ $BATTERY_STATUS == $BATTERY_FULL ] || ([ $BATTERY_STATUS == $BATTERY_DISCHARGING ] && [ $BATTERY_CHARGE -gt $THRESHOLD_WARNING ])); then
       echo "Battery charge at $BATTERY_CHARGE - Going to normal LED mode"
       if [ $LAST_LED_MODE -lt 5 ]; then
         /usr/bin/analog_stick_led.sh $LAST_LED_MODE $LAST_BRIGHTNESS ${LAST_COLOUR_RIGHT[0]} ${LAST_COLOUR_RIGHT[1]} ${LAST_COLOUR_RIGHT[2]} ${LAST_COLOUR[0]} ${LAST_COLOUR[1]} ${LAST_COLOUR[2]}
