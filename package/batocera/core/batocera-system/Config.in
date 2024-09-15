@@ -952,6 +952,8 @@ config BR2_PACKAGE_BATOCERA_HANDHELD_SYSTEMS
 
 	select BR2_PACKAGE_SDL_FLIP_CLOCK		# ALL
 
+	select BR2_PACKAGE_GMU				# ALL
+
     help
         Handheld cores/emulators
 

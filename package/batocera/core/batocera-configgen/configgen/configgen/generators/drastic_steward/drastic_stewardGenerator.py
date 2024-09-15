@@ -25,10 +25,18 @@ class Drastic_stewardGenerator(Generator):
         board = os.popen("cat /boot/boot/batocera.board").read()
         board=board.rstrip("\n\r ")
 
-        if not os.path.exists(drastic_steward_root):
+        if os.path.isfile(drastic_steward_root + "/batocera.board"):
+            board_installed = os.popen("cat " + drastic_steward_root + "/batocera.board").read()
+            board_installed = board_installed.rstrip("\n\r ")
+        else:
+            board_installed = ""
+            
+        if (not os.path.exists(drastic_steward_root)) or (board != board_installed):
             os.makedirs(drastic_steward_root, exist_ok = True)
             os.system("cp -rv /usr/share/drastic_steward/* /userdata/system/drastic")
-            os.system("cp -rv /usr/share/drastic_steward/devices/" + board + "/* /userdata/system/drastic")
+            if os.path.exists("/usr/share/drastic_steward/devices/" + board ):
+                os.system("cp -rv /usr/share/drastic_steward/devices/" + board + "/* /userdata/system/drastic")
+            os.system("cp /boot/boot/batocera.board /userdata/system/drastic")
 
         if not os.path.exists("/userdata/saves/nds/drastic/backup"):
             os.makedirs("/userdata/saves/nds/drastic/backup", exist_ok = True)
