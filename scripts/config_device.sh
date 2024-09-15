@@ -33,7 +33,7 @@ case $ARG in
 esac
 
 # Define file paths relative to the script location
-SCRIPT_DIR=$(dirname $0)
+SCRIPT_DIR=$(cd "$(dirname "$0")/.." && pwd)
 CONFIG_FILE="$SCRIPT_DIR/configs/batocera-h700.board"
 CONFIG_IN_FILE="$SCRIPT_DIR/package/batocera/core/batocera-system/Config.in"
 
