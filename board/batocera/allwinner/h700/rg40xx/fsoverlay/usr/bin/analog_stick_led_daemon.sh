@@ -176,7 +176,7 @@ updateLedSettings() {
   COLOUR_RIGHT=($(batocera-settings-get $KEY_LED_COLOUR_RIGHT))
 
   # Ensure mode is set and within valid range, set to default if not
-  if [ -z $LED_MODE ] || [ $LED_MODE -lt 1 ] || [ $LED_MODE -gt 6 ]; then
+  if [ -z $LED_MODE ] || [ $LED_MODE -lt 0 ] || [ $LED_MODE -gt 6 ]; then
     echo "Invalid or missing LED mode - setting LED mode to default ($DEFAULT_LED_MODE)"
     batocera-settings-set $KEY_LED_MODE $DEFAULT_LED_MODE
     LED_MODE=$(batocera-settings-get $KEY_LED_MODE)
@@ -268,7 +268,9 @@ daemon() {
     elif ($LED_SETTINGS_CHANGE_DETECTED || [ $CURRENT_MODE -ne $MODE_DEFAULT ]) && ([ $BATTERY_STATUS == $BATTERY_FULL ] || ([ $BATTERY_STATUS == $BATTERY_DISCHARGING ] && [ $BATTERY_CHARGE -gt $THRESHOLD_WARNING ])); then
       echo "Battery charge at $BATTERY_CHARGE - Going to normal LED mode"
       readLedVariables
-      if [ $LAST_LED_MODE -lt 5 ]; then
+      if [ $LAST_LED_MODE -eq 0 ]; then
+        /usr/bin/analog_stick_led.sh $LAST_LED_MODE
+      elif [ $LAST_LED_MODE -lt 5 ]; then
         /usr/bin/analog_stick_led.sh $LAST_LED_MODE $LAST_BRIGHTNESS ${LAST_COLOUR_RIGHT[0]} ${LAST_COLOUR_RIGHT[1]} ${LAST_COLOUR_RIGHT[2]} ${LAST_COLOUR[0]} ${LAST_COLOUR[1]} ${LAST_COLOUR[2]}
       else
         /usr/bin/analog_stick_led.sh $LAST_LED_MODE $LAST_BRIGHTNESS $LAST_SPEED
