@@ -53,14 +53,20 @@ fi
 LED_MODE=$1
 BRIGHTNESS=$2
 
+echo $LED_MODE 
+
 # Ensure brightness is within the valid range (0-255)
-if [ $BRIGHTNESS -lt 0 ] || [ $BRIGHTNESS -gt 255 ]; then
+if [ -z $BRIGHTNESS ]; then
+  BRIGHTNESS=0
+elif [ $BRIGHTNESS -lt 0 ] || [ $BRIGHTNESS -gt 255 ]; then
   echo "Brightness value must be between 0 and 255"
   exit 1
 fi
 
 # Ensure LED mode is within the valid range (1-6)
-if [ $LED_MODE -lt 0 ] || [ $LED_MODE -gt 6 ]; then
+if [ -z $LED_MODE ]; then
+  LED_MODE=0
+elif [ $LED_MODE -lt 0 ] || [ $LED_MODE -gt 6 ]; then
   echo "LED mode must be between 0 (off) and 6"
   exit 1
 fi
@@ -118,7 +124,9 @@ elif [ $LED_MODE -ge 5 ] && [ $LED_MODE -le 6 ]; then
   SPEED=$3
 
   # Ensure speed is within the valid range (0-255)
-  if [ $SPEED -lt 0 ] || [ $SPEED -gt 255 ]; then
+  if [ -z $SPEED ]; then
+    SPEED=0
+  elif [ $SPEED -lt 0 ] || [ $SPEED -gt 255 ]; then
     echo "Speed value must be between 0 and 255"
     exit 1
   fi
