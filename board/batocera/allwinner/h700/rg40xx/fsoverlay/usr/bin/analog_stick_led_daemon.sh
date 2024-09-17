@@ -7,9 +7,6 @@ KEY_LED_SPEED="led.speed"
 KEY_LED_COLOUR="led.colour"
 KEY_LED_COLOUR_RIGHT="led.colour.right"
 
-# Path to batocera.conf
-BATOCERA_CONF="/userdata/system/batocera.conf"
-
 # Paths to variables
 VAR_CONF_PID="/var/run/analog_stick_led_daemon.conf.pid"
 VAR_LED_PID="/var/run/analog_stick_led_daemon.led.pid"
@@ -205,7 +202,8 @@ applyLedSettings() {
 # Updates LED settings based on changes to batocera.conf
 confDaemon() {
 
-  while inotifywait -e close_write "$BATOCERA_CONF"; do
+  # Watch userdata/system folder for changes to batocera.conf
+  while inotifywait /userdata/system -e close_write -e move -e create --includei "batocera\.conf"; do
     echo "Batocera.conf has been changed - updating LED settings."
     readLedSettings
   done
