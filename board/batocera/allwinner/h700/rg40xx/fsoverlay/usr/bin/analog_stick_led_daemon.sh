@@ -61,7 +61,7 @@ setLedValues() {
 }
 
 # Clears all LED variables by removing the files.
-clearLedVariables() {
+clearLedValues() {
 
   LAST_LED_VALUES=-1
   if [ -f "$VAR_LED_VALUES" ]; then
@@ -72,7 +72,32 @@ clearLedVariables() {
 
 }
 
-readLedSettings() {
+# Initializes all missing LED values in batocera.conf once before launching the daemon processes.
+initializeLedValues() {
+
+  # Read existing LED settings from batocera.conf
+  LED_MODE=$(batocera-settings-get $KEY_LED_MODE)
+  LED_BRIGHTNESS=$(batocera-settings-get $KEY_LED_BRIGHTNESS)
+  LED_SPEED=$(batocera-settings-get $KEY_LED_SPEED)
+  LED_COLOUR=($(batocera-settings-get $KEY_LED_COLOUR))
+  
+  # Initialize all unset LED-related conf settings with default values
+  if [[ ! -n $LED_MODE ]] || [ $LED_MODE -lt 0 ] || [ $LED_MODE -gt 6 ]; then
+    batocera-settings-set $KEY_LED_MODE $DEFAULT_LED_MODE
+  fi
+  if [[ ! -n $LED_BRIGHTNESS ]] || [ $LED_BRIGHTNESS -lt 0 ] || [ $LED_BRIGHTNESS -gt 255 ]; then
+    batocera-settings-set $KEY_LED_BRIGHTNESS $DEFAULT_BRIGHTNESS
+  fi
+  if [[ ! -n $LED_SPEED ]] || [ -z $LED_SPEED ] || [ $LED_SPEED -lt 0 ] || [ $LED_SPEED -gt 255 ]; then
+    batocera-settings-set $KEY_LED_SPEED $DEFAULT_SPEED
+  fi
+  if [ -z $LED_COLOUR ] || [ "${#LED_COLOUR[@]}" -lt 3 ] || [ -z ${LED_COLOUR[0]} ] || [ ${LED_COLOUR[0]} -lt 0 ] || [ ${LED_COLOUR[0]} -gt 255 ] || [ -z ${LED_COLOUR[1]} ] || [ ${LED_COLOUR[1]} -lt 0 ] || [ ${LED_COLOUR[1]} -gt 255 ] || [ -z ${LED_COLOUR[2]} ] || [ ${LED_COLOUR[2]} -lt 0 ] || [ ${LED_COLOUR[2]} -gt 255 ]; then
+    batocera-settings-set $KEY_LED_COLOUR "$(printf "%s" "${DEFAULT_COLOUR[*]}")"
+  fi
+
+}
+
+readLedValues() {
 
   # Read LED settings from batocera.conf
   LED_MODE=$(batocera-settings-get $KEY_LED_MODE)
@@ -82,40 +107,27 @@ readLedSettings() {
   LED_COLOUR_RIGHT=($(batocera-settings-get $KEY_LED_COLOUR_RIGHT))
 
   # Ensure mode is set and within valid range, set to default if not
-  if [ -z $LED_MODE ]; then
-    LED_MODE=0
-    batocera-settings-set $KEY_LED_MODE 0
-  elif [ $LED_MODE -lt 0 ] || [ $LED_MODE -gt 6 ]; then
-    echo "Invalid or missing LED mode ($LED_MODE) - setting LED mode to default ($DEFAULT_LED_MODE)"
-    batocera-settings-set $KEY_LED_MODE $DEFAULT_LED_MODE
-    LED_MODE=$(batocera-settings-get $KEY_LED_MODE)
+  if [[ ! -n $LED_MODE ]] || [ $LED_MODE -lt 0 ] || [ $LED_MODE -gt 6 ]; then
+    echo "Invalid or missing LED mode ($LED_MODE) - no LED settings applied."
+    return
   fi
   
   # Set default brightness if no brightness selected or selected brightness is invalid
-  if [ -z $LED_BRIGHTNESS ]; then
-    LED_BRIGHTNESS=0
-    batocera-settings-set $KEY_LED_BRIGHTNESS 0
-  elif [ $LED_BRIGHTNESS -lt 0 ] || [ $LED_BRIGHTNESS -gt 255 ]; then
-    echo "Invalid or missing LED brightness ($LED_BRIGHTNESS) - setting LED brightness to default ($DEFAULT_BRIGHTNESS)"
-    batocera-settings-set $KEY_LED_BRIGHTNESS $DEFAULT_BRIGHTNESS
-    LED_BRIGHTNESS=$(batocera-settings-get $KEY_LED_BRIGHTNESS)
+  if [[ ! -n $LED_BRIGHTNESS ]] || [ $LED_BRIGHTNESS -lt 0 ] || [ $LED_BRIGHTNESS -gt 255 ]; then
+    echo "Invalid or missing LED brightness ($LED_BRIGHTNESS) - no LED settings applied."
+    return
   fi
 
   # Ensure speed is provided for modes 5 and 6 and within the valid range (0-255)
-  if [ -z $LED_SPEED ]; then
-    LED_SPEED=0
-    batocera-settings-set $KEY_LED_SPEED 0
-  elif [ -z $LED_SPEED ] || [ $LED_SPEED -lt 0 ] || [ $LED_SPEED -gt 255 ]; then
-    echo "Invalid or missing LED speed ($LED_SPEED) - setting LED speed to default ($DEFAULT_SPEED)"
-    batocera-settings-set $KEY_LED_SPEED $DEFAULT_SPEED
-    LED_SPEED=$(batocera-settings-get $KEY_LED_SPEED)
+  if [[ ! -n $LED_SPEED ]] || [ -z $LED_SPEED ] || [ $LED_SPEED -lt 0 ] || [ $LED_SPEED -gt 255 ]; then
+    echo "Invalid or missing LED speed ($LED_SPEED) - no LED settings applied."
+    return
   fi
 
   # Ensure RGB colours for modes 1-4 are set and within valid range, set to default if not
   if [ -z $LED_COLOUR ] || [ "${#LED_COLOUR[@]}" -lt 3 ] || [ -z ${LED_COLOUR[0]} ] || [ ${LED_COLOUR[0]} -lt 0 ] || [ ${LED_COLOUR[0]} -gt 255 ] || [ -z ${LED_COLOUR[1]} ] || [ ${LED_COLOUR[1]} -lt 0 ] || [ ${LED_COLOUR[1]} -gt 255 ] || [ -z ${LED_COLOUR[2]} ] || [ ${LED_COLOUR[2]} -lt 0 ] || [ ${LED_COLOUR[2]} -gt 255 ]; then
-    echo "Invalid or missing LED colours - setting LED colours to default (${DEFAULT_COLOUR[@]})"
-    batocera-settings-set $KEY_LED_COLOUR "$(printf "%s" "${DEFAULT_COLOUR[*]}")"
-    LED_COLOUR=($(batocera-settings-get $KEY_LED_COLOUR))
+    echo "Invalid or missing LED colours - no LED settings applied."
+    return
   fi
 
   # Determine if overrides for the right sticks exist and are within valid range, ignore them if not
@@ -205,7 +217,7 @@ confDaemon() {
   # Watch userdata/system folder for changes to batocera.conf
   while inotifywait /userdata/system -e close_write -e move -e create --includei "batocera\.conf"; do
     echo "Batocera.conf has been changed - updating LED settings."
-    readLedSettings
+    readLedValues
   done
 
 }
@@ -213,10 +225,6 @@ confDaemon() {
 # Applies changes to the LEDs based on LED variables and battery status
 ledDaemon() {
 
-  # If no variables are set from previous session, initialize led settings from batocera.conf
-  if [ ! -f "$VAR_LED_VALUES" ]; then
-    readLedSettings
-  fi
   # Apply updated LED settings when variables or battery capacity/status has changed
   while :; do
     applyLedSettings
@@ -228,13 +236,26 @@ ledDaemon() {
 }
 
 start() {
+  # Clear variables from previous run if required
   if [ $# -eq 1 ] && [ "$1" == "clear" ]; then
-    clearLedVariables
+    clearLedValues
   fi
+
+  # Initialize missing values in batocera.conf
+  initializeLedValues
+
+  # If no variables are set from previous session, initialize led settings from batocera.conf
+  if [ ! -f "$VAR_LED_VALUES" ]; then
+    readLedValues
+  fi
+  
+  # Launch LED daemon
   ledDaemon &
   LED_PID=$!
   echo $LED_PID > $VAR_LED_PID
   echo "Started analog stick RGB LED daemon."
+  
+  # Launch batocera.conf watcher daemon
   confDaemon &
   CONF_PID=$!
   echo $CONF_PID > $VAR_CONF_PID
@@ -263,7 +284,7 @@ elif [ "$1" == "stop" ]; then
 elif [ "$1" == "restart" ]; then
   restart $2
 elif [ "$1" == "import" ]; then
-  readLedSettings
+  readLedValues
 elif [ $# -eq 4 ] && [ "$1" == "set" ]; then
   BRIGHTNESS=$(batocera-settings-get $KEY_LED_BRIGHTNESS)
   SPEED=$(batocera-settings-get $KEY_LED_SPEED)
