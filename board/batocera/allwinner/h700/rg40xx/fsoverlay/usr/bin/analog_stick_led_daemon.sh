@@ -87,6 +87,7 @@ readLedSettings() {
   # Ensure mode is set and within valid range, set to default if not
   if [ -z $LED_MODE ]; then
     LED_MODE=0
+    batocera-settings-set $KEY_LED_MODE 0
   elif [ $LED_MODE -lt 0 ] || [ $LED_MODE -gt 6 ]; then
     echo "Invalid or missing LED mode ($LED_MODE) - setting LED mode to default ($DEFAULT_LED_MODE)"
     batocera-settings-set $KEY_LED_MODE $DEFAULT_LED_MODE
@@ -96,6 +97,7 @@ readLedSettings() {
   # Set default brightness if no brightness selected or selected brightness is invalid
   if [ -z $LED_BRIGHTNESS ]; then
     LED_BRIGHTNESS=0
+    batocera-settings-set $KEY_LED_BRIGHTNESS 0
   elif [ $LED_BRIGHTNESS -lt 0 ] || [ $LED_BRIGHTNESS -gt 255 ]; then
     echo "Invalid or missing LED brightness ($LED_BRIGHTNESS) - setting LED brightness to default ($DEFAULT_BRIGHTNESS)"
     batocera-settings-set $KEY_LED_BRIGHTNESS $DEFAULT_BRIGHTNESS
@@ -105,6 +107,7 @@ readLedSettings() {
   # Ensure speed is provided for modes 5 and 6 and within the valid range (0-255)
   if [ -z $LED_SPEED ]; then
     LED_SPEED=0
+    batocera-settings-set $KEY_LED_SPEED 0
   elif [ -z $LED_SPEED ] || [ $LED_SPEED -lt 0 ] || [ $LED_SPEED -gt 255 ]; then
     echo "Invalid or missing LED speed ($LED_SPEED) - setting LED speed to default ($DEFAULT_SPEED)"
     batocera-settings-set $KEY_LED_SPEED $DEFAULT_SPEED
