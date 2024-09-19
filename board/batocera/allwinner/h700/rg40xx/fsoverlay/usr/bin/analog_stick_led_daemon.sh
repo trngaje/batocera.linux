@@ -8,9 +8,11 @@ KEY_LED_COLOUR="led.colour"
 KEY_LED_COLOUR_RIGHT="led.colour.right"
 
 # Paths to variables
-VAR_CONF_PID="/var/run/analog_stick_led_daemon.conf.pid"
 VAR_LED_PID="/var/run/analog_stick_led_daemon.led.pid"
 VAR_LED_VALUES="/var/run/analog_stick_led_daemon.values"
+
+# Last change date of batocera.conf
+LAST_CONF_CHANGE_DATE=$(date -r "/userdata/system/batocera.conf")
 
 # Sleep interval for daemon
 UPDATE_INTERVAL_SECONDS=1
@@ -211,22 +213,21 @@ applyLedSettings() {
 
 }
 
-# Updates LED settings based on changes to batocera.conf
-confDaemon() {
-
-  # Watch userdata/system folder for changes to batocera.conf
-  while inotifywait /userdata/system -e close_write -e move -e create --includei "batocera\.conf"; do
-    echo "Batocera.conf has been changed - updating LED settings."
-    readLedValues
-  done
-
-}
-
 # Applies changes to the LEDs based on LED variables and battery status
 ledDaemon() {
 
   # Apply updated LED settings when variables or battery capacity/status has changed
   while :; do
+
+    # Determine the last-modified date of batocera.conf
+    CURRENT_CONF_CHANGE_DATE=$(date -r "/userdata/system/batocera.conf")
+
+    # Only check for details if batocera.conf has recently been changed
+    if [ "$LAST_CONF_CHANGE_DATE" != "$CURRENT_CONF_CHANGE_DATE" ]; then
+      readLedValues
+      LAST_CONF_CHANGE_DATE=$CURRENT_CONF_CHANGE_DATE
+    fi
+    
     applyLedSettings
 
     # Sleep until interval is over
@@ -254,17 +255,11 @@ start() {
   LED_PID=$!
   echo $LED_PID > $VAR_LED_PID
   echo "Started analog stick RGB LED daemon."
-  
-  # Launch batocera.conf watcher daemon
-  confDaemon &
-  CONF_PID=$!
-  echo $CONF_PID > $VAR_CONF_PID
-  echo "Started batocera.conf watcher daemon."
+
 }
 
 stop() {
   kill $(cat $VAR_LED_PID)
-  kill $(cat $VAR_CONF_PID)
   /usr/bin/analog_stick_led.sh 0
   echo "Stopped analog stick RGB LED daemon."
 }
