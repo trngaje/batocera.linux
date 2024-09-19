@@ -36,8 +36,9 @@ BATTERY_WARNING_COLOUR=(255 255 0)
 BATTERY_DANGER_COLOUR=(255 0 0)
 
 # Paths to battery values
-KEY_BATTERY_CAPACITY="/sys/class/power_supply/axp2202-battery/capacity"
-KEY_BATTERY_STATUS="/sys/class/power_supply/axp2202-battery/status"
+BATTERY_DIR=$(ls -d /sys/class/power_supply/*{BAT,bat}* 2>/dev/null | head -1)
+KEY_BATTERY_CAPACITY="$BATTERY_DIR/capacity"
+KEY_BATTERY_STATUS="$BATTERY_DIR/status"
 
 # Battery status names
 BATTERY_CHARGING="Charging"
