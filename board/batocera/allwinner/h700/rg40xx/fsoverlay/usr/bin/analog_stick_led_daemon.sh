@@ -146,9 +146,15 @@ readLedValues() {
 
 applyLedSettings() {
 
+  # Determine current battery capacity:
+  if [ ! -z $KEY_BATTERY_CAPACITY ] && [ -f $KEY_BATTERY_CAPACITY ]; then
+    BATTERY_CHARGE=$(cat $KEY_BATTERY_CAPACITY)
+  fi
+  
   # Determine current battery status:
-  BATTERY_CHARGE=$(cat $KEY_BATTERY_CAPACITY)
-  BATTERY_STATUS=$(cat $KEY_BATTERY_STATUS)
+  if [ ! -z $KEY_BATTERY_STATUS ] && [ -f $KEY_BATTERY_STATUS ]; then
+    BATTERY_STATUS=$(cat $KEY_BATTERY_STATUS)
+  fi
 
   # Read LED variables from file:
   if [ -f $VAR_LED_VALUES ]; then
@@ -181,25 +187,25 @@ applyLedSettings() {
   elif [ $LED_MODE -ne 0 ]; then
 
     # Go to LED mode "charging" if the battery is currently charging.
-    if [ $CURRENT_MODE -ne $MODE_CHARGING ] && [ $BATTERY_STATUS == $BATTERY_CHARGING ] && [ $BATTERY_CHARGE -lt 100 ]; then
+    if [ $CURRENT_MODE -ne $MODE_CHARGING ] && [ ! -z $BATTERY_STATUS ] && [ ! -z $BATTERY_CHARGE ] && [ $BATTERY_STATUS == $BATTERY_CHARGING ] && [ $BATTERY_CHARGE -lt 100 ]; then
       echo "Battery charge at $BATTERY_CHARGE - going to LED mode 'charging'"
       /usr/bin/analog_stick_led.sh $BATTERY_WARNING_MODE $LED_BRIGHTNESS ${DEFAULT_COLOUR[0]} ${DEFAULT_COLOUR[1]} ${DEFAULT_COLOUR[2]} ${DEFAULT_COLOUR[0]} ${DEFAULT_COLOUR[1]} ${DEFAULT_COLOUR[2]}
       CURRENT_MODE=$MODE_CHARGING
 
     # Go to LED mode "warning" if not set to warning but battery charge is equal or below warning threshold (and still above danger threshold)
-    elif [ $CURRENT_MODE -ne $MODE_WARNING ] && [ $BATTERY_STATUS == $BATTERY_DISCHARGING ] && ([ $BATTERY_CHARGE -eq $THRESHOLD_WARNING ] || ([ $BATTERY_CHARGE -lt $THRESHOLD_WARNING ] && [ $BATTERY_CHARGE -gt $THRESHOLD_DANGER ])); then
+    elif [ $CURRENT_MODE -ne $MODE_WARNING ] && [ ! -z $BATTERY_STATUS ] && [ ! -z $BATTERY_CHARGE ] && [ $BATTERY_STATUS == $BATTERY_DISCHARGING ] && ([ $BATTERY_CHARGE -eq $THRESHOLD_WARNING ] || ([ $BATTERY_CHARGE -lt $THRESHOLD_WARNING ] && [ $BATTERY_CHARGE -gt $THRESHOLD_DANGER ])); then
       echo "Battery charge at $BATTERY_CHARGE - going to LED mode 'warning'"
       /usr/bin/analog_stick_led.sh $BATTERY_WARNING_MODE $LED_BRIGHTNESS ${BATTERY_WARNING_COLOUR[0]} ${BATTERY_WARNING_COLOUR[1]} ${BATTERY_WARNING_COLOUR[2]} ${BATTERY_WARNING_COLOUR[0]} ${BATTERY_WARNING_COLOUR[1]} ${BATTERY_WARNING_COLOUR[2]}
       CURRENT_MODE=$MODE_WARNING
 
     # Go to LED mode "danger" if not set to danger but battery charge is equal or below danger threshold
-    elif [ $CURRENT_MODE -ne $MODE_DANGER ] && [ $BATTERY_STATUS == $BATTERY_DISCHARGING ] && ([ $BATTERY_CHARGE -eq $THRESHOLD_DANGER ] || [ $BATTERY_CHARGE -lt $THRESHOLD_DANGER ]); then
+    elif [ $CURRENT_MODE -ne $MODE_DANGER ] && [ ! -z $BATTERY_STATUS ] && [ ! -z $BATTERY_CHARGE ] && [ $BATTERY_STATUS == $BATTERY_DISCHARGING ] && ([ $BATTERY_CHARGE -eq $THRESHOLD_DANGER ] || [ $BATTERY_CHARGE -lt $THRESHOLD_DANGER ]); then
       echo "Battery charge at $BATTERY_CHARGE - Going to LED mode 'danger'"
       /usr/bin/analog_stick_led.sh $BATTERY_WARNING_MODE $LED_BRIGHTNESS ${BATTERY_DANGER_COLOUR[0]} ${BATTERY_DANGER_COLOUR[1]} ${BATTERY_DANGER_COLOUR[2]} ${BATTERY_DANGER_COLOUR[0]} ${BATTERY_DANGER_COLOUR[1]} ${BATTERY_DANGER_COLOUR[2]}
       CURRENT_MODE=$MODE_DANGER
 
     # Go back to normal LED mode if set to either warning or danger but battery status is above warning threshold
-    elif ($LED_SETTINGS_CHANGE_DETECTED || [ $CURRENT_MODE -ne $MODE_DEFAULT ]) && ([ $BATTERY_STATUS == $BATTERY_FULL ] || ([ $BATTERY_STATUS == $BATTERY_DISCHARGING ] && [ $BATTERY_CHARGE -gt $THRESHOLD_WARNING ])); then
+    elif ($LED_SETTINGS_CHANGE_DETECTED || [ $CURRENT_MODE -ne $MODE_DEFAULT ]) && ([ -z $BATTERY_CHARGE ] || [ -z $BATTERY_STATUS ] || [ $BATTERY_STATUS == $BATTERY_FULL ] || ([ $BATTERY_STATUS == $BATTERY_DISCHARGING ] && [ $BATTERY_CHARGE -gt $THRESHOLD_WARNING ])); then
       echo "Battery charge at $BATTERY_CHARGE - Going to normal LED mode"
       if [ $LED_MODE -lt 5 ]; then
         /usr/bin/analog_stick_led.sh $LED_MODE $LED_BRIGHTNESS  $LED_RIGHT_R $LED_RIGHT_G $LED_RIGHT_B $LED_LEFT_R $LED_LEFT_G $LED_LEFT_B
@@ -250,7 +256,7 @@ start() {
   if [ ! -f "$VAR_LED_VALUES" ]; then
     readLedValues
   fi
-  
+
   # Launch LED daemon
   ledDaemon &
   LED_PID=$!
