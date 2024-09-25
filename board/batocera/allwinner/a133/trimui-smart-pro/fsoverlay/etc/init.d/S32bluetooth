@@ -35,7 +35,7 @@ case "$1" in
                     sleep 2 # Give hciattach a few seconds to finish attaching firmware
                 ;;
                 rtk115)
-                    /usr/bin/rtk_hciattach -n -s 115200 ttyS1 rtk_h5 &
+                    /usr/bin/rtk_hciattach -n -s 115200 ttyS1 xradio &
                     sleep 2 # Give hciattach a few seconds to finish attaching firmware
                 ;;
                 bcm921)

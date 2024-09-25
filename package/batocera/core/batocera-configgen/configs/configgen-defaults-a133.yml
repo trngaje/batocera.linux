@@ -23,6 +23,8 @@ atomiswave:
 dreamcast:
   emulator: libretro
   core:     flycastvl
+  options:
+    hud_support: false
 naomi:
   emulator: libretro
   core:     flycastvl
