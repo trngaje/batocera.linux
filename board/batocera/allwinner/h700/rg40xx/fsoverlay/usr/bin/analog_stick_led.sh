@@ -1,43 +1,37 @@
 #!/bin/bash
 
-# Define some keys for batocera.conf
-KEY_LED_MODE="rg40xxh.rgb.mode"
-KEY_BRIGHTNESS="rg40xxh.rgb.brightness"
-KEY_SPEED="rg40xxh.rgb.speed"
-KEY_RED="rg40xxh.rgb.r"
-KEY_GREEN="rg40xxh.rgb.g"
-KEY_BLUE="rg40xxh.rgb.b"
-KEY_LEFT_RED="rg40xxh.rgb.r.left"
-KEY_LEFT_GREEN="rg40xxh.rgb.g.left"
-KEY_LEFT_BLUE="rg40xxh.rgb.b.left"
-KEY_RIGHT_RED="rg40xxh.rgb.r.right"
-KEY_RIGHT_GREEN="rg40xxh.rgb.g.right"
-KEY_RIGHT_BLUE="rg40xxh.rgb.b.right"
-
-# Define some default values
-DEFAULT_LED_MODE=1
-DEFAULT_BRIGHTNESS=100
-DEFAULT_SPEED=1
-DEFAULT_RED=80
-DEFAULT_GREEN=120
-DEFAULT_BLUE=10
-
-# Read settings from batocera.conf
-LED_MODE=$(batocera-settings-get $KEY_LED_MODE)
-BRIGHTNESS=$(batocera-settings-get $KEY_BRIGHTNESS)
-SPEED=$(batocera-settings-get $KEY_SPEED)
-R=$(batocera-settings-get $KEY_RED)
-G=$(batocera-settings-get $KEY_GREEN)
-B=$(batocera-settings-get $KEY_BLUE)
-LEFT_R=$(batocera-settings-get $KEY_LEFT_RED)
-LEFT_G=$(batocera-settings-get $KEY_LEFT_GREEN)
-LEFT_B=$(batocera-settings-get $KEY_LEFT_BLUE)
-RIGHT_R=$(batocera-settings-get $KEY_RIGHT_RED)
-RIGHT_G=$(batocera-settings-get $KEY_RIGHT_GREEN)
-RIGHT_B=$(batocera-settings-get $KEY_RIGHT_BLUE)
-
 # Define the serial device
 SERIAL_DEVICE="/dev/ttyS5"
+
+# Display LED mode descriptions and usage examples if no parameters are provided
+if [ $# -eq 0 ]; then
+  echo "Usage: $0 <led_mode> <brightness_value> [<speed_value>|<r_value> <g_value> <b_value> [<joystick_r> <joystick_g> <joystick_b>]]"
+  echo "LED Modes:"
+  echo "0: LED off"
+  echo "   Usage: $0 0"
+  echo "   Example: $0 0   # LED off"
+  echo "1: Solid Color (no effects)"
+  echo "   Usage: $0 1 <brightness_value> <right_joystick_r> <right_joystick_g> <right_joystick_b> <left_joystick_r> <left_joystick_g> <left_joystick_b>"
+  echo "   Example: $0 1 255 255 0 0 0 0 255   # Right joystick color red, left joystick color blue"
+  echo "   Randomize: $0 1 <brightness_value> randomize"
+  echo "   Example: $0 1 255 randomize  # Randomize RGB values and send to /dev/ttyS5 until stopped"
+  echo "2: Solid Color (Breathing, Fast)"
+  echo "   Usage: $0 2 <brightness_value> <right_joystick_r> <right_joystick_g> <right_joystick_b> <left_joystick_r> <left_joystick_g> <left_joystick_b>"
+  echo "   Example: $0 2 255 0 255 0 0 0 255   # Green color at maximum brightness with fast breathing effect"
+  echo "3: Solid Color (Breathing, Medium)"
+  echo "   Usage: $0 3 <brightness_value> <right_joystick_r> <right_joystick_g> <right_joystick_b> <left_joystick_r> <left_joystick_g> <left_joystick_b>"
+  echo "   Example: $0 3 255 0 0 255 0 0 255   # Blue color at maximum brightness with medium breathing effect"
+  echo "4: Solid Color (Breathing, Slow)"
+  echo "   Usage: $0 4 <brightness_value> <right_joystick_r> <right_joystick_g> <right_joystick_b> <left_joystick_r> <left_joystick_g> <left_joystick_b>"
+  echo "   Example: $0 4 255 255 255 0 255 255 0   # Yellow color at maximum brightness with slow breathing effect"
+  echo "5: Monochromatic Rainbow (Cycle between RGB colors)"
+  echo "   Usage: $0 5 <brightness_value> <speed_value>"
+  echo "   Example: $0 5 255 100   # Monochromatic rainbow effect at maximum brightness with speed 100"
+  echo "6: Multicolor Rainbow (Rainbow Swirl effect)"
+  echo "   Usage: $0 6 <brightness_value> <speed_value>"
+  echo "   Example: $0 6 255 100   # Multicolor rainbow swirl effect at maximum brightness with speed 100"
+  exit 0
+fi
 
 # Open the serial device
 exec 20<>$SERIAL_DEVICE
@@ -50,18 +44,31 @@ echo 1 > /sys/class/power_supply/axp2202-battery/mcu_pwr
 #echo 1 > /sys/class/power_supply/axp2202-battery/mcu_esckey
 sleep 0.05
 
-# Set default mode if no mode selected or selected mode is invalid
-if [ -z $LED_MODE ] || [ $LED_MODE -lt 1 ] || [ $LED_MODE -gt 6 ]; then
-  echo "Invalid or missing LED mode - setting LED mode to default ($DEFAULT_LED_MODE)"
-  batocera-settings-set $KEY_LED_MODE $DEFAULT_LED_MODE
-  LED_MODE=$(batocera-settings-get $KEY_LED_MODE)
+# Ensure correct number of arguments
+if [ $# -lt 1 ]; then
+  echo "Usage: $0 <led_mode> <brightness_value> [<speed_value>|<r_value> <g_value> <b_value> [<joystick_r> <joystick_g> <joystick_b>]]"
+  exit 1
 fi
 
-# Set default brightness if no brightness selected or selected brightness is invalid
-if [ -z $BRIGHTNESS ] || [ $BRIGHTNESS -lt 0 ] || [ $BRIGHTNESS -gt 255 ]; then
-  echo "Invalid or missing LED brightness - setting LED brightness to default ($DEFAULT_BRIGHTNESS)"
-  batocera-settings-set $KEY_BRIGHTNESS $DEFAULT_BRIGHTNESS
-  BRIGHTNESS=$(batocera-settings-get $KEY_BRIGHTNESS)
+LED_MODE=$1
+BRIGHTNESS=$2
+
+echo $LED_MODE 
+
+# Ensure brightness is within the valid range (0-255)
+if [ -z $BRIGHTNESS ]; then
+  BRIGHTNESS=0
+elif [ $BRIGHTNESS -lt 0 ] || [ $BRIGHTNESS -gt 255 ]; then
+  echo "Brightness value must be between 0 and 255"
+  exit 1
+fi
+
+# Ensure LED mode is within the valid range (1-6)
+if [ -z $LED_MODE ]; then
+  LED_MODE=0
+elif [ $LED_MODE -lt 0 ] || [ $LED_MODE -gt 6 ]; then
+  echo "LED mode must be between 0 (off) and 6"
+  exit 1
 fi
 
 # Function to calculate checksum
@@ -73,33 +80,25 @@ calculate_checksum() {
   echo $((sum & 0xFF))
 }
 
-# Construct payload based on LED mode
-if [ $# -eq 1 ]; then
+# Function to generate random RGB values
+generate_random_rgb() {
+  echo $((RANDOM % 256)) $((RANDOM % 256)) $((RANDOM % 256))
+}
 
-  if [ "$1" == "off" ]; then
-    # Does this case have to be so complicated? I just set everything to 0 for now.
-    echo "Turning RGB LEDs off."
-    LED_MODE=1
-    BRIGHTNESS=0
-    R=0
-    G=0
-    B=0
-  elif [ "$1" == "warn" ]; then
-    echo "Switching RGB to warning mode."
-    LED_MODE=2
-    R=255
-    G=255
-    B=0
-  elif [ "$1" == "danger" ]; then
-    echo "Switching RGB to danger mode."
-    LED_MODE=2
-    R=255
-    G=0
-    B=0
-  else 
-    echo "Usage: $0 [off|warn|danger]"
-	exit 1
-  fi
+# Function to read key press
+key_pressed() {
+  read -t 0.001 -n 1 && return 0 || return 1
+}
+
+# Construct payload based on LED mode
+if [ $LED_MODE -eq 0 ]; then
+
+  echo "Turning RGB LEDs off."
+  LED_MODE=1
+  BRIGHTNESS=0
+  R=0
+  G=0
+  B=0
 
   # Construct the payload for RGB values
   PAYLOAD=$(printf '\\x%02X\\x%02X' $LED_MODE $BRIGHTNESS)
@@ -114,14 +113,22 @@ if [ $# -eq 1 ]; then
   done
   CHECKSUM=$(calculate_checksum "${PAYLOAD_BYTES[@]}")
   PAYLOAD+=$(printf '\\x%02X' $CHECKSUM)
-  
-elif [ $LED_MODE -ge 5 ] && [ $LED_MODE -le 6 ]; then
 
-  # Ensure speed is provided for modes 5 and 6 and within the valid range (0-255)
-  if [ -z $SPEED ] || [ $SPEED -lt 0 ] || [ $SPEED -gt 255 ]; then
-    echo "Invalid or missing LED speed - setting LED speed to default ($DEFAULT_SPEED)"
-    batocera-settings-set $KEY_SPEED $DEFAULT_SPEED
-    SPEED=$(batocera-settings-get $KEY_SPEED)
+elif [ $LED_MODE -ge 5 ] && [ $LED_MODE -le 6 ]; then
+  # Ensure speed is provided for modes 5 and 6
+  if [ $# -ne 3 ]; then
+    echo "Usage for modes 5 and 6: $0 <led_mode> <brightness_value> <speed_value>"
+    exit 1
+  fi
+
+  SPEED=$3
+
+  # Ensure speed is within the valid range (0-255)
+  if [ -z $SPEED ]; then
+    SPEED=0
+  elif [ $SPEED -lt 0 ] || [ $SPEED -gt 255 ]; then
+    echo "Speed value must be between 0 and 255"
+    exit 1
   fi
 
   # Calculate the checksum
@@ -130,66 +137,69 @@ elif [ $LED_MODE -ge 5 ] && [ $LED_MODE -le 6 ]; then
   # Construct the payload
   PAYLOAD=$(printf '\\x%02X\\x%02X\\x%02X\\x%02X\\x%02X\\x%02X' $LED_MODE $BRIGHTNESS 1 1 $SPEED $CHECKSUM)
 
+elif [ $LED_MODE -eq 1 ] && [ "$3" == "randomize" ]; then
+  # Randomize mode for LED mode 1
+  echo "Press any key to stop..."
+  while true; do
+    read RIGHT_R RIGHT_G RIGHT_B < <(generate_random_rgb)
+    read LEFT_R LEFT_G LEFT_B < <(generate_random_rgb)
+    
+    # Construct the payload for RGB and joystick values
+    PAYLOAD=$(printf '\\x%02X\\x%02X' $LED_MODE $BRIGHTNESS)
+    for ((i = 0; i < 8; i++)); do
+      PAYLOAD+=$(printf '\\x%02X\\x%02X\\x%02X' $RIGHT_R $RIGHT_G $RIGHT_B)
+    done
+    for ((i = 0; i < 8; i++)); do
+      PAYLOAD+=$(printf '\\x%02X\\x%02X\\x%02X' $LEFT_R $LEFT_G $LEFT_B)
+    done
+
+    # Calculate checksum for the payload
+    PAYLOAD_BYTES=($LED_MODE $BRIGHTNESS)
+    for ((i = 0; i < 8; i++)); do
+      PAYLOAD_BYTES+=($RIGHT_R $RIGHT_G $RIGHT_B)
+    done
+    for ((i = 0; i < 8; i++)); do
+      PAYLOAD_BYTES+=($LEFT_R $LEFT_G $LEFT_B)
+    done
+    CHECKSUM=$(calculate_checksum "${PAYLOAD_BYTES[@]}")
+    PAYLOAD+=$(printf '\\x%02X' $CHECKSUM)
+
+    # Write the payload to the serial device
+    echo -e -n "$PAYLOAD" > $SERIAL_DEVICE
+
+    # Check for key press to exit
+    if key_pressed; then
+      echo "Randomize mode stopped."
+      break
+    fi
+  done
 else
-
-  # Ensure red value is provided for mode 1-4 and within valid range, set to default if not
-  if ([ -z $R ] || [ $R -lt 0 ] || [ $R -gt 255 ]) && ([ -z $LEFT_R ] || [ $LEFT_R -lt 0 ] || [ $LEFT_R -gt 255 ] || [ -z $RIGHT_R ] || [ $RIGHT_R -lt 0 ] || [ $RIGHT_R -gt 255 ]); then
-    echo "Invalid or missing LED left red - setting LED left red to default ($DEFAULT_RED)"
-    batocera-settings-set $KEY_RED $DEFAULT_RED
-    R=$(batocera-settings-get $KEY_RED)
+  # Ensure RGB and joystick values are provided for mode 1
+  if [ $# -ne 8 ]; then
+    echo "Usage for mode 1-4: $0 <led_mode> <brightness_value> <right_joystick_r> <right_joystick_g> <right_joystick_b> <left_joystick_r> <left_joystick_g> <left_joystick_b>"
+    exit 1
   fi
 
-  # Ensure green value is provided for mode 1-4 and within valid range, set to default if not
-  if ([ -z $G ] || [ $G -lt 0 ] || [ $G -gt 255 ]) && ([ -z $LEFT_G ] || [ $LEFT_G -lt 0 ] || [ $LEFT_G -gt 255 ] || [ -z $RIGHT_G ] || [ $RIGHT_G -lt 0 ] || [ $RIGHT_G -gt 255 ]); then
-    echo "Invalid or missing LED left green - setting LED left green to default ($DEFAULT_GREEN)"
-    batocera-settings-set $KEY_GREEN $DEFAULT_GREEN
-    G=$(batocera-settings-get $KEY_GREEN)
+  RIGHT_R=$3
+  RIGHT_G=$4
+  RIGHT_B=$5
+  LEFT_R=$6
+  LEFT_G=$7
+  LEFT_B=$8
+
+  # Ensure RGB values are within the valid range (0-255)
+  if [ $RIGHT_R -lt 0 ] || [ $RIGHT_R -gt 255 ] || [ $RIGHT_G -lt 0 ] || [ $RIGHT_G -gt 255 ] || [ $RIGHT_B -lt 0 ] || [ $RIGHT_B -gt 255 ]; then
+    echo "RGB values must be between 0 and 255"
+    exit 1
   fi
 
-  # Ensure blue value is provided for mode 1-4 and within valid range, set to default if not
-  if ([ -z $B ] || [ $B -lt 0 ] || [ $B -gt 255 ]) && ([ -z $LEFT_B ] || [ $LEFT_B -lt 0 ] || [ $LEFT_B -gt 255 ] || [ -z $RIGHT_B ] || [ $RIGHT_B -lt 0 ] || [ $RIGHT_B -gt 255 ]); then
-    echo "Invalid or missing LED left green - setting LED left green to default ($DEFAULT_BLUE)"
-    batocera-settings-set $KEY_BLUE $DEFAULT_BLUE
-    B=$(batocera-settings-get $KEY_BLUE)
+  # Ensure joystick RGB values are within the valid range (0-255)
+  if [ $LEFT_R -lt 0 ] || [ $LEFT_R -gt 255 ] || [ $LEFT_G -lt 0 ] || [ $LEFT_G -gt 255 ] || [ $LEFT_B -lt 0 ] || [ $LEFT_B -gt 255 ]; then
+    echo "Joystick RGB values must be between 0 and 255"
+    exit 1
   fi
 
-  # Ensure left red value is provided for mode 1-4 and within valid range
-  if [ -z $LEFT_R ] || [ $LEFT_R -lt 0 ] || [ $LEFT_R -gt 255 ]; then
-    echo "No LED left red override found - using regular red ($R)"
-    LEFT_R=$R
-  fi
-
-  # Ensure left green value is provided for mode 1-4 and within valid range
-  if [ -z $LEFT_G ] || [ $LEFT_G -lt 0 ] || [ $LEFT_G -gt 255 ]; then
-    echo "No LED left green override found - using regular green ($G)"
-    LEFT_G=$G
-  fi
-
-  # Ensure left blue value is provided for mode 1-4 and within valid range
-  if [ -z $LEFT_B ] || [ $LEFT_B -lt 0 ] || [ $LEFT_B -gt 255 ]; then
-    echo "No LED left blue override found - using regular blue ($B)"
-    LEFT_B=$B
-  fi
-
-  # Ensure right red value is provided for mode 1-4 and within valid range
-  if [ -z $RIGHT_R ] || [ $RIGHT_R -lt 0 ] || [ $RIGHT_R -gt 255 ]; then
-    echo "No LED right red override found - using regular red ($R)"
-    RIGHT_R=$R
-  fi
-
-  # Ensure right green value is provided for mode 1-4 and within valid range
-  if [ -z $RIGHT_G ] || [ $RIGHT_G -lt 0 ] || [ $RIGHT_G -gt 255 ]; then
-    echo "No LED right green override found - using regular green ($G)"
-    RIGHT_G=$G
-  fi
-
-  # Ensure right blue value is provided for mode 1-4 and within valid range
-  if [ -z $RIGHT_B ] || [ $RIGHT_B -lt 0 ] || [ $RIGHT_B -gt 255 ]; then
-    echo "No LED right blue override found - using regular blue ($B)"
-    RIGHT_B=$B
-  fi
-
-  # Construct the payload for jeft and right joystick values
+  # Construct the payload for RGB and joystick values
   PAYLOAD=$(printf '\\x%02X\\x%02X' $LED_MODE $BRIGHTNESS)
   for ((i = 0; i < 8; i++)); do
     PAYLOAD+=$(printf '\\x%02X\\x%02X\\x%02X' $RIGHT_R $RIGHT_G $RIGHT_B)
@@ -208,7 +218,6 @@ else
   done
   CHECKSUM=$(calculate_checksum "${PAYLOAD_BYTES[@]}")
   PAYLOAD+=$(printf '\\x%02X' $CHECKSUM)
-
 fi
 
 # Debugging output
