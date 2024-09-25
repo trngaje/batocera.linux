@@ -3,8 +3,8 @@
 # batocera-emulationstation
 #
 ################################################################################
-# Last update: Commits on Aug 27, 2024
-BATOCERA_EMULATIONSTATION_VERSION = eab377242f947d8ca06468d5da1cbf2c74049950
+# Last update: Commits on Sept 23, 2024
+BATOCERA_EMULATIONSTATION_VERSION = 62f1a34baddcdeeea4d148cdbaf5345e7baa4473
 BATOCERA_EMULATIONSTATION_SITE = https://github.com/batocera-linux/batocera-emulationstation
 BATOCERA_EMULATIONSTATION_SITE_METHOD = git
 BATOCERA_EMULATIONSTATION_LICENSE = MIT
@@ -119,6 +119,8 @@ define BATOCERA_EMULATIONSTATION_RESOURCES
 	$(INSTALL) -m 0755 -d $(TARGET_DIR)/usr/share/emulationstation/resources/flags
 	$(INSTALL) -m 0755 -d $(TARGET_DIR)/usr/share/emulationstation/resources/battery
 	$(INSTALL) -m 0755 -d $(TARGET_DIR)/usr/share/emulationstation/resources/services
+	$(INSTALL) -m 0755 -d $(TARGET_DIR)/usr/share/emulationstation/resources/shaders
+	$(INSTALL) -m 0755 -d $(TARGET_DIR)/usr/share/emulationstation/resources/shaders/kawase
 	$(INSTALL) -m 0644 -D $(@D)/resources/*.* \
 	    $(TARGET_DIR)/usr/share/emulationstation/resources
 	$(INSTALL) -m 0644 -D $(@D)/resources/help/*.* \
@@ -129,11 +131,14 @@ define BATOCERA_EMULATIONSTATION_RESOURCES
 	    $(TARGET_DIR)/usr/share/emulationstation/resources/battery
 	$(INSTALL) -m 0644 -D $(@D)/resources/services/*.* \
 	    $(TARGET_DIR)/usr/share/emulationstation/resources/services
+	$(INSTALL) -m 0644 -D $(@D)/resources/shaders/*.* \
+	    $(TARGET_DIR)/usr/share/emulationstation/resources/shaders
+	$(INSTALL) -m 0644 -D $(@D)/resources/shaders/*.* \
+	    $(TARGET_DIR)/usr/share/emulationstation/resources/shaders/kawase
 
 	# es_input.cfg
 	mkdir -p $(TARGET_DIR)/usr/share/batocera/datainit/system/configs/emulationstation
-	cp $(BATOCERA_EMULATIONSTATION_SOURCE_PATH)/controllers/es_input.cfg \
-		$(TARGET_DIR)/usr/share/batocera/datainit/system/configs/emulationstation
+	cp $(BATOCERA_EMULATIONSTATION_SOURCE_PATH)/controllers/es_input.cfg $(TARGET_DIR)/usr/share/emulationstation
 
 	# savestates config
 	$(INSTALL) -m 0644 $(BATOCERA_EMULATIONSTATION_SOURCE_PATH)/es_savestates.cfg $(TARGET_DIR)/usr/share/emulationstation
