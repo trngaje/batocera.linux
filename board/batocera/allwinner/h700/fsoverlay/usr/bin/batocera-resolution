@@ -1,13 +1,12 @@
 #!/bin/sh
 
-FILEMODES="/sys/class/graphics/fb0/modes"
-# Path to the HDMI state file
-hdmi_state_file="/sys/devices/platform/soc/6000000.hdmi/extcon/hdmi/state"
-display="/sys/kernel/debug/dispdbg"
+DISPLAY="/sys/kernel/debug/dispdbg"
 
 f_usage() {
-    echo "$0 currentMode" >&2
+    echo "$0 listOutputs" >&2
     echo "$0 currentResolution" >&2
+	echo "$0 setOutput" >&2
+	echo "$0 currentOutput" >&2
 }
 
 if [ $# -eq 0 ]; then
@@ -15,54 +14,56 @@ if [ $# -eq 0 ]; then
     exit 1
 fi
 
-check_hdmi() {
-    state=$(cat "$hdmi_state_file")
-    if [ "$state" = "HDMI=1" ]; then
-        return 0
-    else
-        return 1
-    fi
-}
-
-setOutput() {
-    if check_hdmi; then
-        # 720p external
-        cat /dev/zero > /dev/fb0
-        echo disp0 > $display/name
-        echo switch1 > $display/command
-        echo 4 5 0 0 0x4 0x201 0 1 0 8 > $display/param
-        echo 1 > $display/start
-        fbset -g 1280 720 1280 1440 32 -t 13426 192 56 22 1 136 3
-    else
-        # 480p internal
-        cat /dev/zero > /dev/fb0
-        echo disp0 > $display/name
-        echo switch > $display/command
-        echo 1 0 > $display/param
-        echo 1 > $display/start
-        fbset -g 640 480 640 960 32
-    fi
+set_output() {
+    OUTPUT=$1
+    case "$OUTPUT" in
+        hdmi)
+            # Set output for HDMI (720p external)
+			fbset -g 1 1 1 1 32
+			dd if=/dev/zero of=/dev/fb0 bs=4 count=1
+			echo disp0 > $DISPLAY/name
+            echo switch1 > $DISPLAY/command
+            echo 4 5 0 0 0x4 0x201 0 1 0 8 > $DISPLAY/param
+			echo 1 > $DISPLAY/start
+			sleep 0.5
+            fbset -g 1280 720 1280 1440 32 -t 13468 220 40 20 5 110 5
+            ;;
+        internal)
+            # Set output for internal display (480p internal)
+			fbset -g 1 1 1 1 32
+			dd if=/dev/zero of=/dev/fb0 bs=4 count=1
+			echo disp0 > $DISPLAY/name
+            echo switch > $DISPLAY/command
+            echo 1 0 > $DISPLAY/param
+			echo 1 > $DISPLAY/start
+			sleep 0.5
+            fbset -g 640 480 640 960 32 -t 13426 192 56 22 1 136 3
+            ;;
+        *)
+            f_usage
+            ;;
+    esac
 }
 
 ACTION=$1
-shift
 
 case "${ACTION}" in
-    "listModes"|"listOutputs")
-        echo internal lcd 640x480
-        echo hdmi out 1280x720
+    "listOutputs")
         ;;
-    "setMode"|"setOutput")
-        setOutput
+    "setOutput")
+        HDMI_STATE="$(cat /sys/devices/platform/soc/6000000.hdmi/extcon/hdmi/state)"			
+		if [ "$HDMI_STATE" = "HDMI=1" ]; then  
+            set_output hdmi           			
+        else 
+			set_output internal
+		fi	
+        ;;
+    "currentOutput")
         ;;
     "minTomaxResolution" | "minTomaxResolution-secure")
         ;;
-    "currentMode"|"currentResolution"|"currentOutput")
-        if check_hdmi; then
-            echo 1280x720
-        else
-            echo 640x480
-        fi
+    "currentResolution")
+        fbset | grep "geometry" | awk '{print $2"x"$3}'
         ;;
     "supportSystemRotation")
         exit 1

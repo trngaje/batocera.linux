@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Path to the HDMI state file
-hdmi_state_file="/sys/devices/platform/soc/6000000.hdmi/extcon/hdmi/state"
-
 do_usage() {
     echo "$1 list"
     echo "$1 get"
@@ -21,14 +18,14 @@ export XDG_RUNTIME_DIR=/var/run
 # Set variables
 MAX_VOLUME="$(/usr/bin/batocera-settings-get audio.volume.boost)" || MAX_VOLUME=100
 DEFAULT_SINK=$(LANG=C pactl info | grep -E '^Default Sink: ' | sed -e s+"^Default Sink: "+""+ | head -1)
-DETECT_VOLUME=$(LANG=C pactl list sinks-raw | grep -E '^[^ ]* name="'"${DEFAULT_SINK}"'"' | sed -e s+"^.* volume=\"\([0-9]*\)\" .*$"+'\1'+)
+DETECT_VOLUME=$(LANG=C pactl list sinks-raw | grep -E '^[^ ]* name='"${DEFAULT_SINK}"' ' | sed -e s+"^.* volume=\([0-9]*\) .*$"+'\1'+)
 
 ACTION="$1"
 
 case "${ACTION}" in
     list)
-        printf "auto\tauto\n"
-        LANG=C pactl list sinks-raw | sed -e s+"^sink=\"[0-9]*\" name=\"\([^ ]*\)\" .* description=\"\(.*\)\"$"+"\1\t\2"+
+        echo "auto auto"
+        LANG=C pactl list sinks-raw | sed -e s+"^sink=[0-9]* name=\([^ ]*\) .* description=\(.*\)$"+"\1 \2"+
     ;;
 
     get)
@@ -43,53 +40,27 @@ case "${ACTION}" in
                 BOARD=$(cat /boot/boot/batocera.board)
 
                 case "${ARCH}" in
-                "rk3399")
-                    MODE=alsa_output.platform-hdmi-sound.stereo-fallback
-                    LANG=C pactl set-default-sink "${MODE}" || exit 1
-                    ;;
-                "s922x")
-                    if [ "$BOARD" == "ogu" ]; then
-                        LANG=C pactl set-default-sink INTERNAL
-                        amixer -c 0 -q sset "Master" 100%
-                        amixer -c 0 sset 'Playback Mux' SPK
-                        amixer -c 0 -q sset 'FRDDR_A SINK 1 SEL' 'OUT 1'
-                        amixer -c 0 -q sset 'FRDDR_A SRC 1 EN' 'on'
-                    fi
-                    ;;
-                "rk3326")
-                    LANG=C pactl set-default-sink INTERNAL
-                    amixer -c 0 cset name='Playback Path' SPK
-                    ;;
                 "h700")
-                    state=$(cat "$hdmi_state_file")
-                    if [ "$state" = "HDMI=1" ]; then
+                    # Needed if booted with hdmi cable plugged in
+                    HDMI_STATE="$(cat /sys/devices/platform/soc/6000000.hdmi/extcon/hdmi/state)"
+					if [ "$HDMI_STATE" = "HDMI=1" ]; then
                         MODE=alsa_output._sys_devices_platform_soc_soc_03000000_ahub1_mach_sound_card2.stereo-fallback
-                        LANG=C pactl set-default-sink "${MODE}" || exit 1
-                        amixer -c 0 sset "OutputL Mixer DACL" on
-                        amixer -c 0 sset "OutputL Mixer DACR" off
-                        amixer -c 0 sset "OutputR Mixer DACL" off
-                        amixer -c 0 sset "OutputR Mixer DACR" on
-                    elif [ "$BOARD" == "rg35xx-h" ] || [ "$BOARD" == "rg40xx" ]; then
-                        MODE=alsa_output._sys_devices_platform_soc_soc_03000000_codec_mach_sound_card0.stereo-fallback
-                        LANG=C pactl set-default-sink "${MODE}" || exit 1
-                        amixer -c 0 sset "OutputL Mixer DACL" on
-                        amixer -c 0 sset "OutputL Mixer DACR" off
-                        amixer -c 0 sset "OutputR Mixer DACL" off
-                        amixer -c 0 sset "OutputR Mixer DACR" on
                     else
                         MODE=alsa_output._sys_devices_platform_soc_soc_03000000_codec_mach_sound_card0.stereo-fallback
-                        LANG=C pactl set-default-sink "${MODE}" || exit 1
-                        amixer -c 0 sset "OutputL Mixer DACL" on
-                        amixer -c 0 sset "OutputL Mixer DACR" on
-                        amixer -c 0 sset "OutputR Mixer DACL" on
-                        amixer -c 0 sset "OutputR Mixer DACR" on
                     fi
+                    amixer -c 0 sset "OutputL Mixer DACL" on
+                    amixer -c 0 sset "OutputL Mixer DACR" off
+                    amixer -c 0 sset "OutputR Mixer DACL" off
+                    amixer -c 0 sset "OutputR Mixer DACR" on					    
                     amixer -c 0 sset LINEOUT on
-                    ;;
+                    LANG=C pactl set-default-sink "${MODE}" || exit 1					
+                ;;
+
                 *)
                     # do nothing!
                 esac
-            ;;
+			;;
+
             *)
                 LANG=C pactl set-default-sink "${MODE}" || exit 1
                     if [[ $(LANG=C pactl get-default-sink) != "${MODE}" ]]; then
@@ -100,8 +71,8 @@ case "${ACTION}" in
         ;;
 
     list-profiles)
-        printf "auto\tauto\n"
-        LANG=C pactl list cards-profiles-raw | grep "available=\"1\"" | sed -e s+"^card=\"[0-9]*\" name=\"\(.*\)\" profile=\"\(.*\)\" available=\"[01]\" active=\"[01]\" description=\"\(.*\)\"$"+"\2@\1\t\3"+
+        echo "auto auto"
+        LANG=C pactl list cards-profiles-raw | grep "available=1" | sed -e s+"^card=[0-9]* name=\([^ ]*\) profile=\([^ ]*\) available=[01] active=[01] description=\(.*\)$"+"\2@\1 \3"+
         ;;
 
     get-profile)
@@ -163,7 +134,7 @@ case "${ACTION}" in
         ;;
 
     test)
-        aplay "/usr/share/sounds/Mallet.wav" || exit 1
+        aplay "/usr/share/sounds/stereo-test.wav" || exit 1
     ;;
     *)
         do_usage $(basename $0)
