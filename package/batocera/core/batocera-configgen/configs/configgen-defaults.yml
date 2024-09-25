@@ -162,6 +162,8 @@ dos:
 dreamcast:
   emulator: libretro
   core:     flycast
+  options:
+    hud_support: false
 dxx-rebirth:
   emulator: dxx-rebirth
   core:     dxx-rebirth
