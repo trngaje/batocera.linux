@@ -179,6 +179,11 @@ eduke32:
 electron:
   emulator: libretro
   core:     mame
+emulators:
+  emulator: sh
+  core:     sh
+  options:
+    bezel: none
 etlegacy:
   emulator: etlegacy
   core:     etlegacy
@@ -620,6 +625,11 @@ ti99:
 tic80:
   emulator: libretro
   core:     tic80
+tools:
+  emulator: sh
+  core:     sh
+  options:
+    bezel: none
 triforce:
   emulator: dolphin_triforce
   core:     dolphin_triforce

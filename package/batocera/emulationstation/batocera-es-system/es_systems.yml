@@ -2371,6 +2371,44 @@ ports:
      Aqui você pode encontrar jogos e aplicativos para Linux, iniciados via scripts shell que terminam em
      ".sh". Apenas os scripts ".sh" aparecem no EmulationStation.
 
+tools:
+  name:       Tools
+  manufacturer: Tools
+  release:
+  hardware: tool
+  extensions: [sh, squashfs]
+  platform: pc
+  group: tools
+  path: tools
+  emulators:
+    sh:
+      sh:  { requireAnyOf: [] }
+  force:      True
+  comment_en: |
+    ## SYSTEM TOOLS ##
+    -------------------------------------------------------------------------------
+    Here you can find System tools, launched by shell scripts ending in
+    ".sh". Only the ".sh" scripts appear in EmulationStation.
+
+emulators:
+  name:       Emulators
+  manufacturer: Emulators
+  release:
+  hardware: emulator
+  extensions: [sh, squashfs]
+  platform: pc
+  group: emulators
+  path: emulators
+  emulators:
+    sh:
+      sh:  { requireAnyOf: [] }
+  force:      True
+  comment_en: |
+    ## STANDALONE EMULATORS ##
+    -------------------------------------------------------------------------------
+    Here you can find standalone emulators, launched by shell scripts ending in
+    ".sh". Only the ".sh" scripts appear in EmulationStation.
+
 amiga:
   name:       Amiga
   manufacturer: Commodore

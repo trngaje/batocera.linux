@@ -1,0 +1,11 @@
+#!/bin/sh
+
+
+case "$1" in
+    start)
+	/etc/init.d/S08connman reload
+    ;;
+esac
+
+exit 0
+
