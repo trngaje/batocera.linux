@@ -2,7 +2,7 @@ import os
 import batoceraFiles
 import struct
 from PIL import Image, ImageOps
-from .videoMode import getAltDecoration, getCurrentMode
+from .videoMode import getAltDecoration, getCurrentResolution
 
 from .logger import get_logger
 eslog = get_logger(__name__)
@@ -29,7 +29,12 @@ def getBezelInfos(rom, bezel, systemName, emulator):
     # mamezip files are for MAME-specific advanced artwork (bezels with overlays and backdrops, animated LEDs, etc)
 
     # Retrieve Resolution for resolution specific decorations
-    resolution = getCurrentMode()
+    resolutionObj = getCurrentResolution()
+    if resolutionObj:
+        resolution = str(resolutionObj["width"]) + "x" + str(resolutionObj["height"])
+        eslog.debug(f"Detected resolution: {resolution}")
+    else:
+        eslog.error(f"Unable to detect current resolution.")
 
     # Retrieve alternate decoration
     altDecoration = getAltDecoration(systemName, rom, emulator)
