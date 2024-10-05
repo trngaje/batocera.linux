@@ -24,7 +24,7 @@ ACTION="$1"
 
 case "${ACTION}" in
     list)
-        echo "auto auto"
+        echo "auto"
         LANG=C pactl list sinks-raw | sed -e s+"^sink=[0-9]* name=\([^ ]*\) .* description=\(.*\)$"+"\1 \2"+
     ;;
 
@@ -71,7 +71,7 @@ case "${ACTION}" in
         ;;
 
     list-profiles)
-        echo "auto auto"
+        echo "auto"
         LANG=C pactl list cards-profiles-raw | grep "available=1" | sed -e s+"^card=[0-9]* name=\([^ ]*\) profile=\([^ ]*\) available=[01] active=[01] description=\(.*\)$"+"\2@\1 \3"+
         ;;
 
