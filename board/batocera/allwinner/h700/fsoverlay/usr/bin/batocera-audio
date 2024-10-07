@@ -24,8 +24,8 @@ ACTION="$1"
 
 case "${ACTION}" in
     list)
-        echo "auto"
-        LANG=C pactl list sinks-raw | sed -e s+"^sink=[0-9]* name=\([^ ]*\) .* description=\(.*\)$"+"\1 \2"+
+        printf "auto\tauto\n"
+        LANG=C pactl list sinks-raw | sed -e s+"^sink=\"[0-9]*\" name=\"\([^ ]*\)\" .* description=\"\(.*\)\"$"+"\1\t\2"+
     ;;
 
     get)
@@ -43,7 +43,7 @@ case "${ACTION}" in
                 "h700")
                     # Needed if booted with hdmi cable plugged in
                     HDMI_STATE="$(cat /sys/devices/platform/soc/6000000.hdmi/extcon/hdmi/state)"
-					if [ "$HDMI_STATE" = "HDMI=1" ]; then
+                    if [ "$HDMI_STATE" = "HDMI=1" ]; then
                         MODE=alsa_output._sys_devices_platform_soc_soc_03000000_ahub1_mach_sound_card2.stereo-fallback
                     else
                         MODE=alsa_output._sys_devices_platform_soc_soc_03000000_codec_mach_sound_card0.stereo-fallback
@@ -51,15 +51,15 @@ case "${ACTION}" in
                     amixer -c 0 sset "OutputL Mixer DACL" on
                     amixer -c 0 sset "OutputL Mixer DACR" off
                     amixer -c 0 sset "OutputR Mixer DACL" off
-                    amixer -c 0 sset "OutputR Mixer DACR" on					    
+                    amixer -c 0 sset "OutputR Mixer DACR" on
                     amixer -c 0 sset LINEOUT on
-                    LANG=C pactl set-default-sink "${MODE}" || exit 1					
+                    LANG=C pactl set-default-sink "${MODE}" || exit 1
                 ;;
 
                 *)
                     # do nothing!
                 esac
-			;;
+            ;;
 
             *)
                 LANG=C pactl set-default-sink "${MODE}" || exit 1
@@ -71,8 +71,8 @@ case "${ACTION}" in
         ;;
 
     list-profiles)
-        echo "auto"
-        LANG=C pactl list cards-profiles-raw | grep "available=1" | sed -e s+"^card=[0-9]* name=\([^ ]*\) profile=\([^ ]*\) available=[01] active=[01] description=\(.*\)$"+"\2@\1 \3"+
+        printf "auto\tauto\n"
+        LANG=C pactl list cards-profiles-raw | grep "available=\"1\"" | sed -e s+"^card=\"[0-9]*\" name=\"\(.*\)\" profile=\"\(.*\)\" available=\"[01]\" active=\"[01]\" description=\"\(.*\)\"$"+"\2@\1\t\3"+
         ;;
 
     get-profile)
