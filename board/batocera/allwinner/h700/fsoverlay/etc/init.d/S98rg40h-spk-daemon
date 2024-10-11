@@ -1,0 +1,54 @@
+#!/bin/sh
+
+# The RG40XX-H has swapped audio channels for speakers, but not for headphones.
+#
+# The new kernel in version 1.0.3 of the stock firmware resolves this bug, but
+# we currently use a patched version of an older stock kernel (to fix cardinal
+# snapping issues), and upgrading it isn't trivial.
+#
+# For now, poll spk_state (0 -> headphones plugged, 1 -> headphones unplugged)
+# and swap DACL and DACR when the state changes.
+
+DAEMON=/usr/bin/battery-saver.sh
+PIDFILE=/var/run/battery-saver.pid
+DAEMON_NAME=$(basename "$DAEMON")
+
+start_daemon() {
+    echo "Starting $DAEMON_NAME."
+    start-stop-daemon --start --quiet --pidfile "$PIDFILE" --exec "$DAEMON"
+    if [ $? -eq 0 ]; then
+        echo "$DAEMON_NAME started."
+    else
+        echo "Failed to start $DAEMON_NAME."
+        exit 1
+    fi
+}
+
+stop_daemon() {
+    echo "Stopping $DAEMON_NAME."
+    start-stop-daemon --stop --quiet --pidfile "$PIDFILE"
+    if [ $? -eq 0 ]; then
+        echo "$DAEMON_NAME stopped."
+        rm -f "$PIDFILE"
+    else
+        echo "$DAEMON_NAME is not running."
+    fi
+}
+
+case "$1" in
+    start)
+        start_daemon
+        ;;
+    stop)
+        stop_daemon
+        ;;
+    restart)
+        stop_daemon
+        sleep 1
+        start_daemon
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|restart}" >&2
+        exit 1
+        ;;
+esac

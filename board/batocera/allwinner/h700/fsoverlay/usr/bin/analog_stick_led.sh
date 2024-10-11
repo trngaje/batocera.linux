@@ -1,5 +1,11 @@
 #!/bin/bash
 
+BOARD=$(cat /boot/boot/batocera.board)
+# We only want the script to run for these devices
+if [ "$BOARD" != "rg40xx-h" ] && [ "$BOARD" != "rg40xx-v" ]; then
+    exit 1
+fi
+
 # Define the serial device
 SERIAL_DEVICE="/dev/ttyS5"
 

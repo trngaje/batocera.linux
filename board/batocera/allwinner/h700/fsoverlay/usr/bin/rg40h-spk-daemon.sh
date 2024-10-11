@@ -1,6 +1,11 @@
 #!/bin/sh
 trap 'exit 0' SIGTERM
-trap 'continue' SIGHUP
+
+BOARD=$(cat /boot/boot/batocera.board)
+if [ "$BOARD" != "rg40xx-h" ]; then
+    /etc/init.d/S98rg40h-spk-daemon stop
+	exit 1
+fi
 
 # The RG40XX-H has swapped audio channels for speakers, but not for headphones.
 #
@@ -10,6 +15,8 @@ trap 'continue' SIGHUP
 #
 # For now, poll spk_state (0 -> headphones plugged, 1 -> headphones unplugged)
 # and swap DACL and DACR when the state changes.
+
+LAST_STATE=""
 
 while true; do
 	STATE="$(cat /sys/class/power_supply/axp2202-battery/spk_state)"
