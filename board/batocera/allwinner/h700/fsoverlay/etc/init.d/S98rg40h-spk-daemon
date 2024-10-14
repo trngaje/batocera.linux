@@ -15,25 +15,18 @@ DAEMON_NAME=$(basename "$DAEMON")
 
 start_daemon() {
     echo "Starting $DAEMON_NAME."
-    start-stop-daemon --start --quiet --pidfile "$PIDFILE" --exec "$DAEMON"
-    if [ $? -eq 0 ]; then
-        echo "$DAEMON_NAME started."
-    else
-        echo "Failed to start $DAEMON_NAME."
-        exit 1
-    fi
+    start-stop-daemon --start --quiet --background --make-pidfile --pidfile "$PIDFILE" --exec "$DAEMON" \
+        && echo "$DAEMON_NAME started OK" || { echo "$DAEMON_NAME failed to start"; exit 1; }
 }
 
 stop_daemon() {
     echo "Stopping $DAEMON_NAME."
-    start-stop-daemon --stop --quiet --pidfile "$PIDFILE"
-    if [ $? -eq 0 ]; then
-        echo "$DAEMON_NAME stopped."
-        rm -f "$PIDFILE"
-    else
-        echo "$DAEMON_NAME is not running."
-    fi
+    start-stop-daemon --stop --quiet --pidfile "$PIDFILE" \
+        && { echo "$DAEMON_NAME stopped"; rm -f "$PIDFILE"; } || echo "$DAEMON_NAME is not running."
 }
+
+# Sanity check
+test -x $DAEMON || exit 0
 
 case "$1" in
     start)
