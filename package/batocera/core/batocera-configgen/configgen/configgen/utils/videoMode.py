@@ -180,7 +180,7 @@ def getAltDecoration(systemName, rom, emulator):
     # Vectrex will actually return an abbreviated game name for overlays, all others will return 0, 90, or 270 for rotation angle
     # 0 will be ignored.
     # Currently in use with bezels & libretro shaders
-    if not emulator in [ 'mame', 'retroarch' ]:
+    if not emulator in [ 'mame', 'retroarch', 'libretro' ]:
         return "standalone"
 
     if not systemName in [ 'lynx', 'wswan', 'wswanc', 'mame', 'fbneo', 'naomi', 'atomiswave', 'nds', '3ds', 'vectrex' ]:
