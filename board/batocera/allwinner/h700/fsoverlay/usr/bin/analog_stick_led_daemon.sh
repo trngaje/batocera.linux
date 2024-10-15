@@ -55,6 +55,9 @@ BATTERY_FULL="Full"
 THRESHOLD_WARNING=20
 THRESHOLD_DANGER=5
 
+# Initialize last known applied brightness
+LAST_APPLIED_BRIGHTNESS=-1
+
 # Initialize last known RGB LED settings
 LAST_LED_VALUES=-1
 
@@ -192,35 +195,52 @@ applyLedSettings() {
 
   elif [ $LED_MODE -ne 0 ]; then
 
+    # Determine current screen brightness:
+    SCREEN_BRIGHTNESS_PERCENT=$(batocera-brightness)
+
+    # Determine current HDMI state:
+    HDMI_STATE="$(cat /sys/devices/platform/soc/6000000.hdmi/extcon/hdmi/state)"
+
+    # Calculate applied brightness based on screen brightness percentage of LED brightness.
+    #APPLIED_BRIGHTNESS=$(bc <<<"${LED_BRIGHTNESS}*${SCREEN_BRIGHTNESS_PERCENT}/100")
+    APPLIED_BRIGHTNESS=$(( ${LED_BRIGHTNESS}*${SCREEN_BRIGHTNESS_PERCENT}/100 ))
+
+    # If currently plugged to HDMI or brightness calculation crapped out, let's just use the LED brightness at 100%.
+    if [ "$HDMI_STATE" = "HDMI=1" ] || [ -z $APPLIED_BRIGHTNESS ]; then
+      APPLIED_BRIGHTNESS=${LAST_LED_VALUES[1]}
+    fi
+
     # Go to LED mode "charging" if the battery is currently charging.
-    if [ $CURRENT_MODE -ne $MODE_CHARGING ] && [ ! -z $BATTERY_STATUS ] && [ ! -z $BATTERY_CHARGE ] && [ $BATTERY_STATUS == $BATTERY_CHARGING ] && [ $BATTERY_CHARGE -lt 100 ]; then
+    if ([ $CURRENT_MODE -ne $MODE_CHARGING ] || [ ! $APPLIED_BRIGHTNESS -eq $LAST_APPLIED_BRIGHTNESS ]) && [ ! -z $BATTERY_STATUS ] && [ ! -z $BATTERY_CHARGE ] && [ $BATTERY_STATUS == $BATTERY_CHARGING ] && [ $BATTERY_CHARGE -lt 100 ]; then
       echo "Battery charge at $BATTERY_CHARGE - going to LED mode 'charging'"
-      /usr/bin/analog_stick_led.sh $BATTERY_WARNING_MODE $LED_BRIGHTNESS ${DEFAULT_COLOUR[0]} ${DEFAULT_COLOUR[1]} ${DEFAULT_COLOUR[2]} ${DEFAULT_COLOUR[0]} ${DEFAULT_COLOUR[1]} ${DEFAULT_COLOUR[2]}
+      /usr/bin/analog_stick_led.sh $BATTERY_WARNING_MODE $APPLIED_BRIGHTNESS ${DEFAULT_COLOUR[0]} ${DEFAULT_COLOUR[1]} ${DEFAULT_COLOUR[2]} ${DEFAULT_COLOUR[0]} ${DEFAULT_COLOUR[1]} ${DEFAULT_COLOUR[2]}
       CURRENT_MODE=$MODE_CHARGING
 
     # Go to LED mode "warning" if not set to warning but battery charge is equal or below warning threshold (and still above danger threshold)
-    elif [ $CURRENT_MODE -ne $MODE_WARNING ] && [ ! -z $BATTERY_STATUS ] && [ ! -z $BATTERY_CHARGE ] && [ $BATTERY_STATUS == $BATTERY_DISCHARGING ] && ([ $BATTERY_CHARGE -eq $THRESHOLD_WARNING ] || ([ $BATTERY_CHARGE -lt $THRESHOLD_WARNING ] && [ $BATTERY_CHARGE -gt $THRESHOLD_DANGER ])); then
+    elif ([ $CURRENT_MODE -ne $MODE_WARNING ] || [ ! $APPLIED_BRIGHTNESS -eq $LAST_APPLIED_BRIGHTNESS ]) && [ ! -z $BATTERY_STATUS ] && [ ! -z $BATTERY_CHARGE ] && [ $BATTERY_STATUS == $BATTERY_DISCHARGING ] && ([ $BATTERY_CHARGE -eq $THRESHOLD_WARNING ] || ([ $BATTERY_CHARGE -lt $THRESHOLD_WARNING ] && [ $BATTERY_CHARGE -gt $THRESHOLD_DANGER ])); then
       echo "Battery charge at $BATTERY_CHARGE - going to LED mode 'warning'"
-      /usr/bin/analog_stick_led.sh $BATTERY_WARNING_MODE $LED_BRIGHTNESS ${BATTERY_WARNING_COLOUR[0]} ${BATTERY_WARNING_COLOUR[1]} ${BATTERY_WARNING_COLOUR[2]} ${BATTERY_WARNING_COLOUR[0]} ${BATTERY_WARNING_COLOUR[1]} ${BATTERY_WARNING_COLOUR[2]}
+      /usr/bin/analog_stick_led.sh $BATTERY_WARNING_MODE $APPLIED_BRIGHTNESS ${BATTERY_WARNING_COLOUR[0]} ${BATTERY_WARNING_COLOUR[1]} ${BATTERY_WARNING_COLOUR[2]} ${BATTERY_WARNING_COLOUR[0]} ${BATTERY_WARNING_COLOUR[1]} ${BATTERY_WARNING_COLOUR[2]}
       CURRENT_MODE=$MODE_WARNING
 
     # Go to LED mode "danger" if not set to danger but battery charge is equal or below danger threshold
-    elif [ $CURRENT_MODE -ne $MODE_DANGER ] && [ ! -z $BATTERY_STATUS ] && [ ! -z $BATTERY_CHARGE ] && [ $BATTERY_STATUS == $BATTERY_DISCHARGING ] && ([ $BATTERY_CHARGE -eq $THRESHOLD_DANGER ] || [ $BATTERY_CHARGE -lt $THRESHOLD_DANGER ]); then
+    elif ([ $CURRENT_MODE -ne $MODE_DANGER ] || [ ! $APPLIED_BRIGHTNESS -eq $LAST_APPLIED_BRIGHTNESS ]) && [ ! -z $BATTERY_STATUS ] && [ ! -z $BATTERY_CHARGE ] && [ $BATTERY_STATUS == $BATTERY_DISCHARGING ] && ([ $BATTERY_CHARGE -eq $THRESHOLD_DANGER ] || [ $BATTERY_CHARGE -lt $THRESHOLD_DANGER ]); then
       echo "Battery charge at $BATTERY_CHARGE - Going to LED mode 'danger'"
-      /usr/bin/analog_stick_led.sh $BATTERY_WARNING_MODE $LED_BRIGHTNESS ${BATTERY_DANGER_COLOUR[0]} ${BATTERY_DANGER_COLOUR[1]} ${BATTERY_DANGER_COLOUR[2]} ${BATTERY_DANGER_COLOUR[0]} ${BATTERY_DANGER_COLOUR[1]} ${BATTERY_DANGER_COLOUR[2]}
+      /usr/bin/analog_stick_led.sh $BATTERY_WARNING_MODE $APPLIED_BRIGHTNESS ${BATTERY_DANGER_COLOUR[0]} ${BATTERY_DANGER_COLOUR[1]} ${BATTERY_DANGER_COLOUR[2]} ${BATTERY_DANGER_COLOUR[0]} ${BATTERY_DANGER_COLOUR[1]} ${BATTERY_DANGER_COLOUR[2]}
       CURRENT_MODE=$MODE_DANGER
 
     # Go back to normal LED mode if set to either warning or danger but battery status is above warning threshold
-    elif ($LED_SETTINGS_CHANGE_DETECTED || [ $CURRENT_MODE -ne $MODE_DEFAULT ]) && ([ -z $BATTERY_CHARGE ] || [ -z $BATTERY_STATUS ] || [ $BATTERY_STATUS == $BATTERY_FULL ] || ([ $BATTERY_STATUS == $BATTERY_DISCHARGING ] && [ $BATTERY_CHARGE -gt $THRESHOLD_WARNING ])); then
+    elif ($LED_SETTINGS_CHANGE_DETECTED || [ $CURRENT_MODE -ne $MODE_DEFAULT ] || [ ! $APPLIED_BRIGHTNESS -eq $LAST_APPLIED_BRIGHTNESS ]) && ([ -z $BATTERY_CHARGE ] || [ -z $BATTERY_STATUS ] || [ $BATTERY_STATUS == $BATTERY_FULL ] || ([ $BATTERY_STATUS == $BATTERY_DISCHARGING ] && [ $BATTERY_CHARGE -gt $THRESHOLD_WARNING ])); then
       echo "Battery charge at $BATTERY_CHARGE - Going to normal LED mode"
       if [ $LED_MODE -lt 5 ]; then
-        /usr/bin/analog_stick_led.sh $LED_MODE $LED_BRIGHTNESS  $LED_RIGHT_R $LED_RIGHT_G $LED_RIGHT_B $LED_LEFT_R $LED_LEFT_G $LED_LEFT_B
+        /usr/bin/analog_stick_led.sh $LED_MODE $APPLIED_BRIGHTNESS  $LED_RIGHT_R $LED_RIGHT_G $LED_RIGHT_B $LED_LEFT_R $LED_LEFT_G $LED_LEFT_B
       else
-        /usr/bin/analog_stick_led.sh $LED_MODE $LED_BRIGHTNESS $LED_SPEED
+        /usr/bin/analog_stick_led.sh $LED_MODE $APPLIED_BRIGHTNESS $LED_SPEED
       fi
       CURRENT_MODE=$MODE_DEFAULT
       LED_SETTINGS_CHANGE_DETECTED=false
     fi
+
+    LAST_APPLIED_BRIGHTNESS=$APPLIED_BRIGHTNESS
 
   fi
 
