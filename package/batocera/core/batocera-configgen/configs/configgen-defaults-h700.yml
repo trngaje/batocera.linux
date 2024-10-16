@@ -26,3 +26,6 @@ dreamcast:
 naomi:
   emulator: libretro
   core:     flycastvl
+n64:
+  emulator: libretro
+  core:     parallel_n64
