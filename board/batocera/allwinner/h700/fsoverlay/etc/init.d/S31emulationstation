@@ -36,7 +36,7 @@ case "$1" in
     restart|reload)
         "$0" stop
         while pidof emulationstation > /dev/null; do
-            sleep 0.5  # Wait until emulationstation is fully stopped
+            sleep 0.1  # Wait until emulationstation is fully stopped
         done
         "$0" start
         ;;
