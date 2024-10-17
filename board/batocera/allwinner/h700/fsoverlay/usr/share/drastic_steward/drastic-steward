@@ -1,6 +1,6 @@
 #!/bin/sh
 
-mydir=/usr/share/drastic_steward
+mydir=/userdata/system/configs/drastic_steward
 
 
 export LD_LIBRARY_PATH=$mydir/libs:$LD_LIBRARY_PATH
@@ -11,4 +11,3 @@ export EGL_VIDEODRIVER=mmiyoo
 cd $mydir
 
 ./drastic "$1"
-
