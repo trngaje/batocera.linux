@@ -6,7 +6,7 @@ insmod /lib/modules/mali_kbase.ko
 
 # Rotate screen for the rg28xx
 BOARD=$(cat /boot/boot/batocera.board)
-if [ "$BOARD" = "rg28xx" ]; then
+if [ "$BOARD" = "RG28XX" ]; then
     fbset -g 480 640 480 1280 32 -t 13426 192 56 22 1 136 3
 fi
 

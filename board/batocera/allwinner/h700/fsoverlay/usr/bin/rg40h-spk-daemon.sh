@@ -2,7 +2,7 @@
 trap 'exit 0' SIGTERM
 
 BOARD=$(cat /boot/boot/batocera.board)
-if [ "$BOARD" != "rg40xx-h" ]; then
+if [ "$BOARD" != "RG40XX-H" ]; then
     /etc/init.d/S98rg40h-spk-daemon stop
 	exit 1
 fi

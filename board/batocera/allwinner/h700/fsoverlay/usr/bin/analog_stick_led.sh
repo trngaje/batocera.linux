@@ -2,7 +2,7 @@
 
 BOARD=$(cat /boot/boot/batocera.board)
 # We only want the script to run for these devices
-if [ "$BOARD" != "rg40xx-h" ] && [ "$BOARD" != "rg40xx-v" ]; then
+if [ "$BOARD" != "RG40XX-H" ] && [ "$BOARD" != "RG40XX-V" ]; then
     exit 1
 fi
 
