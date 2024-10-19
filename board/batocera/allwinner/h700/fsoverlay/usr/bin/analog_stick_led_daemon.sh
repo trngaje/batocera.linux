@@ -298,12 +298,43 @@ stop() {
 }
 
 restart() {
-  stop
+  stop $1
   start $1
 }
 
+runAnimation() {
+  kill $(cat $VAR_LED_PID)
+  # Rainbow animation
+  if [ $# -eq 1 ] && [ "$1" == "rainbow" ]; then
+    echo "I would run the rainbow animation now!"
+  else
+    echo "No animation given."
+  fi
+  start
+}
+
+printInstructions() {
+  echo "Usage: $0 [operation] [arguments]"
+  echo "Daemon for analog stick RGB LED control on Anbernic devices"
+  echo "from the RG40XX H/V series."
+  echo ""
+  echo "Possible operations:"
+  echo "  start      Launches the LED daemon with default behavior."
+  echo "  restart    Restarts the LED daemon."
+  echo "  import     Re-imports settings from batocera.conf."
+  echo "  set        Temporarily overrides settings from batocera.conf"
+  echo "             with manually set RGB colors. Example:"
+  echo "             $0 set 148 255 0"
+  echo "  animation  Runs the given animation. Example:"
+  echo "             $0 animation rainbow"
+  echo "             Supported animations: rainbow"
+  echo ""
+  echo "Requires analog_stick_led.sh to be installed."
+  echo "Only works on RG40XX H/V devices."
+}
+
 if [ $# -eq 0 ]; then
-  echo "Usage: $0 start|restart|stop|set|import [clear|<r_value> <g_value> <b_value>]"
+  printInstructions
   exit 1
 elif [ "$1" == "start" ]; then
   start $2
@@ -313,10 +344,16 @@ elif [ "$1" == "restart" ]; then
   restart $2
 elif [ "$1" == "import" ]; then
   readLedValues
+elif [ "$1" == "animation" ]; then
+  if [ $# -eq 2 ] && [ "$1" == "rainbow" ]; then
+    runAnimation $2
+  else
+    printInstructions
+  fi
 elif [ $# -eq 4 ] && [ "$1" == "set" ]; then
   BRIGHTNESS=$(batocera-settings-get $KEY_LED_BRIGHTNESS)
   SPEED=$(batocera-settings-get $KEY_LED_SPEED)
   setLedValues 1 $BRIGHTNESS $SPEED $2 $3 $4 $2 $3 $4
 else 
-  echo "Usage: $0 <start|stop|restart|set [r g b]>"
+  printInstructions
 fi
