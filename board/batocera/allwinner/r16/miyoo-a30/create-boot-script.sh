@@ -16,10 +16,8 @@ BATOCERA_BINARIES_DIR=$6
 
 mkdir -p "${BATOCERA_BINARIES_DIR}/boot/boot"     || exit 1
 
-cp "${BINARIES_DIR}/uImage"           "${BATOCERA_BINARIES_DIR}/boot/boot/linux"           || exit 1
-cp "${BINARIES_DIR}/uInitrd"          "${BATOCERA_BINARIES_DIR}/boot/boot/uInitrd"       || exit 1
+cp "${BOARD_DIR}/uImage"              "${BATOCERA_BINARIES_DIR}/boot/uImage"           || exit 1
+cp "${BOARD_DIR}/rootfs.cpio.gz"      "${BATOCERA_BINARIES_DIR}/boot/rootfs.ramfs"       || exit 1
 cp "${BINARIES_DIR}/rootfs.squashfs"  "${BATOCERA_BINARIES_DIR}/boot/boot/batocera.update" || exit 1
-
-cp "${BOARD_DIR}/boot/boot.scr"       "${BATOCERA_BINARIES_DIR}/boot/boot.scr" || exit 1
 
 exit 0
