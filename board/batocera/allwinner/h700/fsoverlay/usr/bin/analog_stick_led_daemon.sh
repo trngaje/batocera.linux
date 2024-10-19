@@ -314,17 +314,16 @@ restart() {
 }
 
 runAnimation() {
+  # Stop daemon without turning of LEDs
   kill $(cat $VAR_LED_PID)
   updateAppliedBrightness
-  # Rainbow animation
+  # Play rainbow animation
   if [ $# -eq 1 ] && [ "$1" == "rainbow" ]; then
-    echo "I would run the rainbow animation now!"
     /usr/bin/analog_stick_led.sh 6 $APPLIED_BRIGHTNESS 50
     LAST_APPLIED_BRIGHTNESS = $APPLIED_BRIGHTNESS
     sleep 1
-  else
-    echo "No animation given."
   fi
+  # Restart LED daemon with latest settings
   start
 }
 
