@@ -55,6 +55,9 @@ BATTERY_FULL="Full"
 THRESHOLD_WARNING=20
 THRESHOLD_DANGER=5
 
+# Initialize current applied brightness
+APPLIED_BRIGHTNESS=-1
+
 # Initialize last known applied brightness
 LAST_APPLIED_BRIGHTNESS=-1
 
@@ -118,13 +121,13 @@ readLedValues() {
   LED_COLOUR=($(batocera-settings-get $KEY_LED_COLOUR))
   LED_COLOUR_RIGHT=($(batocera-settings-get $KEY_LED_COLOUR_RIGHT))
 
-  # Ensure mode is set and within valid range, set to default if not
+  # Ensure mode is set and within valid range
   if [[ ! -n $LED_MODE ]] || [ $LED_MODE -lt 0 ] || [ $LED_MODE -gt 6 ]; then
     echo "Invalid or missing LED mode ($LED_MODE) - no LED settings applied."
     return
   fi
   
-  # Set default brightness if no brightness selected or selected brightness is invalid
+  # Ensure brightness is set and within valid range
   if [[ ! -n $LED_BRIGHTNESS ]] || [ $LED_BRIGHTNESS -lt 0 ] || [ $LED_BRIGHTNESS -gt 255 ]; then
     echo "Invalid or missing LED brightness ($LED_BRIGHTNESS) - no LED settings applied."
     return
@@ -136,7 +139,7 @@ readLedValues() {
     return
   fi
 
-  # Ensure RGB colours for modes 1-4 are set and within valid range, set to default if not
+  # Ensure RGB colours for modes 1-4 are set and within valid range
   if [ -z $LED_COLOUR ] || [ "${#LED_COLOUR[@]}" -lt 3 ] || [ -z ${LED_COLOUR[0]} ] || [ ${LED_COLOUR[0]} -lt 0 ] || [ ${LED_COLOUR[0]} -gt 255 ] || [ -z ${LED_COLOUR[1]} ] || [ ${LED_COLOUR[1]} -lt 0 ] || [ ${LED_COLOUR[1]} -gt 255 ] || [ -z ${LED_COLOUR[2]} ] || [ ${LED_COLOUR[2]} -lt 0 ] || [ ${LED_COLOUR[2]} -gt 255 ]; then
     echo "Invalid or missing LED colours - no LED settings applied."
     return
@@ -150,6 +153,27 @@ readLedValues() {
 
   # Update LED variable
   setLedValues $LED_MODE $LED_BRIGHTNESS $LED_SPEED ${LED_COLOUR[0]} ${LED_COLOUR[1]} ${LED_COLOUR[2]} ${LED_COLOUR_RIGHT[0]} ${LED_COLOUR_RIGHT[1]} ${LED_COLOUR_RIGHT[2]}
+
+}
+
+updateAppliedBrightness() {
+
+    # Retrieve LED brightness from batocera.conf
+	LED_BRIGHTNESS=$(batocera-settings-get $KEY_LED_BRIGHTNESS)
+
+    # Determine current screen brightness:
+    SCREEN_BRIGHTNESS_PERCENT=$(batocera-brightness)
+
+    # Determine current HDMI state:
+    HDMI_STATE="$(cat /sys/devices/platform/soc/6000000.hdmi/extcon/hdmi/state)"
+
+    # Calculate applied brightness based on screen brightness percentage of LED brightness.
+    APPLIED_BRIGHTNESS=$(( ${LED_BRIGHTNESS}*${SCREEN_BRIGHTNESS_PERCENT}/100 ))
+
+    # If currently plugged to HDMI or brightness calculation crapped out, let's just use the LED brightness at 100%.
+    if [ "$HDMI_STATE" = "HDMI=1" ] || [ -z $APPLIED_BRIGHTNESS ]; then
+      APPLIED_BRIGHTNESS=${LAST_LED_VALUES[1]}
+    fi
 
 }
 
@@ -195,20 +219,7 @@ applyLedSettings() {
 
   elif [ $LED_MODE -ne 0 ]; then
 
-    # Determine current screen brightness:
-    SCREEN_BRIGHTNESS_PERCENT=$(batocera-brightness)
-
-    # Determine current HDMI state:
-    HDMI_STATE="$(cat /sys/devices/platform/soc/6000000.hdmi/extcon/hdmi/state)"
-
-    # Calculate applied brightness based on screen brightness percentage of LED brightness.
-    #APPLIED_BRIGHTNESS=$(bc <<<"${LED_BRIGHTNESS}*${SCREEN_BRIGHTNESS_PERCENT}/100")
-    APPLIED_BRIGHTNESS=$(( ${LED_BRIGHTNESS}*${SCREEN_BRIGHTNESS_PERCENT}/100 ))
-
-    # If currently plugged to HDMI or brightness calculation crapped out, let's just use the LED brightness at 100%.
-    if [ "$HDMI_STATE" = "HDMI=1" ] || [ -z $APPLIED_BRIGHTNESS ]; then
-      APPLIED_BRIGHTNESS=${LAST_LED_VALUES[1]}
-    fi
+    updateAppliedBrightness
 
     # Go to LED mode "charging" if the battery is currently charging.
     if ([ $CURRENT_MODE -ne $MODE_CHARGING ] || [ ! $APPLIED_BRIGHTNESS -eq $LAST_APPLIED_BRIGHTNESS ]) && [ ! -z $BATTERY_STATUS ] && [ ! -z $BATTERY_CHARGE ] && [ $BATTERY_STATUS == $BATTERY_CHARGING ] && [ $BATTERY_CHARGE -lt 100 ]; then
@@ -304,9 +315,13 @@ restart() {
 
 runAnimation() {
   kill $(cat $VAR_LED_PID)
+  updateAppliedBrightness
   # Rainbow animation
   if [ $# -eq 1 ] && [ "$1" == "rainbow" ]; then
     echo "I would run the rainbow animation now!"
+    /usr/bin/analog_stick_led.sh 6 $APPLIED_BRIGHTNESS 50
+    LAST_APPLIED_BRIGHTNESS = $APPLIED_BRIGHTNESS
+    sleep 1
   else
     echo "No animation given."
   fi
@@ -345,7 +360,7 @@ elif [ "$1" == "restart" ]; then
 elif [ "$1" == "import" ]; then
   readLedValues
 elif [ "$1" == "animation" ]; then
-  if [ $# -eq 2 ] && [ "$1" == "rainbow" ]; then
+  if [ $# -eq 2 ] && [ "$2" == "rainbow" ]; then
     runAnimation $2
   else
     printInstructions
