@@ -320,8 +320,14 @@ runAnimation() {
     echo "Unable to run animation: RGB LED daemon is not running (missing PID)."
     exit -1
   fi
-  # If daemon is running, temporarily stop and run animation
+  LED_MODE=$(batocera-settings-get $KEY_LED_MODE)
+  if [ $LED_MODE -eq $MODE_OFF ]; then
+    echo "Unable to run animation: RGB LED mode is set to off (0)."
+    exit -1
+  fi
+  # Read current process ID
   LED_PID=$(cat $VAR_LED_PID)
+  # If daemon is running, temporarily stop and run animation
   if ps -p $LED_PID > /dev/null; then
     # Stop daemon without turning of LEDs
     kill $LED_PID
