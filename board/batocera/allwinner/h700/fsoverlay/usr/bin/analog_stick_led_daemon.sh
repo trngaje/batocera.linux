@@ -309,7 +309,7 @@ stop() {
 }
 
 restart() {
-  stop $1
+  stop
   start $1
 }
 
