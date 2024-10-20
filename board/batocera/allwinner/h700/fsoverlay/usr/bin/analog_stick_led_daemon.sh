@@ -304,6 +304,7 @@ start() {
 
 stop() {
   kill $(cat $VAR_LED_PID)
+  rm $VAR_LED_PID
   /usr/bin/analog_stick_led.sh 0
   echo "Stopped analog stick RGB LED daemon."
 }
@@ -314,17 +315,29 @@ restart() {
 }
 
 runAnimation() {
-  # Stop daemon without turning of LEDs
-  kill $(cat $VAR_LED_PID)
-  updateAppliedBrightness
-  # Play rainbow animation
-  if [ $# -eq 1 ] && [ "$1" == "rainbow" ]; then
-    /usr/bin/analog_stick_led.sh 6 $APPLIED_BRIGHTNESS 50
-    LAST_APPLIED_BRIGHTNESS = $APPLIED_BRIGHTNESS
-    sleep 1.5
+  # Check if daemon is running
+  if [ ! -f $VAR_LED_PID ]; then
+    echo "Unable to run animation: RGB LED daemon is not running (missing PID)."
+    exit -1
   fi
-  # Restart LED daemon with latest settings
-  start
+  # If daemon is running, temporarily stop and run animation
+  LED_PID=$(cat $VAR_LED_PID)
+  if ps -p $LED_PID > /dev/null; then
+    # Stop daemon without turning of LEDs
+    kill $LED_PID
+    updateAppliedBrightness
+    # Play rainbow animation
+    if [ $# -eq 1 ] && [ "$1" == "rainbow" ]; then
+      /usr/bin/analog_stick_led.sh 6 $APPLIED_BRIGHTNESS 50
+      LAST_APPLIED_BRIGHTNESS=$APPLIED_BRIGHTNESS
+      sleep 1.5
+    fi
+    # Restart LED daemon with latest settings
+    start
+  else
+   echo "Unable to run animation: RGB LED daemon is not running (missing process with PID $LED_PID)."
+   exit -1
+  fi
 }
 
 printInstructions() {
