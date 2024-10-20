@@ -1,8 +1,20 @@
 #!/bin/bash
 
+BOARD=$(cat /boot/boot/batocera.board)
+# We only want the script to run for rg35xx-sp
+if [ "$BOARD" != "rg35xx-sp" ]; then
+    exit 1
+fi
+
+MODE="$(/usr/bin/batocera-settings-get system.lid)"
+if [[ -z "$MODE" || ! "$MODE" =~ ^(suspend|shutdown)$ ]]; then
+    MODE="suspend" # default can be suspend|shutdown
+    /usr/bin/batocera-settings-set system.lid "$MODE"
+fi
+
 case "$1" in
     start)
-            batocera-settings-set system.lid shutdown
+            batocera-settings-set system.lid "$MODE"
         ;;
     stop)
             batocera-settings-set system.lid suspend

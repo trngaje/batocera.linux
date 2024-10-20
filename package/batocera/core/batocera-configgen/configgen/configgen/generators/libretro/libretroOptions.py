@@ -2063,7 +2063,7 @@ def generateCoreSettings(coreSettings, system, rom, guns, wheels):
             coreSettings.save('scummvm_speed_hack', '"enabled"')
 
     # Sega Dreamcast / Atomiswave / Naomi
-    if (system.config['core'] == 'flycast'):
+    if (system.config['core'] == 'flycast' or system.config['core'] == 'flycastvl'):
         # force vmu all, to save in saves (otherwise, it saves in game_dir, which is bios)
         coreSettings.save('reicast_per_content_vmus',  '"All VMUs"')
         # Synchronous rendering
@@ -2071,6 +2071,11 @@ def generateCoreSettings(coreSettings, system, rom, guns, wheels):
             coreSettings.save('reicast_synchronous_rendering', '"' + system.config['reicast_synchronous_rendering'] + '"')
         else:
             coreSettings.save('reicast_synchronous_rendering', '"enabled"')
+        # DSP audio
+        if system.isOptSet('reicast_dsp'):
+            coreSettings.save('reicast_enable_dsp', '"' + system.config['reicast_dsp'] + '"')
+        else:
+            coreSettings.save('reicast_enable_dsp', '"disabled"')
         # Threaded Rendering
         coreSettings.save('reicast_threaded_rendering',  '"enabled"')
         # Enable controller force feedback

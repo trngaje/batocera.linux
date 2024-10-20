@@ -59,6 +59,7 @@ menu "System"
 
   menu "Toolchain"
     source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/toolchain/toolchain-optional-linaro-aarch64/Config.in"
+    source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/toolchain/toolchain-optional-linaro-arm/Config.in"
   endmenu
 
   menu "Fonts"
@@ -93,6 +94,8 @@ menu "System"
     source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/gpu/mali-g31-fbdev/Config.in"
     source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/gpu/mali-mp400-wayland/Config.in"
     source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/gpu/mali-mp400-gbm/Config.in"
+    source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/gpu/mali-mp400-sunxi/Config.in"
+    source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/gpu/mali-mp400-sunxi-driver/Config.in"
     source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/gpu/batocera-nvidia/Config.in"
     source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/gpu/nvidia-open-driver/Config.in"
     source "$BR2_EXTERNAL_BATOCERA_PATH/package/batocera/gpu/nvidia-proprietary-driver/Config.in"
