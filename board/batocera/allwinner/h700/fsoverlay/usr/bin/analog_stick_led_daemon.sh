@@ -321,7 +321,7 @@ runAnimation() {
   if [ $# -eq 1 ] && [ "$1" == "rainbow" ]; then
     /usr/bin/analog_stick_led.sh 6 $APPLIED_BRIGHTNESS 50
     LAST_APPLIED_BRIGHTNESS = $APPLIED_BRIGHTNESS
-    sleep 1
+    sleep 1.5
   fi
   # Restart LED daemon with latest settings
   start
