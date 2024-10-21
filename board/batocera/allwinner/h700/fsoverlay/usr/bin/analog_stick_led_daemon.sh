@@ -65,11 +65,6 @@ LAST_APPLIED_BRIGHTNESS=-1
 # Initialize last known RGB LED settings
 LAST_LED_VALUES=-1
 
-# Initialize current charging states
-IS_BATTERY_WARNING=-1
-IS_BATTERY_DANGER=-1
-IS_BATTERY_CHARGING=-1
-
 # Initialize last/current LED mode
 LAST_MODE=-1
 CURRENT_BATTERY_MODE=-1
