@@ -257,21 +257,21 @@ applyLedSettings() {
   updateCurrentBatteryMode
 
   # If battery is charging and either last mode was different or a change in brightness has been registered
-  if [ $CURRENT_BATTERY_MODE -eq $MODE_BATTERY_CHARGING ] && ([ $LAST_MODE -ne $MODE_BATTERY_CHARGING ] || [ ! $APPLIED_BRIGHTNESS -eq $LAST_APPLIED_BRIGHTNESS ]); then
+  if [ $CURRENT_BATTERY_MODE -eq $MODE_BATTERY_CHARGING ] && ([ $LAST_MODE -ne $MODE_BATTERY_CHARGING ] || [ $APPLIED_BRIGHTNESS -ne $LAST_APPLIED_BRIGHTNESS ]); then
     echo "Going to LED mode 'charging'"
     /usr/bin/analog_stick_led.sh $BATTERY_WARNING_MODE $APPLIED_BRIGHTNESS ${DEFAULT_COLOUR[0]} ${DEFAULT_COLOUR[1]} ${DEFAULT_COLOUR[2]} ${DEFAULT_COLOUR[0]} ${DEFAULT_COLOUR[1]} ${DEFAULT_COLOUR[2]}
     LAST_MODE=$MODE_BATTERY_CHARGING
     LAST_APPLIED_BRIGHTNESS=$APPLIED_BRIGHTNESS
 
   # If battery is low and either last mode was different or a change in brightness has been registered
-  elif [ $CURRENT_BATTERY_MODE -eq $MODE_BATTERY_WARNING ] && ([ $LAST_MODE -ne $MODE_BATTERY_WARNING ] || [ ! $APPLIED_BRIGHTNESS -eq $LAST_APPLIED_BRIGHTNESS ]); then
+  elif [ $CURRENT_BATTERY_MODE -eq $MODE_BATTERY_WARNING ] && ([ $LAST_MODE -ne $MODE_BATTERY_WARNING ] || [ $APPLIED_BRIGHTNESS -ne $LAST_APPLIED_BRIGHTNESS ]); then
     echo "Going to LED mode 'warning'"
     /usr/bin/analog_stick_led.sh $BATTERY_WARNING_MODE $APPLIED_BRIGHTNESS ${BATTERY_WARNING_COLOUR[0]} ${BATTERY_WARNING_COLOUR[1]} ${BATTERY_WARNING_COLOUR[2]} ${BATTERY_WARNING_COLOUR[0]} ${BATTERY_WARNING_COLOUR[1]} ${BATTERY_WARNING_COLOUR[2]}
     LAST_MODE=$MODE_BATTERY_WARNING
     LAST_APPLIED_BRIGHTNESS=$APPLIED_BRIGHTNESS
  
    # If battery is dangerously low and either last mode was different or a change in brightness has been registered
-  elif [ $CURRENT_BATTERY_MODE -eq $MODE_BATTERY_DANGER ] && ([ $LAST_MODE -ne $MODE_BATTERY_DANGER ] || [ ! $APPLIED_BRIGHTNESS -eq $LAST_APPLIED_BRIGHTNESS ]); then
+  elif [ $CURRENT_BATTERY_MODE -eq $MODE_BATTERY_DANGER ] && ([ $LAST_MODE -ne $MODE_BATTERY_DANGER ] || [ $APPLIED_BRIGHTNESS -ne $LAST_APPLIED_BRIGHTNESS ]); then
     echo "Going to LED mode 'danger'"
     /usr/bin/analog_stick_led.sh $MODE_BATTERY_DANGER $APPLIED_BRIGHTNESS ${BATTERY_DANGER_COLOUR[0]} ${BATTERY_DANGER_COLOUR[1]} ${BATTERY_DANGER_COLOUR[2]} ${BATTERY_DANGER_COLOUR[0]} ${BATTERY_DANGER_COLOUR[1]} ${BATTERY_DANGER_COLOUR[2]}
     LAST_MODE=$MODE_BATTERY_DANGER
@@ -309,7 +309,7 @@ applyLedSettings() {
       LAST_MODE=$MODE_OFF
     
     # If a change in LED variables was detected or the last mode was different or applied brightness has changed
-    elif [ $LED_MODE -gt 0 ] && ($LED_SETTINGS_CHANGE_DETECTED || [ $LAST_MODE -ne $MODE_DEFAULT ] || [ ! $APPLIED_BRIGHTNESS -eq $LAST_APPLIED_BRIGHTNESS ]); then
+    elif [ $LED_MODE -gt 0 ] && ($LED_SETTINGS_CHANGE_DETECTED || [ $LAST_MODE -ne $MODE_DEFAULT ] || [ $APPLIED_BRIGHTNESS -ne $LAST_APPLIED_BRIGHTNESS ]); then
       echo "Going to normal LED mode"
       if [ $LED_MODE -lt 5 ]; then
         /usr/bin/analog_stick_led.sh $LED_MODE $APPLIED_BRIGHTNESS  $LED_RIGHT_R $LED_RIGHT_G $LED_RIGHT_B $LED_LEFT_R $LED_LEFT_G $LED_LEFT_B
