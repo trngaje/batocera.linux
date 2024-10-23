@@ -25,6 +25,9 @@ LAST_CONF_CHANGE_DATE=$(date -r "/userdata/system/batocera.conf")
 # Sleep interval for daemon
 UPDATE_INTERVAL_SECONDS=1
 
+# Max loop count for daemon
+MAX_LOOP_COUNT=60
+
 # Constants for different LED Daemon modes (different from LED modes!)
 MODE_OFF=0
 MODE_DEFAULT=1
@@ -55,6 +58,11 @@ KEY_BATTERY_STATUS="$BATTERY_DIR/status"
 BATTERY_CHARGING="Charging"
 BATTERY_DISCHARGING="Discharging"
 BATTERY_FULL="Full"
+
+# Initialize thresholds
+THRESHOLD_WARNING=$DEFAULT_BATTERY_LOW_THRESHOLD
+THRESHOLD_DANGER=$DEFAULT_BATTERY_VERY_LOW_THRESHOLD
+INDICATE_CHARGING=$DEFAULT_BATTERY_CHARGING_ENABLED
 
 # Initialize current applied brightness
 APPLIED_BRIGHTNESS=-1
@@ -171,6 +179,34 @@ readLedValues() {
 
 }
 
+# Reads battery thresholds from batocera.conf.
+# Uses default values as fallback if batocera.conf
+# does not have any values present.
+readBatteryValues() {
+
+  # Determine battery indication setup
+  THRESHOLD_WARNING=($(batocera-settings-get $KEY_LED_BATTERY_LOW_THRESHOLD))
+  THRESHOLD_DANGER=$DEFAULT_BATTERY_VERY_LOW_THRESHOLD
+  INDICATE_CHARGING=($(batocera-settings-get $KEY_LED_BATTERY_CHARGING_ENABLED))
+
+  # If warning threshold is invalid, use default as fallback
+  if [[ ! -n $LED_BATTERY_LOW_THRESHOLD ]] || [ -z $LED_BATTERY_LOW_THRESHOLD ] || [ $LED_BATTERY_LOW_THRESHOLD -lt 0 ] || [ $LED_BATTERY_LOW_THRESHOLD -gt 100 ]; then
+    THRESHOLD_WARNING=$DEFAULT_BATTERY_LOW_THRESHOLD
+  fi
+  
+  # If warning threshold is lesser than default danger threshold, use it as danger threshold instead
+  if [[ $THRESHOLD_WARNING -eq $DEFAULT_BATTERY_VERY_LOW_THRESHOLD ]] || [[ $THRESHOLD_WARNING -lt $DEFAULT_BATTERY_VERY_LOW_THRESHOLD ]]; then
+    THRESHOLD_DANGER=$THRESHOLD_WARNING
+    THRESHOLD_WARNING=0
+  fi
+  
+  if [[ ! -n $LED_BATTERY_CHARGING_ENABLED ]] || [ -z $LED_BATTERY_CHARGING_ENABLED ] || [ $LED_BATTERY_CHARGING_ENABLED -lt 0 ] || [ $LED_BATTERY_CHARGING_ENABLED -gt 1 ]; then
+    INDICATE_CHARGING=$DEFAULT_BATTERY_CHARGING_ENABLED
+  fi
+
+}
+
+
 # This function calculates and updates the value for APPLIED_BRIGHTNESS.
 # The applied brightness is the percentage of the LED brightness (which
 # is configured in 'led.brightness') which corresponds to the current
@@ -206,26 +242,6 @@ updateCurrentBatteryMode() {
   # Initialize
   CURRENT_BATTERY_MODE=-1
 
-  # Determine battery indication setup
-  THRESHOLD_WARNING=($(batocera-settings-get $KEY_LED_BATTERY_LOW_THRESHOLD))
-  THRESHOLD_DANGER=$DEFAULT_BATTERY_VERY_LOW_THRESHOLD
-  INDICATE_CHARGING=($(batocera-settings-get $KEY_LED_BATTERY_CHARGING_ENABLED))
-
-  # If warning threshold is invalid, use default as fallback
-  if [[ ! -n $LED_BATTERY_LOW_THRESHOLD ]] || [ -z $LED_BATTERY_LOW_THRESHOLD ] || [ $LED_BATTERY_LOW_THRESHOLD -lt 0 ] || [ $LED_BATTERY_LOW_THRESHOLD -gt 100 ]; then
-    THRESHOLD_WARNING=$DEFAULT_BATTERY_LOW_THRESHOLD
-  fi
-  
-  # If warning threshold is lesser than default danger threshold, use it as danger threshold instead
-  if [[ $THRESHOLD_WARNING -eq $DEFAULT_BATTERY_VERY_LOW_THRESHOLD ]] || [[ $THRESHOLD_WARNING -lt $DEFAULT_BATTERY_VERY_LOW_THRESHOLD ]]; then
-    THRESHOLD_DANGER=$THRESHOLD_WARNING
-    THRESHOLD_WARNING=0
-  fi
-  
-  if [[ ! -n $LED_BATTERY_CHARGING_ENABLED ]] || [ -z $LED_BATTERY_CHARGING_ENABLED ] || [ $LED_BATTERY_CHARGING_ENABLED -lt 0 ] || [ $LED_BATTERY_CHARGING_ENABLED -gt 1 ]; then
-    INDICATE_CHARGING=$DEFAULT_BATTERY_CHARGING_ENABLED
-  fi
-
   # If any battery status indicator is enabled/has a threshold above 0 and any battery status information is available
   if ([ $THRESHOLD_WARNING -gt 1 ] || [ $THRESHOLD_DANGER -gt 1 ] || [ $INDICATE_CHARGING -eq 1 ]) && [ ! -z $KEY_BATTERY_STATUS ] && [ -f $KEY_BATTERY_STATUS ]; then
     BATTERY_STATUS=$(cat $KEY_BATTERY_STATUS)
@@ -252,9 +268,6 @@ applyLedSettings() {
 
   # Update applied brightness
   updateAppliedBrightness
-
-  # Update current battery mode
-  updateCurrentBatteryMode
 
   # Null check for LAST_MODE
   if [ -z "$LAST_MODE" ]; then
@@ -332,6 +345,7 @@ applyLedSettings() {
 # Applies changes to the LEDs based on LED variables and battery status.
 ledDaemon() {
 
+  LOOP_COUNT=0
   # Apply updated LED settings when variables or battery capacity/status has changed
   while :; do
 
@@ -341,7 +355,16 @@ ledDaemon() {
     # Only check for details if batocera.conf has recently been changed
     if [ "$LAST_CONF_CHANGE_DATE" != "$CURRENT_CONF_CHANGE_DATE" ]; then
       readLedValues
+      readBatteryValues
       LAST_CONF_CHANGE_DATE=$CURRENT_CONF_CHANGE_DATE
+    fi
+    
+    if [ $LOOP_COUNT -eq $MAX_LOOP_COUNT ]; then
+      # Update current battery mode
+      updateCurrentBatteryMode
+      LOOP_COUNT=0
+    else
+      LOOP_COUNT=$((LOOP_COUNT++))
     fi
     
     applyLedSettings
@@ -362,10 +385,13 @@ start() {
   # Initialize missing values in batocera.conf
   initializeLedValues
 
-  # If no variables are set from previous session, initialize led settings from batocera.conf
+  # If no variables are set from previous session,
+  # initialize led settings from batocera.conf
   if [ ! -f "$VAR_LED_VALUES" ]; then
     readLedValues
   fi
+  # Read battery values from batocera.conf.
+  readBatteryValues
 
   # Launch LED daemon
   ledDaemon &
