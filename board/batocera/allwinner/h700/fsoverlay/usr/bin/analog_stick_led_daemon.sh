@@ -256,6 +256,11 @@ applyLedSettings() {
   # Update current battery mode
   updateCurrentBatteryMode
 
+  # Null check for LAST_MODE
+  if [ -z "$LAST_MODE" ]; then
+    LAST_MODE=-1
+  fi
+
   # If battery is charging and either last mode was different or a change in brightness has been registered
   if [ $CURRENT_BATTERY_MODE -eq $MODE_BATTERY_CHARGING ] && ([ $LAST_MODE -ne $MODE_BATTERY_CHARGING ] || [ $APPLIED_BRIGHTNESS -ne $LAST_APPLIED_BRIGHTNESS ]); then
     echo "Going to LED mode 'charging'"
