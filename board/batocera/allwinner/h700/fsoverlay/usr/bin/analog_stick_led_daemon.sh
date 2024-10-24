@@ -364,7 +364,7 @@ ledDaemon() {
       updateCurrentBatteryMode
       LOOP_COUNT=0
     else
-      LOOP_COUNT=$((LOOP_COUNT++))
+      LOOP_COUNT=$((LOOP_COUNT+1))
     fi
     
     applyLedSettings
