@@ -249,7 +249,7 @@ updateCurrentBatteryMode() {
     if [ ! -z $BATTERY_STATUS ] && [ $BATTERY_STATUS == $BATTERY_CHARGING ] && [ $INDICATE_CHARGING -eq 1 ]; then
       CURRENT_BATTERY_MODE=$MODE_BATTERY_CHARGING
     # If battery status is not null and battery is discharging, any warning thresholds is larger than 0 and there is capacity information available
-    elif [ ! -z $BATTERY_STATUS ] &&[ $BATTERY_STATUS == $BATTERY_DISCHARGING ] && ([ $THRESHOLD_WARNING -gt 0 ] || [ $THRESHOLD_DANGER -gt 0 ]) && [ ! -z $KEY_BATTERY_CAPACITY ] && [ -f $KEY_BATTERY_CAPACITY ]; then
+    elif $1 && [ ! -z $BATTERY_STATUS ] && [ $BATTERY_STATUS == $BATTERY_DISCHARGING ] && ([ $THRESHOLD_WARNING -gt 0 ] || [ $THRESHOLD_DANGER -gt 0 ]) && [ ! -z $KEY_BATTERY_CAPACITY ] && [ -f $KEY_BATTERY_CAPACITY ]; then
       BATTERY_CHARGE=$(cat $KEY_BATTERY_CAPACITY)
       if [ $THRESHOLD_DANGER -gt 0 ] && ([ $BATTERY_CHARGE == $THRESHOLD_DANGER ] || [ $BATTERY_CHARGE -lt $THRESHOLD_DANGER ]); then
         CURRENT_BATTERY_MODE=$MODE_BATTERY_DANGER
@@ -359,13 +359,15 @@ ledDaemon() {
       LAST_CONF_CHANGE_DATE=$CURRENT_CONF_CHANGE_DATE
     fi
     
+    READ_CAPACITY=false
     if [ $LOOP_COUNT -eq $MAX_LOOP_COUNT ]; then
-      # Update current battery mode
-      updateCurrentBatteryMode
+      READ_CAPACITY=true
       LOOP_COUNT=0
     else
       LOOP_COUNT=$((LOOP_COUNT+1))
     fi
+
+    updateCurrentBatteryMode $READ_CAPACITY
     
     applyLedSettings
 
