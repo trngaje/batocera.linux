@@ -56,4 +56,5 @@ while true; do
     fi
 done
 
+flock -u 200
 exit 0
