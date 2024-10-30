@@ -32,6 +32,7 @@
 - maximum audio volume for the TSP
 
 ### CHANGED / IMPROVED
+- volume/brightness can be adjusted by holding down inputs.
 - drastic inputs have changed to be more universal between all devices(single joystick etc)
 - disabled wifi background scanning for better battery life
 - added board checks for many scripts
