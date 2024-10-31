@@ -5,7 +5,7 @@ do_help() {
 }
 
 do_list() {
-    connmanctl services | awk '{sub(/^... */, "", $0); sub(/wifi_[[:alnum:]]*_/, "", $0); print $1}' | sort -u
+    connmanctl services | sed 's/^...[ ]*//' | awk -F '[ ]*[ ]wifi_[[:alnum:]]*_' '{if (NF==2) print $1}' | sort -u # remove duplicates (a single wifi can appear under 2 interfaces)
 }
 
 do_scanlist() {
@@ -60,7 +60,7 @@ case "${ACTION}" in
     "disable")
         batocera-settings-set wifi.enabled 0
         /etc/init.d/S20connman reload
-		wait_for_ip down
+        wait_for_ip down
         ;;
     *)
         do_help
