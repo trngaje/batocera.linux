@@ -18,11 +18,11 @@ wait_for_ip() {
 
     for i in $(seq 1 20); do
         if [ "$mode" = "up" ]; then
-            if ip addr show | grep "inet " | grep -qv "127\.0\.0\.1"; then
+            if ip -4 addr show | grep "inet " | grep -qv "127\.0\.0\.1"; then
                 break
             fi
         elif [ "$mode" = "down" ]; then
-            if ! ip addr show | grep "inet " | grep -qv "127\.0\.0\.1"; then
+            if ! ip -4 addr show | grep "inet " | grep -qv "127\.0\.0\.1"; then
                 break
             fi
         fi

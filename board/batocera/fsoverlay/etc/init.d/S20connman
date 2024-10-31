@@ -85,19 +85,13 @@ wifi_configure_all() {
 wifi_enable() {
     settingsCountry="$(/usr/bin/batocera-settings-get -f "$BATOCONF" wifi.country)"
     [ -n "$settingsCountry" ] && /usr/sbin/iw reg set "$settingsCountry"
-    if [ "$settingsWlan" != "1" ];then
-        connmanctl disable wifi 2>/dev/null
-        return
-    fi
-
-    connmanctl enable wifi 2>/dev/null
+    
+    connmanctl enable wifi 2>/dev/null 
     connmanctl scan   wifi 2>/dev/null
 }
 
 wifi_disable() {
-    if [ "$settingsWlan" = "0" ];then
-        connmanctl disable wifi 2>/dev/null
-    fi
+    connmanctl disable wifi 2>/dev/null
 }
 
 case "$1" in
@@ -114,9 +108,12 @@ case "$1" in
             sleep 0.25
         done
 
-        sleep 0.5
-        # Detach the wifi enable process
-        wifi_enable &
+		if [ "$settingsWlan" = "1" ];then
+            # Detach the wifi enable process
+            wifi_enable &
+        else
+		    wifi_disable
+        fi
 
         echo "done."
     ;;
