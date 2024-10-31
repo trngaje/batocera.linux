@@ -24,9 +24,11 @@ if [[ -z "$TIMER" || ! "$TIMER" =~ ^[0-9]+$ || "$TIMER" -lt 60 ]]; then
     /usr/bin/batocera-settings-set system.batterysavertimer "$TIMER"
 fi
 
-# Called with SIGTERM so brightness is restored before saving when shutting down
+# Called with SIGTERM so brightness is restored before saving to batocera.conf when shutting down
 restore_brightness() {
-    batocera-brightness $BRIGHTNESS
+    if [ -n "$BRIGHTNESS" ]; then
+        batocera-brightness $BRIGHTNESS
+    fi
 }
 
 js_update() {
