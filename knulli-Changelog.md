@@ -1,6 +1,6 @@
 # knulli - firefly - alpha (20241026)
 
-##ChangeLog
+## ChangeLog
 
 ### ADDED ###
 - es settings for retroarch emulators to customize hotkeys
