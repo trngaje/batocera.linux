@@ -4331,11 +4331,11 @@ ngage:
 
 odcommander:
   name: OD-Commander
-  manufacturer: Ports
+  manufacturer: Tools
   release: 2022
   hardware: port
   extensions: [odc]
-  group: ports
+  group: tools
   emulators:
     odcommander:
       odcommander: { requireAnyOf: [BR2_PACKAGE_OD_COMMANDER] }
