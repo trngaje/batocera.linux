@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 if ! { [ -e /sys/devices/system/cpu/cpufreq/policy0/scaling_governor ] &&
