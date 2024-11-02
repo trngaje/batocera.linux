@@ -24,20 +24,6 @@ case $1 in
         batocera-brightness "$BRI"
         ;;
     stop)
-        # Wait for the battery-saver lock to be released to prevent race condition
-        MAX_LOOP=5
-        LOOP=0
-
-        while [ -f /var/run/battery-saver.lock ]; do
-            sleep 0.1
-            LOOP=$((LOOP + 1))
-
-            # fail-safe
-            if [ "$LOOP" -ge "$MAX_LOOP" ]; then
-                break
-            fi
-        done
-
         # Get brightness values
         CURRENT_BRI=$(batocera-brightness)
         SAVED_BRI=$(batocera-settings-get display.brightness)

@@ -5,7 +5,7 @@ LOCK="/var/run/battery-saver.lock"
 exec 200>"$LOCK"
 flock -n 200 || exit 1
 
-trap 'restore_brightness; flock -u 200; rm -f "$LOCK"; exit 0' SIGTERM EXIT
+trap 'restore_brightness; rm -f "$LOCK"; exit 0' SIGTERM
 
 STATE="active"
 BRIGHTNESS="$(batocera-brightness)"
@@ -24,9 +24,9 @@ if [[ -z "$TIMER" || ! "$TIMER" =~ ^[0-9]+$ || "$TIMER" -lt 60 ]]; then
     /usr/bin/batocera-settings-set system.batterysavertimer "$TIMER"
 fi
 
-# Called with SIGTERM so brightness is restored before saving to batocera.conf when shutting down
+# Called with SIGTERM so brightness is restored before saving to batocera.conf when shutting down and display is dimmed
 restore_brightness() {
-    if [ -n "$BRIGHTNESS" ]; then
+    if [ "$STATE" = "inactive" ]; then
         batocera-brightness $BRIGHTNESS
     fi
 }
