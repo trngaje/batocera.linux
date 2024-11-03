@@ -85,8 +85,8 @@ wifi_configure_all() {
 wifi_enable() {
     settingsCountry="$(/usr/bin/batocera-settings-get -f "$BATOCONF" wifi.country)"
     [ -n "$settingsCountry" ] && /usr/sbin/iw reg set "$settingsCountry"
-    
-    connmanctl enable wifi 2>/dev/null 
+
+    connmanctl enable wifi 2>/dev/null
     connmanctl scan   wifi 2>/dev/null
 }
 
@@ -124,6 +124,7 @@ case "$1" in
         ;;
     restart | reload)
         $0 stop
+        sleep 0.5
         $0 start
         ;;
     *)
