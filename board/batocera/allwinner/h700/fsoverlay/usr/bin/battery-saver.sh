@@ -92,7 +92,7 @@ monitor_controllers() {
             js="${JS_DEVICES[$i]}"
 
             if [ -e "$js" ]; then
-                if timeout 1 jstest --event "$js" | tail -n +25 | grep -q "Event"; then
+                if timeout 1 jstest --event "$js" | grep -v -e 'type 129' -e 'type 130' | grep -m 1 -q "Event"; then
                     LOOP_COUNT=0
                     # Check if detected input device is first and reorder if not
                     if [ "$i" -ne 0 ]; then

@@ -15,7 +15,7 @@ if ! flock -n 200; then
     exit 1
 fi
 
-trap 'wait_exit; flock -u 200; rm -f "${LOCK_FILE}"' EXIT
+trap 'flock -u 200;' EXIT
 
 wait_exit() {
 sleep 2
@@ -23,6 +23,7 @@ sleep 2
 
 suspend_system() {
     pm-is-supported --suspend && pm-suspend
+    wait_exit
 }
 
 shutdown_system() {
