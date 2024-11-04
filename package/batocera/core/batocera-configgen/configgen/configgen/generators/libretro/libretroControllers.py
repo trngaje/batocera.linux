@@ -40,22 +40,28 @@ def writeControllersConfig(retroconfig, system, controllers, lightgun):
     if system.isOptSet('toggle_fast_forward') and system.getOptBoolean('toggle_fast_forward') == True:
         retroarchspecials["right"] = "toggle_fast_forward"
 
-########## Customize hotkeys
-    for key in list(retroarchspecials.keys()):
-        value = retroarchspecials[key]
+########## Customize hotkeys ##########
+    
+    updated_specials = {}
+    for key, value in retroarchspecials.copy().items():
         
         hotkey_var = f"hotkey_{key}"
+        
+        if hotkey_var == "hotkey_pageup":
+            hotkey_var = "hotkey_l1"
+        elif hotkey_var == "hotkey_pagedown":
+            hotkey_var = "hotkey_r1"
+        
         if system.isOptSet(hotkey_var):
-            new_key = system.config[hotkey_var]
-            
-            if new_key == "none":
-                retroarchspecials[new_key] = ""
+            if system.config[hotkey_var] == "none":
+                del retroarchspecials[key]
             else:
-                retroarchspecials[new_key] = value
-            
-            # Remove the old key binding
-            del retroarchspecials[key]
-##########
+                new_key = system.config[hotkey_var]
+                updated_specials[new_key] = value
+    
+    retroarchspecials.update(updated_specials)
+    
+#######################################
 
     # Some input adaptations for some systems with swap Disc/CD \\ Disabling for now until I know how to handle this with custom hotkeys
     #if (system.config['core'] in coreWithSwapSupport) and (system.name not in systemToSwapDisable):

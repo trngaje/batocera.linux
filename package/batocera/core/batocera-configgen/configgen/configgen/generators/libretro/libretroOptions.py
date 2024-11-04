@@ -1201,7 +1201,7 @@ def generateCoreSettings(coreSettings, system, rom, guns, wheels):
             if system.isOptSet('gfxbackend') and system.config['gfxbackend'] == "vulkan":
                 coreSettings.save('parallel-n64-gfxplugin', '"parallel"')
             else:
-                coreSettings.save('parallel-n64-gfxplugin', '"auto"')
+                coreSettings.save('parallel-n64-gfxplugin', '"gln64"')
         # Video Resolution
         if system.isOptSet('parallel-n64-screensize'):
             coreSettings.save('parallel-n64-screensize', '"' + system.config['parallel-n64-screensize'] + '"')
