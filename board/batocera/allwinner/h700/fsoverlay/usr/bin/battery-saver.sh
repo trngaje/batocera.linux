@@ -41,9 +41,9 @@ js_update() {
 }
 
 do_inactivity() {
+    STATE="inactive"
     case "$MODE" in
         dim)
-            STATE="inactive"
             BRIGHTNESS="$(batocera-brightness)"
             if [ "$BRIGHTNESS" -gt 6 ]; then
                 batocera-brightness 6
@@ -91,19 +91,19 @@ monitor_controllers() {
         for i in "${!JS_DEVICES[@]}"; do
             js="${JS_DEVICES[$i]}"
 
-            if [ -e "$js" ]; then
-                if timeout 1 jstest --event "$js" | grep -v -e 'type 129' -e 'type 130' | grep -m 1 -q "Event"; then
-                    LOOP_COUNT=0
-                    # Check if detected input device is first and reorder if not
-                    if [ "$i" -ne 0 ]; then
-                        JS_DEVICES=("$js" "${JS_DEVICES[@]:0:$i}" "${JS_DEVICES[@]:$((i + 1))}")
-                    fi
-                    if [ "$STATE" = "inactive" ]; then
-                        do_activity
-                    fi
+            if timeout 1 jstest --event "$js" 2>/dev/null | grep -Ev 'type 129|type 130' | grep -m 1 -q "Event"; then
+                LOOP_COUNT=0
 
-                    break # If input is detected don't need to continue looping through other devices
+                # Check if detected input device is first and reorder if not
+                if [ "$i" -ne 0 ]; then
+                    JS_DEVICES=("$js" "${JS_DEVICES[@]:0:$i}" "${JS_DEVICES[@]:$((i + 1))}")
                 fi
+
+                if [ "$STATE" = "inactive" ]; then
+                    do_activity
+                fi
+
+                break # If input is detected don't need to continue looping through other devices
             fi
         done
 
