@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<gameList>
+	<game>
+		<path>./PPSSPP.sh</path>
+		<name>PPSSPP</name>
+		<desc>A standalone emulator for PlayStation (PSX).</desc>
+		<thumbnail>./images/ppsspp.png</thumbnail>
+		<genre>Emulator</genre>
+		<lang>en</lang>
+	</game>
+	<game>
+		<path>./ScummVM.sh</path>
+		<name>ScummVM</name>
+		<desc>A framework for running several classic point and click adventures.</desc>
+		<thumbnail>./images/scummvm.png</thumbnail>
+		<genre>Emulator</genre>
+		<lang>en</lang>
+	</game>
+	<game>
+		<path>./Flycast.sh</path>
+		<name>Flycast</name>
+		<desc>A standalone emulator for Dreamcast.</desc>
+		<thumbnail>./images/flycast.png</thumbnail>
+		<genre>Emulator</genre>
+		<lang>en</lang>
+	</game>
+	<game>
+		<path>./RetroArch.sh</path>
+		<name>RetroArch</name>
+		<desc>A collection of various emulators and game engines.</desc>
+		<thumbnail>./images/retroarch.png</thumbnail>
+		<genre>Emulator</genre>
+		<lang>en</lang>
+	</game>
+</gameList>
