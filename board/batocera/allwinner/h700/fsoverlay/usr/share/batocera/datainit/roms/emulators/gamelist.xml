@@ -4,7 +4,9 @@
 		<path>./PPSSPP.sh</path>
 		<name>PPSSPP</name>
 		<desc>A standalone emulator for PlayStation (PSX).</desc>
-		<thumbnail>./images/ppsspp.png</thumbnail>
+		<image>./images/ppsspp-image.png</image>
+		<thumbnail>./images/ppsspp-logo.png</thumbnail>
+		<marquee>./images/ppsspp-logo.png</marquee>
 		<genre>Emulator</genre>
 		<lang>en</lang>
 	</game>
@@ -12,7 +14,9 @@
 		<path>./ScummVM.sh</path>
 		<name>ScummVM</name>
 		<desc>A framework for running several classic point and click adventures.</desc>
-		<thumbnail>./images/scummvm.png</thumbnail>
+		<image>./images/scummvm-image.png</image>
+		<thumbnail>./images/scummvm-logo.png</thumbnail>
+		<marquee>./images/scummvm-logo.png</marquee>
 		<genre>Emulator</genre>
 		<lang>en</lang>
 	</game>
@@ -20,7 +24,9 @@
 		<path>./Flycast.sh</path>
 		<name>Flycast</name>
 		<desc>A standalone emulator for Dreamcast.</desc>
-		<thumbnail>./images/flycast.png</thumbnail>
+		<image>./images/flycast-image.png</image>
+		<thumbnail>./images/flycast-logo.png</thumbnail>
+		<marquee>./images/flycast-logo.png</marquee>
 		<genre>Emulator</genre>
 		<lang>en</lang>
 	</game>
@@ -28,7 +34,9 @@
 		<path>./RetroArch.sh</path>
 		<name>RetroArch</name>
 		<desc>A collection of various emulators and game engines.</desc>
-		<thumbnail>./images/retroarch.png</thumbnail>
+		<image>./images/retroarch-image.png</image>
+		<thumbnail>./images/retroarch-logo.png</thumbnail>
+		<marquee>./images/retroarch-logo.png</marquee>
 		<genre>Emulator</genre>
 		<lang>en</lang>
 	</game>
