@@ -3,7 +3,7 @@
 	<game>
 		<path>./PPSSPP.sh</path>
 		<name>PPSSPP</name>
-		<desc>A standalone emulator for PlayStation (PSX).</desc>
+		<desc>A standalone emulator for PlayStation Portable (PSP).</desc>
 		<image>./images/ppsspp-image.png</image>
 		<thumbnail>./images/ppsspp-logo.png</thumbnail>
 		<marquee>./images/ppsspp-logo.png</marquee>
