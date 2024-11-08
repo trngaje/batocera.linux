@@ -585,6 +585,10 @@ def createLibretroConfig(generator, system, controllers, metadata, guns, wheels,
 
         def is_hdmi_active():
             state = "/sys/devices/platform/soc/6000000.hdmi/extcon/hdmi/state"
+            
+            if not os.path.exists(state):
+                return False
+            
             with open(state, 'r') as file:
                 state = file.read().strip()
                 if state == "HDMI=1":
