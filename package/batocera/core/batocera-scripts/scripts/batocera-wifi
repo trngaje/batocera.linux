@@ -55,7 +55,15 @@ case "${ACTION}" in
             batocera-settings-set wifi.key "$2"
         fi
         /etc/init.d/S20connman reload
-        wait_for_ip up
+
+        settings_ssid="$(batocera-settings-get wifi.ssid)"
+
+        # We don't need to wait for an IP if no saved ssid
+        if [ -n "${settings_ssid}" ]; then
+            wait_for_ip up
+        else
+            sleep 1 # wait 1 second for connman to initialize and start scanning
+        fi
         ;;
     "disable")
         batocera-settings-set wifi.enabled 0
