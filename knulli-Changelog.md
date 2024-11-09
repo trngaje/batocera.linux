@@ -22,6 +22,7 @@
 - preliminary support for the TrimUI Brick
 
 ### FIXED ###
+- inconsistent ip address when booting/enabling wifi due to multiple wlans present. Now always enables first wlan found and disables any others.
 - issue with wifi not connecting at boot (again). wpa3 still doesn't work
 - issue with wifi not working with wifi dongles on affected devices
 - bug in S29namebluetooth that resulted in duplicate lines
@@ -32,6 +33,10 @@
 - maximum audio volume for the TSP
 
 ### CHANGED / IMPROVED
+- removed some unnecessary init and daemon scripts
+- default emulation station screensaver is now slideshow
+- updated powermode/battery mode scripts
+- handheld tate mode now works with mame078plus
 - volume/brightness can be adjusted by holding down inputs.
 - drastic inputs have changed to be more universal between all devices(single joystick etc)
 - disabled wifi background scanning for better battery life
