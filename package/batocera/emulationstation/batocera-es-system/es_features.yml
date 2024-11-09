@@ -4038,6 +4038,12 @@ libretro:
                 choices:
                     "Off":        disabled
                     "On":         enabled
+            mame078plus-hhtate:
+                prompt: HANDHELD TATE MODE
+                description: Rotates the display and remaps inputs for device to be used sideways.
+                choices:
+                    "Off":    "False"
+                    "On":     "True"                    
             mame2003-plus_neogeo_bios:
                 prompt:      NEO GEO BIOS
                 choices:
