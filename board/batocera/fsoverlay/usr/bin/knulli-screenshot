@@ -1,0 +1,17 @@
+#!/bin/sh
+
+#knulli-screenshot 20241105 by dopaz for Knulli
+
+#use the first argument as the output filename
+FILE=$1
+#if the first argument does not result in a valid filename...
+if [ -z ${FILE} ]; then
+	#generate a filename
+    FILE=/userdata/screenshots/knulli-screenshot_$(date +%Y%m%d_%Hh%Mm%Ss).png
+fi
+#get the width
+FB_WIDTH=$(fbset | grep "geometry" | awk '{print $2}')
+#get the height
+FB_HEIGHT=$(fbset | grep "geometry" | awk '{print $3}')
+#call fbgrab, ignore the alpha channel
+fbgrab -a -w ${FB_WIDTH} -h ${FB_HEIGHT} -l ${FB_WIDTH} "${FILE}" 2>/dev/null || exit 1
