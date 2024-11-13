@@ -11405,6 +11405,38 @@ xemu:
 lexaloffle:
   features: [padtokeyboard]
   shared: [powermode, tdp, videomode, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo]
+  systems:
+    pico8:
+        cfeatures:
+            pico8_showfps:
+                group: ADVANCED OPTIONS
+                prompt: SHOW FPS
+                description: Show current FPS during gameplay.
+                choices:
+                    "Off":  0
+                    "On":   1
+            pico8_splorefilter:
+                group: ADVANCED OPTIONS
+                prompt: SPLORE FILTER
+                description: Filters out games tagged mature in splore.
+                choices:
+                    "Off":  0
+                    "On":   1
+            pico8_framesleep:
+                group: ADVANCED OPTIONS
+                prompt: FRAME SLEEP DURATION
+                description: Set the number of milliseconds to wait each frame to reduce power usage.
+                choices:
+                    "1 (Default)":  1
+                    "2":            2
+                    "3":            3
+                    "4":            4
+                    "5":            5
+                    "6":            6
+                    "7":            7
+                    "8":            8
+                    "9":            9
+                    "10":           10
 
 ecwolf:
   features: [padtokeyboard]
