@@ -2070,7 +2070,7 @@ def generateCoreSettings(coreSettings, system, rom, guns, wheels):
         if system.isOptSet('reicast_synchronous_rendering'):
             coreSettings.save('reicast_synchronous_rendering', '"' + system.config['reicast_synchronous_rendering'] + '"')
         else:
-            coreSettings.save('reicast_synchronous_rendering', '"enabled"')
+            coreSettings.save('reicast_synchronous_rendering', '"disabled"')
         # DSP audio
         if system.isOptSet('reicast_dsp'):
             coreSettings.save('reicast_enable_dsp', '"' + system.config['reicast_dsp'] + '"')
