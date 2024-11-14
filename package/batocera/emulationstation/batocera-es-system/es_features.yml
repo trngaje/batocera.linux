@@ -11415,6 +11415,13 @@ lexaloffle:
                 choices:
                     "Off":  0
                     "On":   1
+            pico8_pixelperfect:
+                group: ADVANCED OPTIONS
+                prompt: PIXEL PERFECT
+                description: Enables integer scaling for pixel-perfect image quality.
+                choices:
+                    "Off":  0
+                    "On":   1                    
             pico8_splorefilter:
                 group: ADVANCED OPTIONS
                 prompt: SPLORE FILTER

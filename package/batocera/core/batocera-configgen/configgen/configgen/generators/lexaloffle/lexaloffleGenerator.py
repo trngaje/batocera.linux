@@ -102,7 +102,7 @@ class LexaloffleGenerator(Generator):
         # Write config_settings to config.txt
         self.write_config(config_settings)
         
-        # the command to run
+        # The command to run
         commandArray = [BIN_PATH]
         
         basename = os.path.basename(rom)
@@ -124,6 +124,10 @@ class LexaloffleGenerator(Generator):
         else:
             commandArray.extend(["-run", rom])
 
+        # Pixel perfect / integer scaling
+        if system.isOptSet("pico8_pixelperfect") and system.config['pico8_pixelperfect'] == '1':
+            commandArray.extend(["-pixel_perfect", "1"])
+        
         controllersdir = os.path.dirname(CONTROLLERS)
         if not os.path.exists(controllersdir):
                 os.makedirs(controllersdir)
@@ -134,6 +138,9 @@ class LexaloffleGenerator(Generator):
         return Command.Command(array=commandArray, env={})
 
     def write_config(self, settings):
+        configdir = os.path.dirname(PICO8_CONFIG_PATH)
+        if not os.path.exists(configdir):
+            os.makedirs(configdir)
         with open(PICO8_CONFIG_PATH, "w") as config_file:
             for key, value in settings.items():
                 config_file.write(f"{key} {value}\n")
