@@ -48,7 +48,7 @@
 - emulators start with a negative niceness. May provide marginal performance improvements
 - added check so emulation station can't have more than one instance running
 - default n64 emulator is now parallel libretro core.
-- gln64 now the default gfx plugin for paralell libretro core
+- gln64 now the default gfx plugin for paralell_n64 libretro core
 - improvements to batocera-resolution
 - brightness has a new floor which allows for very low brightness
 - for the rg40xx devices with rgb, rgb brightness now follows screen brightness
