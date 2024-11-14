@@ -3,6 +3,7 @@
 ## ChangeLog
 
 ### ADDED ###
+- es settings for lexaloffle pico-8
 - es setting for drastic image scaling. Bilinear(smooth) and nearest-neighbor(sharp)
 - es settings for retroarch emulators to customize hotkeys
 - battery saver mode. In batocera.conf valid modes for batterysavermode=dim|suspend|shutdown. batterysavertimer=(number in seconds >=60)
@@ -34,6 +35,7 @@
 - maximum audio volume for the TSP
 
 ### CHANGED / IMPROVED
+- updated lexaloffle pico-8 configgen
 - updated power-button script for suspend and shutdown with optimized event detection, eliminating the need for excessive loops and checks
 - removed some unnecessary init and daemon scripts
 - default emulation station screensaver is now slideshow
