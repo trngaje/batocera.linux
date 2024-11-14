@@ -1,4 +1,4 @@
-# knulli - firefly - alpha (20241026)
+# knulli - firefly - alpha (20241111)
 
 ## ChangeLog
 
@@ -23,6 +23,8 @@
     - Romanian translation (SilverGreen93)
     - squashfs support MSU-MD
 - Emulation features
+    - EmulationStation settings for Lexaloffle Pico-8
+    - EmulationStation setting for Drastic image scaling: bilinear(smooth) and nearest-neighbor (sharp)
     - EmulationStation settings for RetroArch emulators to customize hotkeys
     - EmulationStation setting for RetroArch to change fast-forward hold/toggle
     - EmulationStation setting for DSP audio in Flycast/FlycastVL(default is off). Copied es settings from Flycast to FlycastVL.
@@ -31,8 +33,9 @@
     - Drastic-Steward emulator. (Note that hotkeys and inputs differ from drastic!)
 
 ### FIXED ###
-- issue with wifi not connecting at boot (again). wpa3 still doesn't work
-- issue with wifi not working with wifi dongles on affected devices
+- inconsistent IP address when booting/enabling Wi-Fi due to multiple wlans present. Now always enables first wlan found and disables any others.
+- issue with Wi-Fi not connecting at boot (again). wpa3 still doesn't work
+- issue with Wi-Fi not working with Wi-Fi dongles on affected devices
 - bug in S29namebluetooth that resulted in duplicate lines
 - reversed stereo audio channels for the rg40xx-h
 - issue with audio switching before es reloads when switching between internal lcd and hdmi out
@@ -44,9 +47,12 @@
 ### CHANGED / IMPROVED
 - OS features
     - updated EmulationStation to the latest version, it's now maintained as separate fork
-    - volume/brightness can be adjusted by holding down inputs.
+    - default EmulationStation screensaver is now slideshow
+    - volume/brightness can be adjusted by holding down inputs
+    - updated powermode/battery mode scripts
+    - updated power-button script for suspend and shutdown with optimized event detection, eliminating the need for excessive loops and checks
     - brightness has a new floor which allows for very low brightness
-    - disabled wifi background scanning for better battery life
+    - disabled Wi-Fi background scanning for better battery life
     - added check so emulation station can't have more than one instance running
     - improvements to batocera-resolution
     - improvements to batocera-audio
@@ -55,11 +61,14 @@
     - updated all DTBs for all the h700 boards so now each board has a unique model identifier
     - updated DTBs to include unique controller identifiers for all boards
     - added board checks for many scripts
+    - removed some unnecessary init and daemon scripts
 - Emulator features
-    - drastic inputs have changed to be more universal between all devices(single joystick etc)
+    - updated Lexaloffle Pico-8 configgen
+    - Drastic inputs have changed to be more universal between all devices(single joystick etc)
     - emulators start with a negative niceness. May provide marginal performance improvements
     - default n64 emulator is now parallel libretro core.
     - gln64 now the default gfx plugin for parallel libretro core
     - updated amiberry to 5.7.4
     - updated PPSSPP to 1.18.1
+    - handheld tate mode now works with mame078plus
 

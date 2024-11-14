@@ -20,7 +20,7 @@ eslog = get_logger(__name__)
 sys.path.append(
     os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
-# Return value for es invertedbuttons    
+# Return value for es invertedbuttons
 def getInvertButtonsValue():
     try:
         tree = ET.parse(batoceraFiles.esSettings)
@@ -579,12 +579,16 @@ def createLibretroConfig(generator, system, controllers, metadata, guns, wheels,
             controller, pad = controller_list[i - 1]
             if (pad.guid in valid_n64_controller_guids and pad.configName in valid_n64_controller_names) or (system.isOptSet(f'{option}-controller{i}') and system.config[f'{option}-controller{i}'] != 'retropad'):
                 update_n64_controller_config(i)
-    
+
     ## TATE mode remap for handhelds
-    if system.config['core'] in ['fbneo', 'mame']:
+    if system.config['core'] in ['fbneo', 'mame', 'mame078plus']:
 
         def is_hdmi_active():
             state = "/sys/devices/platform/soc/6000000.hdmi/extcon/hdmi/state"
+
+            if not os.path.exists(state):
+                return False
+
             with open(state, 'r') as file:
                 state = file.read().strip()
                 if state == "HDMI=1":
@@ -599,31 +603,20 @@ def createLibretroConfig(generator, system, controllers, metadata, guns, wheels,
             rom_element = root.find(f".//rom[@id='{rom_id}']")
             if rom_element is not None and rom_element.get('vert') == 'true':
                 return True
-            return False        
-
-        def set_rotation_defaults():
-            if system.config['core'] == 'fbneo':
-                coreSettings.save('fbneo-vertical-mode', '"disabled"')
-            elif system.config['core'] == 'mame':
-                coreSettings.save('mame_rotation_mode', '"libretro"')
+            else:
+                return False
 
         def update_handheld_config(name):
             if name in handhelds:
                 settings = handhelds[name]
                 # set display rotation
                 if settings['rotation'] == 'left':
-                    if system.config['core'] == 'fbneo':
-                        coreSettings.save('fbneo-vertical-mode', '"' + 'TATE alternate' + '"')
-                    elif system.config['core'] == 'mame':
-                        coreSettings.save('mame_rotation_mode', '"' + 'tate-rol' + '"')
+                    retroarchConfig['video_rotation'] = '1'
                 elif settings['rotation'] == 'right':
-                    if system.config['core'] == 'fbneo':
-                        coreSettings.save('fbneo-vertical-mode', '"' + 'TATE' + '"')
-                    elif system.config['core'] == 'mame':
-                        coreSettings.save('mame_rotation_mode', '"' + 'tate-ror' + '"')
+                    retroarchConfig['video_rotation'] = '3'
                 # remap inputs
                 for btn, value in settings['remap'].items():
-                    retroarchConfig[f'input_player1_{btn}'] = value    
+                    retroarchConfig[f'input_player1_{btn}'] = value
 
         common_remap = {
             'stk_r_x+': '18', 'stk_r_x-': '19', 'stk_r_y+': '17', 'stk_r_y-': '16',
@@ -642,7 +635,7 @@ def createLibretroConfig(generator, system, controllers, metadata, guns, wheels,
                 'rotation': 'left', 'remap': common_remap
             },
             'Anbernic RG28XX Controller': {  # rg28xx
-                'rotation': 'right', 
+                'rotation': 'right',
                 'remap': {
                     'btn_down': '7', 'btn_left': '5', 'btn_right': '4', 'btn_up': '6',
                     'btn_start': '0', 'btn_select': '8', 'btn_l2': '1', 'btn_r': '2',
@@ -653,18 +646,17 @@ def createLibretroConfig(generator, system, controllers, metadata, guns, wheels,
                 'rotation': 'left', 'remap': common_remap
             },
         }
-        
-        db_path = "/usr/share/emulationstation/resources/arcaderoms.xml"
-        controller, pad = sorted(controllers.items())[0]
-        
+
         if system.isOptSet(f"{systemCore}-hhtate") and system.config[f"{systemCore}-hhtate"] == "True":
+            db_path = "/usr/share/emulationstation/resources/arcaderoms.xml"
+            controller, pad = sorted(controllers.items())[0]
             if check_vertical(db_path, rom) and not is_hdmi_active():
                 update_handheld_config(pad.configName)
                 bezel = None
             else:
-                set_rotation_defaults()
+                retroarchConfig['video_rotation'] = '0'
         else:
-            set_rotation_defaults()
+            retroarchConfig['video_rotation'] = '0'
 
     ## PORTS
     ## Quake
@@ -1039,12 +1031,12 @@ def createLibretroConfig(generator, system, controllers, metadata, guns, wheels,
             # override core settings
             for key in raguncoreconf:
                 coreSettings.save(key, '"' + raguncoreconf[key] + '"')
-            
+
             # hide the mouse pointer with gun games
             retroarchConfig['input_overlay_show_mouse_cursor'] = "false"
     else:
         retroarchConfig['input_overlay_show_mouse_cursor'] = "true"
-    
+
     # write coreSettings a bit late while guns configs can modify it
     coreSettings.write()
 

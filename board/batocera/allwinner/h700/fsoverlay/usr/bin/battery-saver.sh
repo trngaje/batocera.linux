@@ -20,7 +20,7 @@ fi
 
 TIMER="$(/usr/bin/batocera-settings-get system.batterysavertimer)"
 if [[ -z "$TIMER" || ! "$TIMER" =~ ^[0-9]+$ || "$TIMER" -lt 60 ]]; then
-    TIMER="120" # default in seconds
+    TIMER="300" # default in seconds
     /usr/bin/batocera-settings-set system.batterysavertimer "$TIMER"
 fi
 

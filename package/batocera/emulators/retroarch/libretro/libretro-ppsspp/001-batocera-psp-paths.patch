@@ -1,6 +1,6 @@
 --- libretro-ppsspp-lbrpdx/Core/System.cpp	2022-06-26 00:30:14.000000000 -0700
 +++ libretro-ppsspp-04affb19582eb2294a63b2b4c6d5421dcfdbb832/Core/System.cpp	2022-08-21 19:16:34.709966352 -0700
-@@ -594,63 +594,58 @@
+@@ -653,63 +653,58 @@
  }
  
  Path GetSysDirectory(PSPDirectories directoryType) {
@@ -12,7 +12,7 @@
 -	} else {
 -		pspDirectory = memStickDirectory / "PSP";
 -	}
-+	// Batocera config directories
++       // Batocera config directories
 +        Path memStickDirectory = Path("/userdata/saves/psp/");
 +        Path pspDirectory = Path("/userdata/system/configs/ppsspp/PSP/");
  
@@ -101,16 +101,16 @@
 -		return g_Config.memStickDirectory;
 -	// Just return the memory stick root if we run into some sort of problem.
 -	default:
--		ERROR_LOG(FILESYS, "Unknown directory type.");
+-		ERROR_LOG(Log::FileSystem, "Unknown directory type.");
 -		return g_Config.memStickDirectory;
 -	}
 +        case DIRECTORY_MEMSTICK_ROOT:
 +                return memStickDirectory;
 +        // Just return the memory stick root if we run into some sort of problem.
 +        default:
-+                ERROR_LOG(FILESYS, "Unknown directory type.");
++                ERROR_LOG(Log::FileSystem, "Unknown directory type.");
 +                return pspDirectory;
-+        }	
++        }
  }
  
- #if PPSSPP_PLATFORM(WINDOWS)
+ bool CreateSysDirectories() {
