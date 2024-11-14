@@ -62,7 +62,7 @@
     - updated DTBs to include unique controller identifiers for all boards
     - added board checks for many scripts
     - removed some unnecessary init and daemon scripts
-- Emulator features
+- Emulation features
     - updated Lexaloffle Pico-8 configgen
     - Drastic inputs have changed to be more universal between all devices(single joystick etc)
     - emulators start with a negative niceness. May provide marginal performance improvements
