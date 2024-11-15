@@ -23,6 +23,7 @@
     - Romanian translation (SilverGreen93)
     - squashfs support MSU-MD
 - Emulation features
+    - EmulationStation setting for RetroArch integer overscale
     - EmulationStation settings for Lexaloffle Pico-8
     - EmulationStation setting for Drastic image scaling: bilinear(smooth) and nearest-neighbor (sharp)
     - EmulationStation settings for RetroArch emulators to customize hotkeys
