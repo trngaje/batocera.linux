@@ -65,7 +65,7 @@ index fc4d207f..4b753c8b 100644
  	case DIRECTORY_TEXTURES:
  		return pspDirectory / "TEXTURES";
  	case DIRECTORY_PLUGINS:
-@@ -673,22 +668,22 @@ Path GetSysDirectory(PSPDirectories directoryType) {
+@@ -688,22 +688,22 @@
  		if (!g_Config.appCacheDirectory.empty()) {
  			return g_Config.appCacheDirectory;
  		}
@@ -75,7 +75,7 @@ index fc4d207f..4b753c8b 100644
  		return pspDirectory / "VIDEO";
  	case DIRECTORY_AUDIO:
 -		return pspDirectory / "AUDIO";
-+		return Path("/userdata/music/");
++		return Path("/userdata/music");
  	case DIRECTORY_CUSTOM_SHADERS:
  		return pspDirectory / "shaders";
  	case DIRECTORY_CUSTOM_THEMES:
@@ -86,7 +86,7 @@ index fc4d207f..4b753c8b 100644
 +		return memStickDirectory;
  	// Just return the memory stick root if we run into some sort of problem.
  	default:
- 		ERROR_LOG(FILESYS, "Unknown directory type.");
+ 		ERROR_LOG(Log::FileSystem, "Unknown directory type.");
 -		return g_Config.memStickDirectory;
 +		return pspDirectory;
  	}

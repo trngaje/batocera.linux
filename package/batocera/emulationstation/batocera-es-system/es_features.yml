@@ -93,6 +93,13 @@ shared:
       choices:
         "On": 1
         "Off": 0
+    integeroverscale:
+      prompt:  INTEGER OVERSCALE
+      description: Forces integer scaling to round up instead of down.
+      submenu: GAME RENDERING & SHADERS
+      choices:
+        "On": 1
+        "Off": 0        
     bezel:
       prompt: DECORATION SET
       submenu: DECORATIONS
@@ -266,7 +273,7 @@ shared:
       group: CONTROLS
       submenu: HOTKEYS
       prompt: INCREASE SAVE SLOT NUMBER
-      description: Default hotkey + up.
+      description: Default hotkey + UP.
       choices:
         "none": "none"
         "up": "up"
@@ -288,7 +295,7 @@ shared:
       group: CONTROLS
       submenu: HOTKEYS
       prompt: DECREASE SAVE SLOT NUMBER
-      description: Default hotkey + down.
+      description: Default hotkey + DOWN.
       choices:
         "none": "none"
         "up": "up"
@@ -310,7 +317,7 @@ shared:
       group: CONTROLS
       submenu: HOTKEYS
       prompt: REWIND
-      description: Default hotkey + left.
+      description: Default hotkey + LEFT.
       choices:
         "none": "none"
         "up": "up"
@@ -332,7 +339,7 @@ shared:
       group: CONTROLS
       submenu: HOTKEYS
       prompt: FAST-FORWARD
-      description: Default hotkey + right.
+      description: Default hotkey + RIGHT.
       choices:
         "none": "none"
         "up": "up"
@@ -354,7 +361,7 @@ shared:
       group: CONTROLS
       submenu: HOTKEYS
       prompt: SAVE STATE
-      description: Default hotkey + y.
+      description: Default hotkey + Y.
       choices:
         "none": "none"
         "up": "up"
@@ -376,7 +383,7 @@ shared:
       group: CONTROLS
       submenu: HOTKEYS
       prompt: LOAD STATE
-      description: Default hotkey + x.
+      description: Default hotkey + X.
       choices:
         "none": "none"
         "up": "up"
@@ -398,7 +405,7 @@ shared:
       group: CONTROLS
       submenu: HOTKEYS
       prompt: RETROARCH MENU
-      description: Default hotkey + b.
+      description: Default hotkey + B.
       choices:
         "none": "none"
         "up": "up"
@@ -420,7 +427,7 @@ shared:
       group: CONTROLS
       submenu: HOTKEYS
       prompt: RESET EMULATOR
-      description: Default hotkey + a.
+      description: Default hotkey + A.
       choices:
         "none": "none"
         "up": "up"
@@ -442,7 +449,7 @@ shared:
       group: CONTROLS
       submenu: HOTKEYS
       prompt: SCREENSHOT
-      description: Default hotkey + l1.
+      description: Default hotkey + L1.
       choices:
         "none": "none"
         "up": "up"
@@ -464,7 +471,7 @@ shared:
       group: CONTROLS
       submenu: HOTKEYS
       prompt: AUTO TRANSLATE
-      description: Default hotkey + r1.
+      description: Default hotkey + R1.
       choices:
         "none": "none"
         "up": "up"
@@ -486,7 +493,7 @@ shared:
       group: CONTROLS
       submenu: HOTKEYS
       prompt: PREVIOUS SHADER
-      description: Default hotkey + l2.
+      description: Default hotkey + L2.
       choices:
         "none": "none"
         "up": "up"
@@ -508,7 +515,7 @@ shared:
       group: CONTROLS
       submenu: HOTKEYS
       prompt: NEXT SHADER
-      description: Default hotkey + r2.
+      description: Default hotkey + R2.
       choices:
         "none": "none"
         "up": "up"
@@ -526,10 +533,10 @@ shared:
         "l3": "l3"
         "r3": "r3"
 global:
-  shared: [powermode, batterymode, tdp, videomode, ratio, shaderset, smooth, integerscale, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo, ai_service_enabled, ai_target_lang, ai_service_url, ai_service_pause, rewind, toggle_fast_forward, runahead, secondinstance, video_frame_delay_auto, vrr_runloop_enable, video_threaded, rumble_gain]
+  shared: [powermode, batterymode, tdp, videomode, ratio, shaderset, smooth, integerscale, integeroverscale, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo, ai_service_enabled, ai_target_lang, ai_service_url, ai_service_pause, rewind, toggle_fast_forward, runahead, secondinstance, video_frame_delay_auto, vrr_runloop_enable, video_threaded, rumble_gain]
 
 libretro:
-  shared: [powermode, tdp, videomode, ratio, shaderset, smooth, integerscale, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo, ai_service_enabled, ai_target_lang, ai_service_url, ai_service_pause, toggle_fast_forward, runahead, preemptiveframes, secondinstance, video_frame_delay_auto, vrr_runloop_enable, video_threaded, rumble_gain, audio_volume, hotkey_up, hotkey_down, hotkey_left, hotkey_right, hotkey_y, hotkey_x, hotkey_b, hotkey_a, hotkey_l1, hotkey_r1, hotkey_l2, hotkey_r2]
+  shared: [powermode, tdp, videomode, ratio, shaderset, smooth, integerscale, integeroverscale, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo, ai_service_enabled, ai_target_lang, ai_service_url, ai_service_pause, toggle_fast_forward, runahead, preemptiveframes, secondinstance, video_frame_delay_auto, vrr_runloop_enable, video_threaded, rumble_gain, audio_volume, hotkey_up, hotkey_down, hotkey_left, hotkey_right, hotkey_y, hotkey_x, hotkey_b, hotkey_a, hotkey_l1, hotkey_r1, hotkey_l2, hotkey_r2]
   cfeatures:
     gfxbackend:
       archs_include: [x86, x86_64, bcm2711, bcm2712, a3gen2]
@@ -4038,6 +4045,12 @@ libretro:
                 choices:
                     "Off":        disabled
                     "On":         enabled
+            mame078plus-hhtate:
+                prompt: HANDHELD TATE MODE
+                description: Rotates the display and remaps inputs for device to be used sideways.
+                choices:
+                    "Off":    "False"
+                    "On":     "True"                    
             mame2003-plus_neogeo_bios:
                 prompt:      NEO GEO BIOS
                 choices:
@@ -11299,6 +11312,13 @@ drastic:
             choices:
                 "Off": 0
                 "On":  1
+        drastic_scaling:
+            group: ADVANCED OPTIONS
+            prompt:      IMAGE SCALING
+            description: Switches between smooth (Bilinear) and sharp (Nearest Neighbor) image scaling.
+            choices:
+                "Bilinear": bilinear
+                "Nearest-neighbor":  nearest
         drastic_fix2d:
             group: ADVANCED OPTIONS
             prompt:      KEEP MAIN SCREEN ON TOP
@@ -11392,6 +11412,45 @@ xemu:
 lexaloffle:
   features: [padtokeyboard]
   shared: [powermode, tdp, videomode, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo]
+  systems:
+    pico8:
+        cfeatures:
+            pico8_showfps:
+                group: ADVANCED OPTIONS
+                prompt: SHOW FPS
+                description: Show current FPS during gameplay.
+                choices:
+                    "Off":  0
+                    "On":   1
+            pico8_pixelperfect:
+                group: ADVANCED OPTIONS
+                prompt: PIXEL PERFECT
+                description: Enables integer scaling for pixel-perfect image quality.
+                choices:
+                    "Off":  0
+                    "On":   1                    
+            pico8_splorefilter:
+                group: ADVANCED OPTIONS
+                prompt: SPLORE FILTER
+                description: Filters out games tagged mature in splore.
+                choices:
+                    "Off":  0
+                    "On":   1
+            pico8_framesleep:
+                group: ADVANCED OPTIONS
+                prompt: FRAME SLEEP DURATION
+                description: Set the number of milliseconds to wait each frame to reduce power usage.
+                choices:
+                    "1 (Default)":  1
+                    "2":            2
+                    "3":            3
+                    "4":            4
+                    "5":            5
+                    "6":            6
+                    "7":            7
+                    "8":            8
+                    "9":            9
+                    "10":           10
 
 ecwolf:
   features: [padtokeyboard]
