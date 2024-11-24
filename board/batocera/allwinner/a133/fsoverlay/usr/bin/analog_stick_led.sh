@@ -11,7 +11,7 @@ DAEMON_MODE_BREATHING_SLOW=4
 DAEMON_MODE_SINGLE_RAINBOW=5
 DAEMON_MODE_MULTI_RAINBOW=6
 
-# Known TSP LED modes
+# Known TrimUI LED modes
 LED_MODE_OFF=0
 LED_MODE_LINEAR=1
 LED_MODE_BREATH=2
@@ -21,8 +21,11 @@ LED_MODE_BLINK_SINGLE=5
 LED_MODE_BLINK_DOUBLE=6
 LED_MODE_BLINK_TRIPLE=7
 
-# TSP LEDs have an odd max integer value of 60
+# TrimUI LEDs have an odd max integer value of 60
 MAX_INTEGER=60
+
+# TrimUI LEDs interpret effect cycles value -1 as infinite loop
+EFFECT_CYCLES_INFINITE_LOOP=-1
 
 # Initialize color (black)
 COLOR="00000"
@@ -33,13 +36,13 @@ MODE=0
 # Initialize brightness (none)
 BRIGHTNESS=0
 
-# Converts Daemon mode into TSP mode
+# Converts Daemon mode into TrimUI LED mode
 #
 # The analog_stick_led_daemon.sh was written for the
 # Anbernic RG40XXH/V and RGCubeXX, consequently it
 # sets the modes known from those devices.
 # Before a mode can be set, it must be translated
-# from a daemon/Anbernic mode to a TSP mode.
+# from a daemon/Anbernic mode to a TrimUI LED mode.
 setMode() {
   
   if [ $1 -eq $DAEMON_MODE_OFF ]; then
@@ -117,6 +120,7 @@ setHexColor() {
 
 }
 
+# Disables the LED by simply turning brightness to 0
 disableLed() {
 
   echo 0 > /sys/class/led_anim/max_scale
@@ -142,12 +146,30 @@ startEffect() {
   #set color
   echo "$COLOR " > /sys/class/led_anim/effect_rgb_hex_lr
   echo "$COLOR " > /sys/class/led_anim/effect_rgb_hex_m
-  #set cycles
-  echo -1 > /sys/class/led_anim/effect_cycles_lr
-  echo -1 > /sys/class/led_anim/effect_cycles_m
+  # only the Brick has f1/f2
+  if [ -f "/sys/class/led_anim/effect_rgb_hex_f1" ] && if [ -f "/sys/class/led_anim/effect_rgb_hex_f2" ];then # TODO: replace with boardcheck if possible!
+    echo "$COLOR " > /sys/class/led_anim/effect_rgb_hex_f1
+    echo "$COLOR " > /sys/class/led_anim/effect_rgb_hex_f2
+  fi
+  
+  #set cycles to infinite loop (-1)
+  echo $EFFECT_CYCLES_INFINITE_LOOP > /sys/class/led_anim/effect_cycles_lr
+  echo $EFFECT_CYCLES_INFINITE_LOOP > /sys/class/led_anim/effect_cycles_m
+  # only the Brick has f1/f2
+  if [ -f "/sys/class/led_anim/effect_cycles_f1" ] && if [ -f "/sys/class/led_anim/effect_cycles_f2" ];then # TODO: replace with boardcheck if possible!
+    echo $EFFECT_CYCLES_INFINITE_LOOP > /sys/class/led_anim/effect_cycles_f1
+    echo $EFFECT_CYCLES_INFINITE_LOOP > /sys/class/led_anim/effect_cycles_f2
+  fi
+
   #set mode
   echo $MODE > /sys/class/led_anim/effect_m
   echo $MODE > /sys/class/led_anim/effect_lr
+  # only the Brick has f1/f2
+  if [ -f "/sys/class/led_anim/effect_f1" ] && if [ -f "/sys/class/led_anim/effect_f2" ];then # TODO: replace with boardcheck if possible!
+    echo "$MODE " > /sys/class/led_anim/effect_f1
+    echo "$MODE " > /sys/class/led_anim/effect_f2
+  fi
+
   #go
   echo 1 > /sys/class/led_anim/effect_enable
 
