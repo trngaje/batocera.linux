@@ -245,7 +245,10 @@ if [ $# -gt 0 ] && [ $1 -eq $DAEMON_MODE_OFF ]; then
 elif [ $# -eq 3 ] && [ $1 -gt 4 ]; then
   setSpeedBasedMode $1 $2 $3
 # Go to an RGB-based mode
-elif [ $# -eq 5 ] && [ $1 -lt 5 ]; then
+elif [ $# -gt 4 ] && [ $1 -lt 5 ]; then
+  if [ $# -gt 5 ]; then # TODO: Extend daemon to support dedicated control of each available LED (left, right, center, f1, f2)
+    echo "Dedicated RGB values for the right stick are not supported, yet."
+  fi
   setRGBBasedMode $1 $2 $3 $4 $5
 # Invalid input
 else
