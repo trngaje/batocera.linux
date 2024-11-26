@@ -67,11 +67,11 @@ then
 fi
 if test -e "${TARGET_DIR}/etc/init.d/S45connman"
 then
-    if test -e "${TARGET_DIR}/etc/init.d/S08connman"
+    if test -e "${TARGET_DIR}/etc/init.d/S20connman"
     then
 	rm -f "${TARGET_DIR}/etc/init.d/S45connman" || exit 1
     else
-	mv "${TARGET_DIR}/etc/init.d/S45connman" "${TARGET_DIR}/etc/init.d/S08connman" || exit 1 # move to make before share
+	mv "${TARGET_DIR}/etc/init.d/S45connman" "${TARGET_DIR}/etc/init.d/S20connman" || exit 1 # move to make before share
     fi
 fi
 if test -e "${TARGET_DIR}/etc/init.d/S21rngd"
