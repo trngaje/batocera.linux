@@ -147,7 +147,7 @@ startEffect() {
   echo "$COLOR " > /sys/class/led_anim/effect_rgb_hex_lr
   echo "$COLOR " > /sys/class/led_anim/effect_rgb_hex_m
   # only the Brick has f1/f2
-  if [ -f "/sys/class/led_anim/effect_rgb_hex_f1" ] && if [ -f "/sys/class/led_anim/effect_rgb_hex_f2" ];then # TODO: replace with boardcheck if possible!
+  if [ -f "/sys/class/led_anim/effect_rgb_hex_f1" ] && [ -f "/sys/class/led_anim/effect_rgb_hex_f2" ];then # TODO: replace with boardcheck if possible!
     echo "$COLOR " > /sys/class/led_anim/effect_rgb_hex_f1
     echo "$COLOR " > /sys/class/led_anim/effect_rgb_hex_f2
   fi
@@ -156,7 +156,7 @@ startEffect() {
   echo $EFFECT_CYCLES_INFINITE_LOOP > /sys/class/led_anim/effect_cycles_lr
   echo $EFFECT_CYCLES_INFINITE_LOOP > /sys/class/led_anim/effect_cycles_m
   # only the Brick has f1/f2
-  if [ -f "/sys/class/led_anim/effect_cycles_f1" ] && if [ -f "/sys/class/led_anim/effect_cycles_f2" ];then # TODO: replace with boardcheck if possible!
+  if [ -f "/sys/class/led_anim/effect_cycles_f1" ] && [ -f "/sys/class/led_anim/effect_cycles_f2" ];then # TODO: replace with boardcheck if possible!
     echo $EFFECT_CYCLES_INFINITE_LOOP > /sys/class/led_anim/effect_cycles_f1
     echo $EFFECT_CYCLES_INFINITE_LOOP > /sys/class/led_anim/effect_cycles_f2
   fi
@@ -165,7 +165,7 @@ startEffect() {
   echo $MODE > /sys/class/led_anim/effect_m
   echo $MODE > /sys/class/led_anim/effect_lr
   # only the Brick has f1/f2
-  if [ -f "/sys/class/led_anim/effect_f1" ] && if [ -f "/sys/class/led_anim/effect_f2" ];then # TODO: replace with boardcheck if possible!
+  if [ -f "/sys/class/led_anim/effect_f1" ] && [ -f "/sys/class/led_anim/effect_f2" ];then # TODO: replace with boardcheck if possible!
     echo "$MODE " > /sys/class/led_anim/effect_f1
     echo "$MODE " > /sys/class/led_anim/effect_f2
   fi
