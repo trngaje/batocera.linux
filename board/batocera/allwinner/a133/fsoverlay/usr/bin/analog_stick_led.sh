@@ -68,10 +68,18 @@ setMode() {
 
 }
 
-# Calculates brightness percentage of 60
+# Converts brightness (0-255) into an integer of (0-60)
 setBrightness() {
 
-  BRIGHTNESS=$(( ${1}/100*${MAX_INTEGER} ))
+  BRIGHTNESS_DEC=$1
+  
+  # The TSP has an integer range of 0-60
+  # So we need to do some math first:
+  # Divide by 255 and mulitply by 60
+  BRIGHTNESS_TSP_FLOAT=$(echo "scale=2; $BRIGHTNESS_DEC/255*$MAX_INTEGER" | bc)
+
+  # Round it to get applicable brightness
+  BRIGHTNESS="$(printf '%.0f' ${BRIGHTNESS_TSP_FLOAT})"
 
 }
 
@@ -137,13 +145,13 @@ stopEffect() {
 # Starts the given effect with the given color and brightness
 startEffect() {
 
-  #stop
+  # stop previous effect
   stopEffect
 
-  #set brightness
+  # set brightness of next effect
   echo $BRIGHTNESS > /sys/class/led_anim/max_scale
 
-  #set color
+  # set color of next effect
   echo "$COLOR " > /sys/class/led_anim/effect_rgb_hex_lr
   echo "$COLOR " > /sys/class/led_anim/effect_rgb_hex_m
   # only the Brick has f1/f2
@@ -152,7 +160,7 @@ startEffect() {
     echo "$COLOR " > /sys/class/led_anim/effect_rgb_hex_f2
   fi
   
-  #set cycles to infinite loop (-1)
+  # set cycles of next effect to infinite loop (-1)
   echo $EFFECT_CYCLES_INFINITE_LOOP > /sys/class/led_anim/effect_cycles_lr
   echo $EFFECT_CYCLES_INFINITE_LOOP > /sys/class/led_anim/effect_cycles_m
   # only the Brick has f1/f2
@@ -161,7 +169,7 @@ startEffect() {
     echo $EFFECT_CYCLES_INFINITE_LOOP > /sys/class/led_anim/effect_cycles_f2
   fi
 
-  #set mode
+  #set mode of next effect
   echo $MODE > /sys/class/led_anim/effect_m
   echo $MODE > /sys/class/led_anim/effect_lr
   # only the Brick has f1/f2
@@ -170,7 +178,7 @@ startEffect() {
     echo "$MODE " > /sys/class/led_anim/effect_f2
   fi
 
-  #go
+  # start next effect
   echo 1 > /sys/class/led_anim/effect_enable
 
 }
@@ -192,7 +200,7 @@ printInstructions() {
   echo "             4: breath (slow)"
   echo "             5: single rainbow (cyling through colors)"
   echo "             6: multi rainbow (swirl)"
-  echo "  brightness 0-100"
+  echo "  brightness 0-255"
   echo "  red        0-255"
   echo "  green      0-255"
   echo "  blue       0-255"
