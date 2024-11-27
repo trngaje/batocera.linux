@@ -4,7 +4,6 @@ import logging
 import struct
 from pathlib import Path
 from typing import TYPE_CHECKING, TypedDict
-import os
 
 from PIL import Image, ImageOps
 
@@ -59,7 +58,7 @@ def getBezelInfos(rom: str | Path, bezel: str, systemName: str, emulator: str) -
 
     # Retrieve alternate decoration
     altDecoration = getAltDecoration(systemName, rom, emulator)
-    romBase = os.path.splitext(os.path.basename(rom))[0]  # filename without extension
+    romBase = Path(rom).stem # filename without extension
 
     # Paths in order of priority
     search_paths = [
@@ -99,13 +98,13 @@ def getBezelInfos(rom: str | Path, bezel: str, systemName: str, emulator: str) -
             continue
         
         pathBase, bezel_game = entry
-        overlay_info_file = pathBase + ".info"
-        overlay_png_file  = pathBase + ".png"
-        overlay_layout_file = pathBase + ".lay"
-        overlay_mamezip_file = pathBase + ".zip"
+        overlay_info_file = Path(pathBase + ".info")
+        overlay_png_file  = Path(pathBase + ".png")
+        overlay_layout_file = Path(pathBase + ".lay")
+        overlay_mamezip_file = Path(pathBase + ".zip")
         
         # Check if the png file exists
-        if os.path.exists(overlay_png_file):
+        if overlay_png_file.exists():
             eslog.debug(f"Original bezel file used: {overlay_png_file}")
             return {
                 "png": overlay_png_file, 
@@ -345,4 +344,3 @@ def createTransparentBezel(output_png: Path, width: int, height: int) -> None:
     from PIL import ImageDraw
     imgnew = Image.new("RGBA", (width,height), (0,0,0,0))
     imgnewdraw = ImageDraw.Draw(imgnew)
-    imgnew.save(output_png, mode="RGBA", format="PNG")
