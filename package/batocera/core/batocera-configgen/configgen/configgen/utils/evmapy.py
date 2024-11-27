@@ -1,50 +1,74 @@
-#!/usr/bin/env python
+from __future__ import annotations
 
-import subprocess
 import json
-import re
+import logging
 import os
+import subprocess
+from contextlib import AbstractContextManager
+from dataclasses import dataclass, field
+from typing import TYPE_CHECKING
+
 import evdev
-import controllersConfig as controllers
 
-from utils.logger import get_logger
-eslog = get_logger(__name__)
+from ..controllersConfig import mouseButtonToCode
 
-class Evmapy():
+if TYPE_CHECKING:
+    from collections.abc import Mapping
+    from types import TracebackType
+
+    from ..controller import ControllerMapping
+    from ..types import Gun, GunMapping
+
+
+eslog = logging.getLogger(__name__)
+
+
+@dataclass(slots=True)
+class evmapy(AbstractContextManager[None, None]):
     # evmapy is a process that map pads to keyboards (for pygame for example)
-    __started = False
+    __started: bool = field(init=False, default=False)
 
-    @staticmethod
-    def start(system, emulator, core, rom, playersControllers, guns):
-        if Evmapy.__prepare(system, emulator, core, rom, playersControllers, guns):
-            Evmapy.__started = True
+    system: str
+    emulator: str
+    core: str
+    rom: str
+    controllers: ControllerMapping
+    guns: GunMapping
+
+    def __enter__(self) -> None:
+        if self.__prepare():
+            self.__started = True
             subprocess.call(["batocera-evmapy", "start"])
 
-    @staticmethod
-    def stop():
-        if Evmapy.__started:
-            Evmapy.__started = False
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_value: BaseException | None,
+        traceback: TracebackType | None,
+        /,
+    ) -> None:
+        if self.__started:
+            self.__started = False
             subprocess.call(["batocera-evmapy", "stop"])
 
-    @staticmethod
-    def __buildMergedEvmappy(system, emulator, core, rom, playersControllers, guns):
+    def __build_merged_keys_file(self) -> str | None:
         # consider files here in this order to get a configuration
         filesToMerge = []
         for keysfile in [
-                "{}.keys" .format (rom),
-                "{}/padto.keys" .format (rom), # case when the rom is a directory
-                #"/userdata/system/configs/evmapy/{}.{}.{}.keys" .format (system, emulator, core),
-                #"/userdata/system/configs/evmapy/{}.{}.keys" .format (system, emulator),
-                "/userdata/system/configs/evmapy/{}.keys" .format (system),
-                "/userdata/system/configs/evmapy/{}.keys" .format (emulator),
+                "{}.keys" .format (self.rom),
+                "{}/padto.keys" .format (self.rom), # case when the rom is a directory
+                #"/userdata/system/configs/evmapy/{}.{}.{}.keys" .format (self.system, self.emulator, self.core),
+                #"/userdata/system/configs/evmapy/{}.{}.keys" .format (self.system, self.emulator),
+                "/userdata/system/configs/evmapy/{}.keys" .format (self.system),
+                "/userdata/system/configs/evmapy/{}.keys" .format (self.emulator),
                 "/userdata/system/configs/evmapy/any.keys",
-                #"/usr/share/evmapy/{}.{}.{}.keys" .format (system, emulator, core),
-                "/usr/share/evmapy/{}.{}.keys" .format (system, emulator),
-                "/usr/share/evmapy/{}.keys" .format (system),
-                "/usr/share/evmapy/{}.keys" .format (emulator),
+                #"/usr/share/evmapy/{}.{}.{}.keys" .format (self.system, self.emulator, self.core),
+                "/usr/share/evmapy/{}.{}.keys" .format (self.system, self.emulator),
+                "/usr/share/evmapy/{}.keys" .format (self.system),
+                "/usr/share/evmapy/{}.keys" .format (self.emulator),
                 "/usr/share/evmapy/any.keys",
         ]:
-            if os.path.exists(keysfile) and not (os.path.isdir(rom) and keysfile == "{}.keys" .format (rom)): # "{}.keys" .format (rom) is forbidden for directories, it must be inside
+            if os.path.exists(keysfile) and not (os.path.isdir(self.rom) and keysfile == "{}.keys" .format (self.rom)): # "{}.keys" .format (rom) is forbidden for directories, it must be inside
                 eslog.debug(f"evmapy file to merge : {keysfile}")
                 filesToMerge.append(keysfile)
 
@@ -65,38 +89,37 @@ class Evmapy():
                     mergedValues[action] = values[action]
         with open(mergedFile, "w") as fd:
             fd.write(json.dumps(mergedValues, indent=2))
-        
+
         return mergedFile
-            
-    @staticmethod
-    def __prepare(system, emulator, core, rom, playersControllers, guns):
-        keysfile = Evmapy.__buildMergedEvmappy(system, emulator, core, rom, playersControllers, guns)
+
+    def __prepare(self) -> bool:
+        keysfile = self.__build_merged_keys_file()
         if keysfile is not None:
             eslog.debug(f"evmapy on {keysfile}")
             subprocess.call(["batocera-evmapy", "clear"])
-    
+
             padActionConfig = json.load(open(keysfile))
 
             # configure guns
             ngun = 1
-            for gun in guns:
+            for gun in self.guns:
                 if "actions_gun"+str(ngun) in padActionConfig:
-                    configfile = "/var/run/evmapy/{}.json" .format (os.path.basename(guns[gun]["node"]))
+                    configfile = "/var/run/evmapy/{}.json" .format (os.path.basename(self.guns[gun]["node"]))
                     eslog.debug("config file for keysfile is {} (from {}) - gun" .format (configfile, keysfile))
                     padConfig = {}
                     padConfig["buttons"] = []
                     padConfig["axes"] = []
                     padConfig["actions"] = []
-                    for button in guns[gun]["buttons"]:
+                    for button in self.guns[gun]["buttons"]:
                         padConfig["buttons"].append({
                             "name": button,
-                            "code": controllers.mouseButtonToCode(button)
+                            "code": mouseButtonToCode(button)
                         })
                     padConfig["grab"] = False
 
                     for action in padActionConfig["actions_gun"+str(ngun)]:
                         if "trigger" in action and "type" in action and "target" in action:
-                            guntrigger = Evmapy.__getGunTrigger(action["trigger"], guns[gun])
+                            guntrigger = self.__get_gun_trigger(action["trigger"], self.guns[gun])
                             if guntrigger:
                                 newaction = action
                                 if "description" in newaction:
@@ -109,11 +132,11 @@ class Evmapy():
 
             # configure each player
             nplayer = 1
-            for playercontroller, pad in sorted(playersControllers.items()):
+            for playercontroller, pad in sorted(self.controllers.items()):
                 if "actions_player"+str(nplayer) in padActionConfig:
-                    configfile = "/var/run/evmapy/{}.json" .format (os.path.basename(pad.dev))
+                    configfile = "/var/run/evmapy/{}.json" .format (os.path.basename(pad.device_path))
                     eslog.debug("config file for keysfile is {} (from {})" .format (configfile, keysfile))
-    
+
                     # create mapping
                     padConfig = {}
                     padConfig["axes"] = []
@@ -121,7 +144,7 @@ class Evmapy():
                     padConfig["grab"] = False
                     absbasex_positive = True
                     absbasey_positive = True
-    
+
                     # define buttons / axes
                     known_buttons_names = {}
                     known_buttons_codes = {}
@@ -148,7 +171,7 @@ class Evmapy():
                                     isYAsInt = 0
                                 else:
                                     name = "Y"
-                                    isYAsInt =  1 
+                                    isYAsInt =  1
                                 known_buttons_names["HAT" + input.id + name + ":min"] = True
                                 known_buttons_names["HAT" + input.id + name + ":max"] = True
                                 padConfig["axes"].append({
@@ -189,7 +212,7 @@ class Evmapy():
                                     axisName = input.name
 
                                 if ((axisId in ["0", "1", "BASE"] and axisName in ["X", "Y"]) or axisId == "_OTHERS_") and input.code is not None:
-                                    axisMin, axisMax = Evmapy.__getPadMinMaxAxis(pad.dev, int(input.code))
+                                    axisMin, axisMax = self.__get_pad_min_max_axis(pad.device_path, int(input.code))
                                     known_buttons_names["ABS" + axisId + axisName + ":min"] = True
                                     known_buttons_names["ABS" + axisId + axisName + ":max"] = True
                                     known_buttons_names["ABS" + axisId + axisName + ":val"] = True
@@ -233,9 +256,9 @@ class Evmapy():
                     # define actions
                     for action in padActionsDefined:
                         if "trigger" in action:
-                            trigger = Evmapy.__trigger_mapper(action["trigger"], known_buttons_alias, known_buttons_names, absbasex_positive, absbasey_positive)
+                            trigger = self.__trigger_mapper(action["trigger"], known_buttons_alias, known_buttons_names, absbasex_positive, absbasey_positive)
                             if "mode" not in action:
-                                mode = Evmapy.__trigger_mapper_mode(action["trigger"])
+                                mode = self.__trigger_mapper_mode(action["trigger"])
                                 if mode != None:
                                     action["mode"] = mode
                             action["trigger"] = trigger
@@ -277,32 +300,30 @@ class Evmapy():
 
                     for axis in padConfig["axes"]:
                         if axis["name"]+":val" not in axis_for_mouse and axis["name"]+":min" not in axis_for_mouse and axis["name"]+":max" not in axis_for_mouse:
-                            min, max = Evmapy.__getPadMinMaxAxisForKeys(axis["min"], axis["max"])
+                            min, max = self.__get_pad_min_max_axis_for_keys(axis["min"], axis["max"])
                             axis["min"] = min
                             axis["max"] = max
 
                     # save config file
                     with open(configfile, "w") as fd:
                         fd.write(json.dumps(padConfig, indent=2))
-    
+
                 nplayer += 1
             return True
         # otherwise, preparation did nothing
-        eslog.debug("no evmapy config file found for system={}, emulator={}".format(system, emulator))
+        eslog.debug("no evmapy config file found for system={}, emulator={}".format(self.system, self.emulator))
         return False
-    
+
     # remap evmapy trigger (aka up become HAT0Y:max)
-    @staticmethod
-    def __trigger_mapper(trigger, known_buttons_alias, known_buttons_names, absbasex_positive, absbasey_positive):
+    def __trigger_mapper(self, trigger: str | list[str], known_buttons_alias: Mapping[str, str], known_buttons_names: Mapping[str, bool], absbasex_positive: bool, absbasey_positive: bool):
         if isinstance(trigger, list):
             new_trigger = []
             for x in trigger:
-                new_trigger.append(Evmapy.__trigger_mapper_string(x, known_buttons_alias, known_buttons_names, absbasex_positive, absbasey_positive))
+                new_trigger.append(self.__trigger_mapper_string(x, known_buttons_alias, known_buttons_names, absbasex_positive, absbasey_positive))
             return new_trigger
-        return Evmapy.__trigger_mapper_string(trigger, known_buttons_alias, known_buttons_names, absbasex_positive, absbasey_positive)
+        return self.__trigger_mapper_string(trigger, known_buttons_alias, known_buttons_names, absbasex_positive, absbasey_positive)
 
-    @staticmethod
-    def __trigger_mapper_string(trigger, known_buttons_alias, known_buttons_names, absbasex_positive, absbasey_positive):
+    def __trigger_mapper_string(self, trigger: str, known_buttons_alias: Mapping[str, str], known_buttons_names: Mapping[str, bool], absbasex_positive: bool, absbasey_positive: bool):
         # maybe this function is more complex if a pad has several hat. never see them.
         mapping = {
             "joystick1right": "ABS0X:max",
@@ -355,25 +376,22 @@ class Evmapy():
                 return mapping[trigger]
         return trigger # no tranformation
 
-    @staticmethod
-    def __trigger_mapper_mode(trigger):
+    def __trigger_mapper_mode(self, trigger: str | list[str]):
         if isinstance(trigger, list):
             new_trigger = []
             for x in trigger:
-                mode = Evmapy.__trigger_mapper_mode_string(x)
+                mode = self.__trigger_mapper_mode_string(x)
                 if mode != None:
                     return mode
             return None
-        return Evmapy.__trigger_mapper_mode_string(trigger)
+        return self.__trigger_mapper_mode_string(trigger)
 
-    @staticmethod
-    def __trigger_mapper_mode_string(trigger):
+    def __trigger_mapper_mode_string(self, trigger: str):
         if trigger in [ "joystick1x", "joystick1y", "joystick2x", "joystick2y"]:
             return "any"
         return None
 
-    @staticmethod
-    def __getGunTrigger(trigger, gun):
+    def __get_gun_trigger(self, trigger: str | list[str], gun: Gun, /) -> str | list[str] | None:
         if isinstance(trigger, list):
             for button in trigger:
                 if button not in gun["buttons"]:
@@ -384,8 +402,7 @@ class Evmapy():
                 return None
             return trigger
 
-    @staticmethod
-    def __getPadMinMaxAxis(devicePath, axisCode):
+    def __get_pad_min_max_axis(self, devicePath: str, axisCode: int) -> tuple[int, int]:
         device = evdev.InputDevice(devicePath)
         capabilities = device.capabilities(False)
 
@@ -396,8 +413,7 @@ class Evmapy():
                         return val.min, val.max
         return 0,0 # not found
 
-    @staticmethod
-    def __getPadMinMaxAxisForKeys(min, max):
+    def __get_pad_min_max_axis_for_keys(self, min: float, max: float) -> tuple[float, float]:
         valrange = (max - min)/2 # for each side
         valmin   = min + valrange/2
         valmax   = max - valrange/2
