@@ -22,6 +22,6 @@ fi
 if mkdir -p /var/run/usbmount.delay; then
     TIMESTAMP=$(date +%s%N) # Generate timestamp to use as a unique identifier
     set |
-    grep -E '^DEVNAME=|^ID_FS_USAGE=|^ID_FS_UUID=|^ID_FS_TYPE=|^ID_FS_LABEL=' |
-    sed -e s+'^'+'export '+ > /var/run/usbmount.delay/"$TIMESTAMP"."$1"
+        grep -E '^DEVNAME=|^ID_FS_USAGE=|^ID_FS_UUID=|^ID_FS_TYPE=|^ID_FS_LABEL=' |
+        sed -e s+'^'+'export '+ > /var/run/usbmount.delay/"$TIMESTAMP"."$1"
 fi
