@@ -45,8 +45,8 @@ EOF
         echo "Stopping connman..."
         "$CONNMAN_SERVICE" stop
 
-  # Stop existing dbus wpa_supplicant instance
-  killall -9 wpa_supplicant
+        # Stop existing dbus wpa_supplicant instance
+        killall -9 wpa_supplicant
 
         # Start wpa_supplicant
         echo "Starting wpa_supplicant..."
