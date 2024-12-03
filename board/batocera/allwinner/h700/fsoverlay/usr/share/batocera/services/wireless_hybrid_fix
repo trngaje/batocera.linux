@@ -9,14 +9,25 @@ case "$1" in
     start)
         echo "Starting custom Wi-Fi service..."
 
-        # Get Wi-Fi SSID and Key
+        # Get first Wi-Fi SSID and Key
         SSID=$(batocera-settings-get wifi.ssid)
         KEY=$(batocera-settings-get wifi.key)
-
         # Check if variables are defined
         if [ -z "$SSID" ] || [ -z "$KEY" ]; then
-            echo "Wi-Fi SSID or Key is not defined. Exiting."
-            exit 1
+          # Get second Wi-Fi SSID and Key
+          SSID=$(batocera-settings-get wifi2.ssid)
+          KEY=$(batocera-settings-get wifi2.key)
+          # Check if variables are defined
+          if [ -z "$SSID" ] || [ -z "$KEY" ]; then
+            # Get third Wi-Fi SSID and Key
+            SSID=$(batocera-settings-get wifi3.ssid)
+            KEY=$(batocera-settings-get wifi3.key)
+            # Check if variables are defined
+            if [ -z "$SSID" ] || [ -z "$KEY" ]; then
+              echo "Wi-Fi SSID or Key is not defined. Exiting."
+              exit 1
+            fi
+          fi
         fi
 
         # Populate wpa_supplicant.conf
@@ -34,8 +45,8 @@ EOF
         echo "Stopping connman..."
         "$CONNMAN_SERVICE" stop
 
-	# Stop existing dbus wpa_supplicant instance
-	killall -9 wpa_supplicant
+        # Stop existing dbus wpa_supplicant instance
+        killall -9 wpa_supplicant
 
         # Start wpa_supplicant
         echo "Starting wpa_supplicant..."
