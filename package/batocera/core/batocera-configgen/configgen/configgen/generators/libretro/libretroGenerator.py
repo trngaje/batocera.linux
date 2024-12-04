@@ -75,7 +75,7 @@ class LibretroGenerator(Generator):
                 lightgun = system.getOptBoolean('lightgun_map')
             else:
                 # Lightgun button mapping breaks lr-mame's inputs, disable if left on auto
-                if system.config['core'] in [ 'mess', 'mamevirtual', 'same_cdi', 'mame078plus', 'mame0139' ]:
+                if system.config['core'] in [ 'mess', 'mamevirtual', 'same_cdi', 'mame078plus', 'mame0139', 'mame2003_plus_dsno' ]:
                     lightgun = False
                 else:
                     lightgun = True
@@ -115,7 +115,7 @@ class LibretroGenerator(Generator):
         # The command to run
         dontAppendROM = False
         # For the NeoGeo CD (lr-fbneo) it is necessary to add the parameter: --subsystem neocd
-        if system.name == 'neogeocd' and system.config['core'] == "fbneo":
+        if system.name == 'neogeocd' and (system.config['core'] == "fbneo" or system.config['core'] == "fbneo_dsno"):
             commandArray = [batoceraFiles.batoceraBins[system.config['emulator']], "-L", retroarchCore, "--subsystem", "neocd", "--config", system.config['configfile']]
         # Set up GB/GBC Link games to use 2 different ROMs if needed
         if system.name == 'gb2players' or system.name == 'gbc2players':

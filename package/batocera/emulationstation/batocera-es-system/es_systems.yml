@@ -366,6 +366,8 @@ nds:
       drastic: { requireAnyOf: [BR2_PACKAGE_DRASTIC], incompatible_extensions: [7z] }
     drastic_steward:
       drastic_steward: { requireAnyOf: [BR2_PACKAGE_DRASTIC_STEWARD], incompatible_extensions: [7z] }
+    advanced_drastic:
+      advanced_drastic: { requireAnyOf: [], incompatible_extensions: [7z] }
 
 fds:
   name:       Family Computer Disk System
@@ -877,6 +879,7 @@ fbneo:
     libretro:
       fbalpha:  { requireAnyOf: [BR2_PACKAGE_LIBRETRO_FBALPHA]  }
       fbneo:    { requireAnyOf: [BR2_PACKAGE_LIBRETRO_FBNEO]    }
+      fbneo_dsno:    { requireAnyOf: []    }
     fba2x:
       fba2x:    { requireAnyOf: [BR2_PACKAGE_PIFBA] }
     advmame:
@@ -922,6 +925,7 @@ mame:
     libretro:
       imame4all:    { requireAnyOf: [BR2_PACKAGE_LIBRETRO_IMAME]          }
       mame078plus:  { requireAnyOf: [BR2_PACKAGE_LIBRETRO_MAME2003_PLUS]  }
+      mame2003_plus_dsno:  { requireAnyOf: []  }
       mame0139:     { requireAnyOf: [BR2_PACKAGE_LIBRETRO_MAME2010]       }
       mame:         { requireAnyOf: [BR2_PACKAGE_LIBRETRO_MAME]           }
     mame:
@@ -974,8 +978,10 @@ neogeo:
     libretro:
       fbalpha:      { requireAnyOf: [BR2_PACKAGE_LIBRETRO_FBALPHA]        }
       fbneo:        { requireAnyOf: [BR2_PACKAGE_LIBRETRO_FBNEO]          }
+      fbneo_dsno:        { requireAnyOf: []          }
       imame4all:    { requireAnyOf: [BR2_PACKAGE_LIBRETRO_IMAME]          }
       mame078plus:  { requireAnyOf: [BR2_PACKAGE_LIBRETRO_MAME2003_PLUS]  }
+      mame2003_plus_dsno:  { requireAnyOf: []  }
       mame0139:     { requireAnyOf: [BR2_PACKAGE_LIBRETRO_MAME2010]       }
       mame:         { requireAnyOf: [BR2_PACKAGE_LIBRETRO_MAME]           }
     mame:

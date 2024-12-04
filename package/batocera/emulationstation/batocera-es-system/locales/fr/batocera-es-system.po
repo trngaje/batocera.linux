@@ -1298,7 +1298,7 @@ msgstr ""
 "Ignorer les images pour améliorer les performances, au prix d'un mouvement "
 "saccadé."
 
-#. TRANSLATION: libretro/desmume, libretro/fbneo, libretro/flycast, libretro/mame078plus, libretro/mgba, ...
+#. TRANSLATION: libretro/desmume, libretro/fbneo, libretro/flycast, libretro/mame078plus, libretro/mame2003_plus_dsno, ...
 msgctxt "game_options"
 msgid "FRAMESKIP"
 msgstr "SAUT D'IMAGE"
@@ -3088,12 +3088,12 @@ msgctxt "game_options"
 msgid "HANDHELD TATE MODE"
 msgstr ""
 
-#. TRANSLATION: libretro/fbneo, libretro/mame078plus
+#. TRANSLATION: libretro/fbneo, libretro/mame078plus, libretro/mame2003_plus_dsno
 msgctxt "game_options"
 msgid "NEO GEO BIOS"
 msgstr "NEO GEO BIOS"
 
-#. TRANSLATION: libretro/fbneo, libretro/mame078plus
+#. TRANSLATION: libretro/fbneo, libretro/mame078plus, libretro/mame2003_plus_dsno
 msgctxt "game_options"
 msgid "Console AES World"
 msgstr "Console AES World"
@@ -3103,17 +3103,17 @@ msgctxt "game_options"
 msgid "Console AES Japan"
 msgstr "Console AES Japan"
 
-#. TRANSLATION: libretro/fbneo, libretro/mame078plus
+#. TRANSLATION: libretro/fbneo, libretro/mame078plus, libretro/mame2003_plus_dsno
 msgctxt "game_options"
 msgid "Arcade MVS Europe"
 msgstr "Arcade MVS Europe"
 
-#. TRANSLATION: libretro/fbneo, libretro/mame078plus
+#. TRANSLATION: libretro/fbneo, libretro/mame078plus, libretro/mame2003_plus_dsno
 msgctxt "game_options"
 msgid "Arcade MVS USA"
 msgstr "Arcade MVS USA"
 
-#. TRANSLATION: libretro/fbneo, libretro/mame078plus
+#. TRANSLATION: libretro/fbneo, libretro/mame078plus, libretro/mame2003_plus_dsno
 msgctxt "game_options"
 msgid "Arcade MVS Japan"
 msgstr "Arcade MVS Japan"
@@ -3477,7 +3477,7 @@ msgctxt "game_options"
 msgid "CONTROLLER TYPE 1"
 msgstr "CONTRÔLEUR TYPE 1"
 
-#. TRANSLATION: libretro/fuse, libretro/fuse, libretro/mame078plus, libretro/puae, libretro/puae, ...
+#. TRANSLATION: libretro/fuse, libretro/fuse, libretro/mame078plus, libretro/mame2003_plus_dsno, libretro/puae, ...
 msgctxt "game_options"
 msgid "Retropad"
 msgstr "Retropad"
@@ -5405,47 +5405,47 @@ msgctxt "game_options"
 msgid "Video Game Music Files"
 msgstr "Fichiers de musique de jeux vidéo"
 
-#. TRANSLATION: libretro/mame078plus
+#. TRANSLATION: libretro/mame078plus, libretro/mame2003_plus_dsno
 msgctxt "game_options"
 msgid "CONTROL MAPPING"
 msgstr "CARTOGRAPHIE DES CONTRÔLES"
 
-#. TRANSLATION: libretro/mame078plus
+#. TRANSLATION: libretro/mame078plus, libretro/mame2003_plus_dsno
 msgctxt "game_options"
 msgid "Analog"
 msgstr "Analogique"
 
-#. TRANSLATION: libretro/mame078plus
+#. TRANSLATION: libretro/mame078plus, libretro/mame2003_plus_dsno
 msgctxt "game_options"
 msgid "Digital"
 msgstr "Digital"
 
-#. TRANSLATION: libretro/mame078plus, libretro/vice_x64, libretro/vice_x64sc, libretro/vice_xscpu64, libretro/vice_x128, ...
+#. TRANSLATION: libretro/mame078plus, libretro/mame2003_plus_dsno, libretro/vice_x64, libretro/vice_x64sc, libretro/vice_xscpu64, ...
 msgctxt "game_options"
 msgid "Keyboard shortcuts unavailable if passing through the keyboard."
 msgstr "Raccourcis clavier indisponibles si passage par le clavier."
 
-#. TRANSLATION: libretro/mame078plus
+#. TRANSLATION: libretro/mame078plus, libretro/mame2003_plus_dsno
 msgctxt "game_options"
 msgid "INPUT INTERFACE"
 msgstr "INTERFACE D'ENTRÉE"
 
-#. TRANSLATION: libretro/mame078plus
+#. TRANSLATION: libretro/mame078plus, libretro/mame2003_plus_dsno
 msgctxt "game_options"
 msgid "Keyboard passthrough"
 msgstr "Intercommunication clavier"
 
-#. TRANSLATION: libretro/mame078plus
+#. TRANSLATION: libretro/mame078plus, libretro/mame2003_plus_dsno
 msgctxt "game_options"
 msgid "Simultaneous"
 msgstr "Simultanée"
 
-#. TRANSLATION: libretro/mame078plus, mame
+#. TRANSLATION: libretro/mame078plus, libretro/mame2003_plus_dsno, mame
 msgctxt "game_options"
 msgid "Rotates screen by 90 degrees. Intended for rotating displays."
 msgstr "Faire pivoter l'écran de 90 degrés. Destiné aux affichages rotatifs."
 
-#. TRANSLATION: libretro/mame078plus, mame
+#. TRANSLATION: libretro/mame078plus, libretro/mame2003_plus_dsno, mame
 msgctxt "game_options"
 msgid "VERTICAL ROTATION (TATE)"
 msgstr "ROTATION VERTICALE (TATE)"

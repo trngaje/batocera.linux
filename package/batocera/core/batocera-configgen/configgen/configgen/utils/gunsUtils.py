@@ -37,7 +37,7 @@ def precalibration(systemName, emulator, core, rom):
         if emulator == "mame":
             target_dir = "mame"
         elif emulator == "libretro":
-            if core == "mame078plus":
+            if core == "mame078plus" or core == "mame2003_plus_dsno":
                 target_dir = "mame/mame2003-plus"
             elif core == "mame":
                 target_dir = "mame/mame"

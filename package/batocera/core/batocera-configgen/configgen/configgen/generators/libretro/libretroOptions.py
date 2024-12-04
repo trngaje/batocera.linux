@@ -762,7 +762,7 @@ def generateCoreSettings(coreSettings, system, rom, guns, wheels):
         coreSettings.save('same_cdi_mouse_enable', '"enabled"')
 
     # MAME 2003 Plus
-    if (system.config['core'] == 'mame078plus'):
+    if (system.config['core'] == 'mame078plus' or system.config['core'] == 'mame2003_plus_dsno'):
         # Skip Disclaimer and Warnings
         coreSettings.save('mame2003-plus_skip_disclaimer', '"enabled"')
         coreSettings.save('mame2003-plus_skip_warnings',   '"enabled"')
@@ -2448,7 +2448,7 @@ def generateCoreSettings(coreSettings, system, rom, guns, wheels):
             coreSettings.save('fuse_hide_border', '"disabled"')
 
     # SNK Neogeo AES MVS / Neogeo CD
-    if (system.config['core'] == 'fbneo'):
+    if (system.config['core'] == 'fbneo' or system.config['core'] == 'fbneo_dsno'):
         romBase = os.path.splitext(os.path.basename(rom))[0] # filename without extension
         # Diagnostic input
         coreSettings.save('fbneo-diagnostic-input', '"Start + L + R"')

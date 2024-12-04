@@ -1453,7 +1453,7 @@ msgctxt "game_options"
 msgid "Skip frames to improve performance, at the cost of choppy motion."
 msgstr "프레임을 건너뛰어 성능을 향상시키지만 동작이 고르지 않습니다."
 
-#. TRANSLATION: libretro/desmume, libretro/fbneo, libretro/flycast, libretro/mame078plus, libretro/mgba, ...
+#. TRANSLATION: libretro/desmume, libretro/fbneo, libretro/flycast, libretro/mame078plus, libretro/mame2003_plus_dsno, ...
 #, fuzzy
 msgctxt "game_options"
 msgid "FRAMESKIP"
@@ -3378,13 +3378,13 @@ msgctxt "game_options"
 msgid "HANDHELD TATE MODE"
 msgstr ""
 
-#. TRANSLATION: libretro/fbneo, libretro/mame078plus
+#. TRANSLATION: libretro/fbneo, libretro/mame078plus, libretro/mame2003_plus_dsno
 #, fuzzy
 msgctxt "game_options"
 msgid "NEO GEO BIOS"
 msgstr "네오 지오 바이오스"
 
-#. TRANSLATION: libretro/fbneo, libretro/mame078plus
+#. TRANSLATION: libretro/fbneo, libretro/mame078plus, libretro/mame2003_plus_dsno
 #, fuzzy
 msgctxt "game_options"
 msgid "Console AES World"
@@ -3396,19 +3396,19 @@ msgctxt "game_options"
 msgid "Console AES Japan"
 msgstr "콘솔 AES 일본"
 
-#. TRANSLATION: libretro/fbneo, libretro/mame078plus
+#. TRANSLATION: libretro/fbneo, libretro/mame078plus, libretro/mame2003_plus_dsno
 #, fuzzy
 msgctxt "game_options"
 msgid "Arcade MVS Europe"
 msgstr "아케이드 MVS 유럽"
 
-#. TRANSLATION: libretro/fbneo, libretro/mame078plus
+#. TRANSLATION: libretro/fbneo, libretro/mame078plus, libretro/mame2003_plus_dsno
 #, fuzzy
 msgctxt "game_options"
 msgid "Arcade MVS USA"
 msgstr "아케이드 MVS 미국"
 
-#. TRANSLATION: libretro/fbneo, libretro/mame078plus
+#. TRANSLATION: libretro/fbneo, libretro/mame078plus, libretro/mame2003_plus_dsno
 #, fuzzy
 msgctxt "game_options"
 msgid "Arcade MVS Japan"
@@ -3832,7 +3832,7 @@ msgctxt "game_options"
 msgid "CONTROLLER TYPE 1"
 msgstr "컨트롤러 유형 1"
 
-#. TRANSLATION: libretro/fuse, libretro/fuse, libretro/mame078plus, libretro/puae, libretro/puae, ...
+#. TRANSLATION: libretro/fuse, libretro/fuse, libretro/mame078plus, libretro/mame2003_plus_dsno, libretro/puae, ...
 #, fuzzy
 msgctxt "game_options"
 msgid "Retropad"
@@ -6006,54 +6006,54 @@ msgctxt "game_options"
 msgid "Video Game Music Files"
 msgstr "비디오 게임 음악 파일"
 
-#. TRANSLATION: libretro/mame078plus
+#. TRANSLATION: libretro/mame078plus, libretro/mame2003_plus_dsno
 #, fuzzy
 msgctxt "game_options"
 msgid "CONTROL MAPPING"
 msgstr "컨트롤 매핑"
 
-#. TRANSLATION: libretro/mame078plus
+#. TRANSLATION: libretro/mame078plus, libretro/mame2003_plus_dsno
 #, fuzzy
 msgctxt "game_options"
 msgid "Analog"
 msgstr "아날로그"
 
-#. TRANSLATION: libretro/mame078plus
+#. TRANSLATION: libretro/mame078plus, libretro/mame2003_plus_dsno
 #, fuzzy
 msgctxt "game_options"
 msgid "Digital"
 msgstr "디지털"
 
-#. TRANSLATION: libretro/mame078plus, libretro/vice_x64, libretro/vice_x64sc, libretro/vice_xscpu64, libretro/vice_x128, ...
+#. TRANSLATION: libretro/mame078plus, libretro/mame2003_plus_dsno, libretro/vice_x64, libretro/vice_x64sc, libretro/vice_xscpu64, ...
 #, fuzzy
 msgctxt "game_options"
 msgid "Keyboard shortcuts unavailable if passing through the keyboard."
 msgstr "키보드를 통과하는 경우 키보드 단축키를 사용할 수 없습니다."
 
-#. TRANSLATION: libretro/mame078plus
+#. TRANSLATION: libretro/mame078plus, libretro/mame2003_plus_dsno
 #, fuzzy
 msgctxt "game_options"
 msgid "INPUT INTERFACE"
 msgstr "입력 인터페이스"
 
-#. TRANSLATION: libretro/mame078plus
+#. TRANSLATION: libretro/mame078plus, libretro/mame2003_plus_dsno
 #, fuzzy
 msgctxt "game_options"
 msgid "Keyboard passthrough"
 msgstr "키보드 패스스루"
 
-#. TRANSLATION: libretro/mame078plus
+#. TRANSLATION: libretro/mame078plus, libretro/mame2003_plus_dsno
 msgctxt "game_options"
 msgid "Simultaneous"
 msgstr "동시"
 
-#. TRANSLATION: libretro/mame078plus, mame
+#. TRANSLATION: libretro/mame078plus, libretro/mame2003_plus_dsno, mame
 #, fuzzy
 msgctxt "game_options"
 msgid "Rotates screen by 90 degrees. Intended for rotating displays."
 msgstr "화면을 90도 회전합니다. 디스플레이 회전용입니다."
 
-#. TRANSLATION: libretro/mame078plus, mame
+#. TRANSLATION: libretro/mame078plus, libretro/mame2003_plus_dsno, mame
 #, fuzzy
 msgctxt "game_options"
 msgid "VERTICAL ROTATION (TATE)"

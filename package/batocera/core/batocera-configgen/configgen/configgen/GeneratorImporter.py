@@ -179,6 +179,9 @@ def getGenerator(emulator):
         from generators.drastic_steward.drastic_stewardGenerator import Drastic_stewardGenerator
         return Drastic_stewardGenerator()
 
+    if emulator == 'advanced_drastic':
+        from generators.advanced_drastic.advanced_drasticGenerator import Advanced_drasticGenerator
+        return Advanced_drasticGenerator()
 
     if emulator == 'xemu':
         from generators.xemu.xemuGenerator import XemuGenerator

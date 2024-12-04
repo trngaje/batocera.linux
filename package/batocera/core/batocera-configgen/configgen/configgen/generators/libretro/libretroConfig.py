@@ -48,7 +48,7 @@ systemToBluemsx = {'msx': '"MSX2"', 'msx1': '"MSX2"', 'msx2': '"MSX2"', 'colecov
 
 # Define Retroarch Core compatible with retroachievements
 # List taken from https://docs.libretro.com/guides/retroachievements/#cores-compatibility
-coreToRetroachievements = {'arduous', 'beetle-saturn', 'blastem', 'bluemsx', 'bsnes', 'bsnes_hd', 'cap32', 'desmume', 'duckstation', 'fbneo', 'fceumm', 'flycast', 'flycastvl', 'flycast-xtreme', 'freechaf', 'freeintv', 'gambatte', 'genesisplusgx', 'genesisplusgx-wide', 'handy', 'kronos', 'mednafen_lynx', 'mednafen_ngp', 'mednafen_psx', 'mednafen_supergrafx', 'mednafen_wswan', 'melonds', 'mesen', 'mesens', 'mgba', 'morpheuscast', 'mupen64plus-next', 'neocd', 'o2em', 'opera', 'parallel_n64', 'pce', 'pce_fast', 'pcfx', 'pcsx_rearmed', 'picodrive', 'pokemini', 'potator', 'ppsspp', 'prosystem', 'quasi88', 'snes9x', 'sameduck', 'snes9x_next', 'stella', 'stella2014', 'swanstation', 'uzem', 'vb', 'vba-m', 'vecx', 'virtualjaguar', 'wasm4', 'gpsp', 'melondsds'}
+coreToRetroachievements = {'arduous', 'beetle-saturn', 'blastem', 'bluemsx', 'bsnes', 'bsnes_hd', 'cap32', 'desmume', 'duckstation', 'fbneo', 'fbneo_dsno','fceumm', 'flycast', 'flycastvl', 'flycast-xtreme', 'freechaf', 'freeintv', 'gambatte', 'genesisplusgx', 'genesisplusgx-wide', 'handy', 'kronos', 'mednafen_lynx', 'mednafen_ngp', 'mednafen_psx', 'mednafen_supergrafx', 'mednafen_wswan', 'melonds', 'mesen', 'mesens', 'mgba', 'morpheuscast', 'mupen64plus-next', 'neocd', 'o2em', 'opera', 'parallel_n64', 'pce', 'pce_fast', 'pcfx', 'pcsx_rearmed', 'picodrive', 'pokemini', 'potator', 'ppsspp', 'prosystem', 'quasi88', 'snes9x', 'sameduck', 'snes9x_next', 'stella', 'stella2014', 'swanstation', 'uzem', 'vb', 'vba-m', 'vecx', 'virtualjaguar', 'wasm4', 'gpsp', 'melondsds'}
 
 # Define systems NOT compatible with rewind option
 systemNoRewind = {'sega32x', 'psx', 'zxspectrum', 'n64', 'dreamcast', 'atomiswave', 'naomi', 'saturn'};
@@ -581,7 +581,7 @@ def createLibretroConfig(generator, system, controllers, metadata, guns, wheels,
                 update_n64_controller_config(i)
     
     ## TATE mode remap for handhelds
-    if system.config['core'] in ['fbneo', 'mame']:                       
+    if system.config['core'] in ['fbneo', 'fbneo_dsno', 'mame']:                       
 
         def get_board_info():
             file_path = "/boot/boot/batocera.board"
@@ -594,12 +594,12 @@ def createLibretroConfig(generator, system, controllers, metadata, guns, wheels,
                 settings = handhelds[(guid, name, board)]
                 # set display rotation
                 if settings['rotation'] == 'left':
-                    if (system.config['core'] == 'fbneo'):
+                    if (system.config['core'] == 'fbneo' or system.config['core'] == 'fbneo_dsno'):
                         coreSettings.save('fbneo-vertical-mode', '"' + 'TATE alternate' + '"')
                     elif (system.config['core'] == 'mame'):
                         coreSettings.save('mame_rotation_mode', '"' + 'tate-rol' + '"')
                 elif settings['rotation'] == 'right':
-                    if (system.config['core'] == 'fbneo'):
+                    if (system.config['core'] == 'fbneo' or system.config['core'] == 'fbneo_dsno'):
                         coreSettings.save('fbneo-vertical-mode', '"' + 'TATE' + '"')
                     elif (system.config['core'] == 'mame'):
                         coreSettings.save('mame_rotation_mode', '"' + 'tate-ror' + '"')
@@ -651,7 +651,7 @@ def createLibretroConfig(generator, system, controllers, metadata, guns, wheels,
         
         if system.isOptSet(f"{systemCore}-hhtate") and system.config[f"{systemCore}-hhtate"] == "True" and check_vertical(db_path, rom):
             update_handheld_config(pad.guid, pad.configName, board_name)
-        elif system.config['core'] == 'fbneo':
+        elif system.config['core'] == 'fbneo' or system.config['core'] == 'fbneo_dsno':
             coreSettings.save('fbneo-vertical-mode', '"disabled"')
         elif system.config['core'] == 'mame':
             coreSettings.save('mame_rotation_mode', '"libretro"')
@@ -980,8 +980,10 @@ def createLibretroConfig(generator, system, controllers, metadata, guns, wheels,
                             "segacd" : { "device": 516, "p2": 0,
                                          "gameDependant": [ { "key": "type", "value": "justifier", "mapkey": "device", "mapvalue": "772" } ]} },
         "fbneo"         : { "default" : { "device":   4, "p1": 0, "p2": 1 } },
+        "fbneo_dsno"         : { "default" : { "device":   4, "p1": 0, "p2": 1 } },
         "mame"          : { "default" : { "p1": 0, "p2": 1, "p3": 2 } },
         "mame078plus"   : { "default" : { "device":   4, "p1": 0, "p2": 1 } },
+        "mame2003_plus_dsno"   : { "default" : { "device":   4, "p1": 0, "p2": 1 } },
         "mame0139"      : { "default" : { "device":   4, "p1": 0, "p2": 1 } },
         "flycast"       : { "default" : { "device":   4, "p1": 0, "p2": 1, "p3": 2, "p4": 3 } },
         "flycastvl"     : { "default" : { "device":   4, "p1": 0, "p2": 1, "p3": 2, "p4": 3 } },
@@ -1103,7 +1105,7 @@ def configureGunInputsForPlayer(n, gun, controllers, retroarchConfig, core, meta
             pedalconfig = 'input_player{}_gun_aux_a'.format(n)
             retroarchConfig['input_player{}_gun_aux_b_mbtn'         .format(n)] = 3
 
-    if core == "fbneo":
+    if core == "fbneo" or core == "fbneo_dsno":
         retroarchConfig['input_player{}_gun_offscreen_shot_mbtn'.format(n)] = ''
         retroarchConfig['input_player{}_gun_aux_a_mbtn'         .format(n)] = 2
         pedalconfig = 'input_player{}_gun_aux_a'.format(n)
@@ -1152,7 +1154,7 @@ def configureGunInputsForPlayer(n, gun, controllers, retroarchConfig, core, meta
         retroarchConfig['input_player{}_start_mbtn'             .format(n)] = 3
         retroarchConfig['input_player{}_select_mbtn'            .format(n)] = 4
 
-    if core == "mame078plus":
+    if core == "mame078plus" or core == "mame2003_plus_dsno":
         retroarchConfig['input_player{}_gun_offscreen_shot_mbtn'.format(n)] = ''
         retroarchConfig['input_player{}_gun_start_mbtn'         .format(n)] = ''
         retroarchConfig['input_player{}_gun_select_mbtn'        .format(n)] = ''
