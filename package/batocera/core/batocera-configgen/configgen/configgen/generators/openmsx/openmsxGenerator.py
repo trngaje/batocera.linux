@@ -1,17 +1,25 @@
-#!/usr/bin/env python
+from __future__ import annotations
 
-from generators.Generator import Generator
-import Command
+import logging
+import re
 import os
 from distutils.dir_util import copy_tree
-import xml.etree.ElementTree as ET
 import shutil
 import xml.dom.minidom as minidom
-import re
+import xml.etree.ElementTree as ET
 import zipfile
-from utils.logger import get_logger
+from distutils.dir_util import copy_tree
+from pathlib import Path
+from typing import TYPE_CHECKING, Final
 
-eslog = get_logger(__name__)
+from ... import Command
+from ...batoceraPaths import CONFIGS, SCREENSHOTS, mkdir_if_not_exists
+from ..Generator import Generator
+
+if TYPE_CHECKING:
+    from ...types import HotkeysContext
+
+eslog = logging.getLogger(__name__)
 
 #openMSX_Homedir = '/userdata/system/configs/openmsx'
 openMSX_Homedir = '/userdata/system/.openMSX'
@@ -21,6 +29,12 @@ class OpenmsxGenerator(Generator):
 
     def hasInternalMangoHUDCall(self):
         return True
+
+    def getHotkeysContext(self) -> HotkeysContext:
+        return {
+            "name": "openmsx",
+            "keys": { "exit": ["KEY_LEFTALT", "KEY_F4"] }
+        }
 
     def generate(self, system, rom, playersControllers, metadata, guns, wheels, gameResolution):
 
@@ -48,7 +62,7 @@ class OpenmsxGenerator(Generator):
         # Adjust settings.xml as needed
         tree = ET.parse(settings_xml)
         root = tree.getroot()
-        
+
         settings_elem = root.find("settings")
         if system.isOptSet("openmsx_loading"):
             fullspeed_elem = ET.Element("setting", {"id": "fullspeedwhenloading"})
@@ -56,18 +70,18 @@ class OpenmsxGenerator(Generator):
         else:
             fullspeed_elem = ET.Element("setting", {"id": "fullspeedwhenloading"})
             fullspeed_elem.text = "true"
-        
+
         settings_elem.append(fullspeed_elem)
-        
+
         # Create the bindings element
         bindings_elem = ET.Element("bindings")
         new_bind = ET.Element("bind", {"key": "keyb F6"})
         new_bind.text = "cycle videosource"
         bindings_elem.append(new_bind)
-        
+
         # Add the bindings element to the root element
         root.append(bindings_elem)
-        
+
         # Write the updated xml to the file
         with open(settings_xml, "w") as f:
             f.write("<!DOCTYPE settings SYSTEM 'settings.dtd'>\n")
@@ -75,11 +89,11 @@ class OpenmsxGenerator(Generator):
             xml_string = minidom.parseString(ET.tostring(root)).toprettyxml(indent="  ")
             formatted_xml = "\n".join([line for line in xml_string.split("\n") if line.strip()])
             f.write(formatted_xml)
-              
+
         # setup the blank tcl file
         with open(settings_tcl, "w") as file:
             file.write("")
-        
+
         # set the tcl file options - we can add other options later
         with open(settings_tcl, "a") as file:
             file.write("filepool add -path /userdata/bios/Machines -types system_rom -position 1\n")
@@ -105,8 +119,16 @@ class OpenmsxGenerator(Generator):
                 if nplayer <= 2:
                     if nplayer == 1:
                         file.write("plug joyporta joystick1\n")
+                        file.write('dict set joystick1_config LEFT {-axis0 L_hat0}\n')
+                        file.write('dict set joystick1_config RIGHT {+axis0 R_hat0}\n')
+                        file.write('dict set joystick1_config UP {-axis1 U_hat0}\n')
+                        file.write('dict set joystick1_config DOWN {+axis1 D_hat0}\n')
                     if nplayer == 2:
                         file.write("plug joyportb joystick2\n")
+                        file.write('dict set joystick2_config LEFT {-axis0 L_hat0}\n')
+                        file.write('dict set joystick2_config RIGHT {+axis0 R_hat0}\n')
+                        file.write('dict set joystick2_config UP {-axis1 U_hat0}\n')
+                        file.write('dict set joystick2_config DOWN {+axis1 D_hat0}\n')
                     for x in pad.inputs:
                         input = pad.inputs[x]
                         if input.name == "y":
@@ -147,13 +169,13 @@ class OpenmsxGenerator(Generator):
 
         if system.name == "colecovision":
             commandArray[1:1] = ["-machine", "ColecoVision_SGM"]
-        
+
         if system.name == "spectravideo":
             commandArray[1:1] = ["-machine", "Spectravideo_SVI-328"]
-        
+
         if system.isOptSet("hud") and system.config["hud"] != "":
             commandArray.insert(0, "mangohud")
-        
+
         # setup the media types
         if file_extension == ".zip":
             with zipfile.ZipFile(rom, "r") as zip_file:
@@ -163,7 +185,7 @@ class OpenmsxGenerator(Generator):
                     if file_extension in [".cas", ".dsk", ".ogv"]:
                         eslog.debug(f"Zip file contains: {file_extension}")
                         break
-        
+
         if file_extension == ".ogv":
             eslog.debug("File is a laserdisc")
             for i in range(len(commandArray)):
@@ -171,13 +193,13 @@ class OpenmsxGenerator(Generator):
                     commandArray[i+1] = "Pioneer_PX-7"
                 elif commandArray[i] == "-cart":
                     commandArray[i] = "-laserdisc"
-        
+
         if file_extension == ".cas":
             eslog.debug("File is a cassette")
             for i in range(len(commandArray)):
                 if commandArray[i] == "-cart":
                     commandArray[i] = "-cassetteplayer"
-        
+
         if file_extension == ".dsk":
             eslog.debug("File is a disk")
             disk_type = "-diska"
@@ -186,7 +208,7 @@ class OpenmsxGenerator(Generator):
             for i in range(len(commandArray)):
                 if commandArray[i] == "-cart":
                     commandArray[i] = disk_type
-        
+
         # handle our own file format for stacked roms / disks
         if file_extension == ".openmsx":
             # read the contents of the file and extract the rom paths

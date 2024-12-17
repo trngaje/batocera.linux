@@ -2,15 +2,14 @@ default:
   options:
     gfxbackend: gl
     video_threaded: true
-    retroarch.video_rotation: 0 # for people upgrading
     # menu retroarch
     retroarch.menu_driver: ozone
     retroarch.audio_driver: alsathread
     retroarch.menu_scale_factor: 1.500000
 
 nds:
-  emulator: drastic
-  core:     drastic
+  emulator: drastic_steward
+  core:     drastic_steward
 fmtowns:
   emulator: libretro
   core:     mame
@@ -23,6 +22,8 @@ atomiswave:
 dreamcast:
   emulator: libretro
   core:     flycastvl
+  options:
+    hud_support: false
 naomi:
   emulator: libretro
   core:     flycastvl

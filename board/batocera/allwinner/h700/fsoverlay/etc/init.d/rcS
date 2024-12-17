@@ -4,6 +4,12 @@
 # using the sdl-compat/SDL2 for rendering
 insmod /lib/modules/mali_kbase.ko
 
+# Rotate screen for the rg28xx
+BOARD=$(cat /boot/boot/batocera.board)
+if [ "$BOARD" = "rg28xx" ]; then
+    fbset -g 480 640 480 1280 32 -t 13426 192 56 22 1 136 3
+fi
+
 # Call the charger process
 /usr/bin/charger
 
@@ -32,7 +38,7 @@ for i in /etc/init.d/S??* ; do
             ;;
         *)
             case "$i" in
-                *S02resize | *S05udev | *S06audio | *S11share | *S12populateshare) # Don't run these in background
+                *S01dbus | *S02resize | *S03modules | *S04populate | *S05udev | *S06audio | *S06modprobe | *S11share | *S12populateshare) # Don't run these in background
                     $i start
                     ;;
                 *)

@@ -1,26 +1,29 @@
-#!/usr/bin/env python
+from __future__ import annotations
 
-from generators.Generator import Generator
-import batoceraFiles
-import Command
-import shutil
+import filecmp
 import os
-from utils.logger import get_logger
-from os import path
-from os import environ
-import configparser
-from xml.dom import minidom
-import codecs
 import shutil
-import utils.bezels as bezelsUtil
+from os import environ
+from os import path
 import subprocess
-from xml.dom import minidom
-from PIL import Image, ImageOps
-from pathlib import Path
-import csv
-import controllersConfig
+from typing import TYPE_CHECKING
+
+from ... import Command
+from ...batoceraPaths import CONFIGS
+from ...controller import generate_sdl_game_controller_config
+from ..Generator import Generator
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    from ...types import HotkeysContext
 
 class AdvMameGenerator(Generator):
+    def getHotkeysContext(self) -> HotkeysContext:
+        return {
+            "name": "advmame",
+            "keys": { "exit": "KEY_ESC" }
+        }
 
     def generate(self, system, rom, playersControllers, metadata, guns, wheels, gameResolution):
         # Extract "<romfile.zip>"
@@ -52,4 +55,4 @@ class AdvMameGenerator(Generator):
         commandArray =  [ "/usr/bin/advmame" ]
         commandArray += [ os.path.splitext(romBasename)[0] ]
   
-        return Command.Command(array=commandArray, env={'SDL_GAMECONTROLLERCONFIG': controllersConfig.generateSdlGameControllerConfig(playersControllers)})
+        return Command.Command(array=commandArray, env={'SDL_GAMECONTROLLERCONFIG': generate_sdl_game_controller_config(playersControllers)})

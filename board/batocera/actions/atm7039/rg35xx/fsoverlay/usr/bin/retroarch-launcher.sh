@@ -28,9 +28,13 @@ export HOME=/userdata/system
 # Start PVR 
 /usr/local/bin/pvrsrvctl --start --no-module
 
-LAUNCHER="emulationstation"
-if [ -f /boot/startRA ]; then
-        LAUNCHER="retroarch"
+CUSTOM_LAUNCHER_FILE="/userdata/system/customlauncher"
+
+LAUNCHER="simplemenu"
+
+if [ -f "${CUSTOM_LAUNCHER_FILE}" ]; then
+    # Read the content of the file
+    LAUNCHER=$(cat "${CUSTOM_LAUNCHER_FILE}")
 fi
 
 GAMELAUNCH=1
@@ -38,13 +42,11 @@ while test -e "${REBOOT_FLAG}"
 do
     if test "$LAUNCHER" = "retroarch"
     then
-	cd $HOME
+        cd $HOME
         retroarch --verbose
     else
-	cd $HOME
-	simplemenu
-        #emulationstation 
-	#--windowed
+        cd $HOME
+        $LAUNCHER
     fi
     GAMELAUNCH=0
 done

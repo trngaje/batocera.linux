@@ -3,9 +3,9 @@
 # batocera-emulationstation
 #
 ################################################################################
-# Last update: Commits on Aug 27, 2024
-BATOCERA_EMULATIONSTATION_VERSION = eab377242f947d8ca06468d5da1cbf2c74049950
-BATOCERA_EMULATIONSTATION_SITE = https://github.com/batocera-linux/batocera-emulationstation
+# Last update: Commits on Oct 18, 2024
+BATOCERA_EMULATIONSTATION_VERSION = knulli
+BATOCERA_EMULATIONSTATION_SITE = https://github.com/knulli-cfw/batocera-emulationstation
 BATOCERA_EMULATIONSTATION_SITE_METHOD = git
 BATOCERA_EMULATIONSTATION_LICENSE = MIT
 BATOCERA_EMULATIONSTATION_GIT_SUBMODULES = YES
@@ -25,7 +25,7 @@ BATOCERA_EMULATIONSTATION_CONF_OPTS += -DCMAKE_EXE_LINKER_FLAGS=-lmali
 BATOCERA_EMULATIONSTATION_CONF_OPTS += -DCMAKE_SHARED_LINKER_FLAGS=-lmali
 endif
 
-ifeq ($(BR2_PACKAGE_HAS_LIBGL),y)
+ifeq ($(BR2_PACKAGE_HAS_LIBGL)$(BR2_PACKAGE_XSERVER_XORG_SERVER),yy)
 BATOCERA_EMULATIONSTATION_CONF_OPTS += -DGL=ON
 else
 ifeq ($(BR2_PACKAGE_HAS_LIBGLES),y)
@@ -34,7 +34,6 @@ endif
 endif
 
 ifeq ($(BR2_PACKAGE_RPI_USERLAND),y)
-BATOCERA_EMULATIONSTATION_DEPENDENCIES += omxplayer
 BATOCERA_EMULATIONSTATION_CONF_OPTS += -DBCM=ON -DRPI=ON
 endif
 
@@ -119,6 +118,8 @@ define BATOCERA_EMULATIONSTATION_RESOURCES
 	$(INSTALL) -m 0755 -d $(TARGET_DIR)/usr/share/emulationstation/resources/flags
 	$(INSTALL) -m 0755 -d $(TARGET_DIR)/usr/share/emulationstation/resources/battery
 	$(INSTALL) -m 0755 -d $(TARGET_DIR)/usr/share/emulationstation/resources/services
+	$(INSTALL) -m 0755 -d $(TARGET_DIR)/usr/share/emulationstation/resources/shaders
+	$(INSTALL) -m 0755 -d $(TARGET_DIR)/usr/share/emulationstation/resources/shaders/kawase
 	$(INSTALL) -m 0644 -D $(@D)/resources/*.* \
 	    $(TARGET_DIR)/usr/share/emulationstation/resources
 	$(INSTALL) -m 0644 -D $(@D)/resources/help/*.* \
@@ -129,11 +130,14 @@ define BATOCERA_EMULATIONSTATION_RESOURCES
 	    $(TARGET_DIR)/usr/share/emulationstation/resources/battery
 	$(INSTALL) -m 0644 -D $(@D)/resources/services/*.* \
 	    $(TARGET_DIR)/usr/share/emulationstation/resources/services
+	$(INSTALL) -m 0644 -D $(@D)/resources/shaders/*.* \
+	    $(TARGET_DIR)/usr/share/emulationstation/resources/shaders
+	$(INSTALL) -m 0644 -D $(@D)/resources/shaders/*.* \
+	    $(TARGET_DIR)/usr/share/emulationstation/resources/shaders/kawase
 
 	# es_input.cfg
 	mkdir -p $(TARGET_DIR)/usr/share/batocera/datainit/system/configs/emulationstation
-	cp $(BATOCERA_EMULATIONSTATION_SOURCE_PATH)/controllers/es_input.cfg \
-		$(TARGET_DIR)/usr/share/batocera/datainit/system/configs/emulationstation
+	cp $(BATOCERA_EMULATIONSTATION_SOURCE_PATH)/controllers/es_input.cfg $(TARGET_DIR)/usr/share/emulationstation
 
 	# savestates config
 	$(INSTALL) -m 0644 $(BATOCERA_EMULATIONSTATION_SOURCE_PATH)/es_savestates.cfg $(TARGET_DIR)/usr/share/emulationstation
@@ -156,10 +160,6 @@ BATOCERA_EMULATIONSTATION_CONF_OPTS += -DCEC=OFF
 #else
 #BATOCERA_EMULATIONSTATION_CONF_OPTS += -DCEC=ON
 #endif
-
-ifeq ($(BR2_PACKAGE_BATOCERA_SPLASH_OMXPLAYER),y)
-BATOCERA_EMULATIONSTATION_ARGS = $${EXTRA_OPTS}
-endif
 
 # on SPLASH_MPV, the splash with video + es splash is ok
 ifeq ($(BR2_PACKAGE_BATOCERA_SPLASH_MPV),y)

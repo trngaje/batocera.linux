@@ -2,7 +2,6 @@ default:
   options:
     gfxbackend: gl
     video_threaded: true
-    retroarch.video_rotation: 0 # for people upgrading
     # menu retroarch
     retroarch.menu_driver: ozone
     retroarch.menu_scale_factor: "1.500000"
@@ -26,3 +25,6 @@ dreamcast:
 naomi:
   emulator: libretro
   core:     flycastvl
+n64:
+  emulator: libretro
+  core:     parallel_n64

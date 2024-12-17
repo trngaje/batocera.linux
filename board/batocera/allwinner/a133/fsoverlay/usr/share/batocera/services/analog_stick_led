@@ -1,0 +1,20 @@
+#!/bin/bash
+
+case "$1" in
+  start)
+  # Code in here will only be executed on start.
+    echo -n "Enabling analog stick LEDs"
+    /usr/bin/analog_stick_led_daemon.sh start clear
+    ;;
+  stop)
+    echo -n "Disabling analog stick LEDs"
+    # Code in here will only be executed on shutdown.
+    /usr/bin/analog_stick_led_daemon.sh stop
+    ;;
+  *)
+    # Code in here will be executed in all other conditions.
+    echo "Usage: $0 {start|stop}"
+    ;;
+esac
+ 
+exit $?

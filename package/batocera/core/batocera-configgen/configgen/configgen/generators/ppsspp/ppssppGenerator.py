@@ -1,16 +1,27 @@
-#!/usr/bin/env python
+from __future__ import annotations
 
-import Command
-import batoceraFiles
-from generators.Generator import Generator
-import shutil
+from typing import TYPE_CHECKING
+
+from ... import Command
+from ...batoceraPaths import CONFIGS, SAVES
+from ...controller import generate_sdl_game_controller_config
+from ..Generator import Generator
+from . import ppssppConfig, ppssppControllers
+from .ppssppPaths import PPSSPP_CONFIG_DIR
+
 import os
-import configparser
-import controllersConfig
-from . import ppssppConfig
-from . import ppssppControllers
+
+if TYPE_CHECKING:
+    from ...types import HotkeysContext
+
 
 class PPSSPPGenerator(Generator):
+
+    def getHotkeysContext(self) -> HotkeysContext:
+        return {
+            "name": "ppsspp",
+            "keys": { "exit": ["KEY_LEFTALT", "KEY_F4"], "save_state": "KEY_F3", "restore_state": "KEY_F4", "menu": "KEY_F9", "pause": "KEY_F9", "next_slot": "KEY_F6", "previous_slot": "KEY_F5" }
+        }
 
     # Main entry of the module
     # Configure fba and return a command
@@ -23,15 +34,15 @@ class PPSSPPGenerator(Generator):
             os.system("cp -rv /usr/share/ppsspp/PPSSPP/assets/_flash0/* /userdata/system/configs/ppsspp/PSP/flash0")
             
         # Remove the old gamecontrollerdb.txt file
-        dbpath = "/userdata/system/configs/ppsspp/gamecontrollerdb.txt"
-        if os.path.exists(dbpath):
-            os.remove(dbpath)
-        
+        dbpath = PPSSPP_CONFIG_DIR / "gamecontrollerdb.txt"
+        if dbpath.exists():
+            dbpath.unlink()
+
         # Generate the controls.ini
         for index in playersControllers :
             controller = playersControllers[index]
             # We only care about player 1
-            if controller.player != "1":
+            if controller.player_number != 1:
                 continue
             ppssppControllers.generateControllerConfig(controller)
             break
@@ -61,14 +72,14 @@ class PPSSPPGenerator(Generator):
             nplayer = nplayer +1
 
         return Command.Command(
-            array=commandArray, 
+            array=commandArray,
             env={
-                "XDG_CONFIG_HOME":batoceraFiles.CONF,
-                "XDG_DATA_HOME":batoceraFiles.SAVES,
-                "SDL_GAMECONTROLLERCONFIG": controllersConfig.generateSdlGameControllerConfig(playersControllers)
+                "XDG_CONFIG_HOME":CONFIGS,
+                "XDG_DATA_HOME":SAVES,
+                "SDL_GAMECONTROLLERCONFIG": generate_sdl_game_controller_config(playersControllers)
             }
         )
-    
+
     @staticmethod
     def isLowResolution(gameResolution):
         return gameResolution["width"] <= 480 or gameResolution["height"] <= 480

@@ -33,8 +33,7 @@ stop_pipewire() {
 
 case "$1" in
     start)
-        alsactl init # init cards with alsa files
-	start_pipewire
+        start_pipewire
     ;;
     stop)
         stop_pipewire

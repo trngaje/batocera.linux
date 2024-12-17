@@ -47,8 +47,10 @@ endif
 #fix tclConfig.sh paths!
 define OPENMSX_TCL_CONFIG_FIXUP
     cp $(STAGING_DIR)/usr/lib/tclConfig.sh $(STAGING_DIR)/usr/lib/tclConfig.sh.bak
-    sed -i "s@TCL_LIB_SPEC='-L/usr/lib -ltcl8.6'@TCL_LIB_SPEC='-L$(STAGING_DIR)/usr/lib -ltcl8.6'@" $(STAGING_DIR)/usr/lib/tclConfig.sh
-    sed -i "s@TCL_INCLUDE_SPEC='-I/usr/include'@TCL_INCLUDE_SPEC='-I$(STAGING_DIR)/usr/include'@" $(STAGING_DIR)/usr/lib/tclConfig.sh
+    sed -i "s@TCL_LIB_SPEC='-L/usr/lib -ltcl8.6'@TCL_LIB_SPEC='-L$(STAGING_DIR)/usr/lib -ltcl8.6'@" \
+        $(STAGING_DIR)/usr/lib/tclConfig.sh
+    sed -i "s@TCL_INCLUDE_SPEC='-I/usr/include'@TCL_INCLUDE_SPEC='-I$(STAGING_DIR)/usr/include'@" \
+        $(STAGING_DIR)/usr/lib/tclConfig.sh
 endef
 
 #change the appropriate directories & then compile & install.
@@ -64,9 +66,12 @@ endef
 
 define OPENMSX_INSTALL_TARGET_CMDS
     mkdir -p $(TARGET_DIR)/usr/share/evmapy
-    cp -f $(BR2_EXTERNAL_BATOCERA_PATH)/package/batocera/emulators/openmsx/*.keys $(TARGET_DIR)/usr/share/evmapy/
-    cp -f $(BR2_EXTERNAL_BATOCERA_PATH)/package/batocera/emulators/openmsx/settings.xml $(TARGET_DIR)/usr/share/openmsx
-    
+
+    cp -f $(BR2_EXTERNAL_BATOCERA_PATH)/package/batocera/emulators/openmsx/*.keys \
+        $(TARGET_DIR)/usr/share/evmapy/
+    cp -f $(BR2_EXTERNAL_BATOCERA_PATH)/package/batocera/emulators/openmsx/settings.xml \
+        $(TARGET_DIR)/usr/share/openmsx
+
     wget https://www.msxarchive.nl/pub/msx/emulator/openMSX/systemroms.zip -P $(TARGET_DIR)/usr/share/openmsx
     unzip $(TARGET_DIR)/usr/share/openmsx/systemroms.zip -d $(TARGET_DIR)/usr/share/openmsx
     rm $(TARGET_DIR)/usr/share/openmsx/systemroms.zip

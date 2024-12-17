@@ -68,9 +68,7 @@ shared:
     toggle_fast_forward:
       prompt: TOGGLE FAST FORWARD
       description: Enable to toggle fast forward instead of holding it down. Only on libretro cores.
-      choices:
-        "On":  1
-        "Off": 0
+      preset: switchauto
     autosave:
       prompt: AUTO SAVE/LOAD ON GAME LAUNCH
       description: Load latest save state on game launch and save state when exiting game.
@@ -95,6 +93,13 @@ shared:
       choices:
         "On": 1
         "Off": 0
+    integeroverscale:
+      prompt:  INTEGER OVERSCALE
+      description: Forces integer scaling to round up instead of down.
+      submenu: GAME RENDERING & SHADERS
+      choices:
+        "On": 1
+        "Off": 0        
     bezel:
       prompt: DECORATION SET
       submenu: DECORATIONS
@@ -148,12 +153,12 @@ shared:
       prompt: RESIZE TATTOO
       description: Shrink/expand tattoo to fit within the bezel's border.
       submenu: DECORATIONS
-      preset: switchon
+      preset: switchauto
     ai_service_enabled:
       prompt: ENABLE AI TRANSLATION SERVICE
       description: During gameplay, press Hotkey + R1 to translate on-screen text. Only on libretro cores.
       submenu: AI GAME TRANSLATION
-      preset: switch
+      preset: switchauto
     ai_target_lang:
       prompt: TARGET LANGUAGE
       description: The language to translate into.
@@ -188,7 +193,7 @@ shared:
     ai_service_pause:
       prompt: PAUSE ON TRANSLATED SCREEN
       submenu: AI GAME TRANSLATION
-      preset: switch
+      preset: switchauto
     runahead:
       submenu:     LATENCY REDUCTION
       prompt:      RUN-AHEAD FRAMES
@@ -236,74 +241,6 @@ shared:
       choices:
         "On": 1
         "Off": 0
-    use_guns:
-      order: 99
-      group: CONTROLS
-      submenu: LIGHT GUNS
-      prompt: USE LIGHT GUNS
-      description: Use light guns instead of pads if light guns are connected.
-      choices:
-        "On":  1
-        "Off": 0
-    use_wheels:
-      order: 100
-      group: CONTROLS
-      submenu: WHEELS
-      prompt: USE WHEELS
-      description: Use wheels instead of pads if wheels are connected.
-      choices:
-        "On":  1
-        "Off": 0
-    wheel_rotation:
-      order: 100
-      group: CONTROLS
-      submenu: WHEELS
-      prompt: WHEEL ROTATION
-      description: Maximum wheel rotation from left to right (in degrees)
-      choices:
-        "150": 150
-        "180": 180
-        "200": 200
-        "240": 240
-        "270": 270
-        "360": 360
-        "720": 720
-        "900": 900
-        "1080": 1080
-    wheel_deadzone:
-      order: 100
-      group: CONTROLS
-      submenu: WHEELS
-      prompt: WHEEL DEADZONE
-      description: Zone for which the game doesn't react to the wheel (in degrees)
-      choices:
-        "5":   5
-        "10": 10
-        "15": 15
-        "20": 20
-        "25": 25
-        "30": 30
-        "35": 35
-        "40": 40
-        "45": 45
-        "50": 50
-    wheel_midzone:
-      order: 100
-      group: CONTROLS
-      submenu: WHEELS
-      prompt: WHEEL MIDZONE
-      description: Reserve a non dead zone at the center of the wheel to go straight ahead (in degrees)
-      choices:
-        "1":   1
-        "2":   2
-        "3":   3
-        "4":   4
-        "5":   5
-        "6":   6
-        "7":   7
-        "8":   8
-        "9":   9
-        "10": 10
     rumble_gain:
       prompt:      RUMBLE LEVEL
       description: For emulators and controllers supporting force feedback.
@@ -331,19 +268,275 @@ shared:
         "+8":          8.000000
         "+10":         10.000000
         "+12":         12.000000
-    bordersmode:
-      group: LIGHT GUN
-      prompt:      BORDER MODE
-      description: Show/Hide guns borders for specific systems
+    hotkey_up:
+      order: 98
+      group: CONTROLS
+      submenu: HOTKEYS
+      prompt: INCREASE SAVE SLOT NUMBER
+      description: Default hotkey + UP.
       choices:
-        "normal": "normal"
-        "hidden": "hidden"
-
+        "none": "none"
+        "up": "up"
+        "down": "down"
+        "left": "left"
+        "right": "right"
+        "y": "y"
+        "x": "x"
+        "b": "b"
+        "a": "a"
+        "l1": "pageup"
+        "r1": "pagedown"
+        "l2": "l2"
+        "r2": "r2"
+        "l3": "l3"
+        "r3": "r3"
+    hotkey_down:
+      order: 98
+      group: CONTROLS
+      submenu: HOTKEYS
+      prompt: DECREASE SAVE SLOT NUMBER
+      description: Default hotkey + DOWN.
+      choices:
+        "none": "none"
+        "up": "up"
+        "down": "down"
+        "left": "left"
+        "right": "right"
+        "y": "y"
+        "x": "x"
+        "b": "b"
+        "a": "a"
+        "l1": "pageup"
+        "r1": "pagedown"
+        "l2": "l2"
+        "r2": "r2"
+        "l3": "l3"
+        "r3": "r3"
+    hotkey_left:
+      order: 98
+      group: CONTROLS
+      submenu: HOTKEYS
+      prompt: REWIND
+      description: Default hotkey + LEFT.
+      choices:
+        "none": "none"
+        "up": "up"
+        "down": "down"
+        "left": "left"
+        "right": "right"
+        "y": "y"
+        "x": "x"
+        "b": "b"
+        "a": "a"
+        "l1": "pageup"
+        "r1": "pagedown"
+        "l2": "l2"
+        "r2": "r2"
+        "l3": "l3"
+        "r3": "r3"
+    hotkey_right:
+      order: 98
+      group: CONTROLS
+      submenu: HOTKEYS
+      prompt: FAST-FORWARD
+      description: Default hotkey + RIGHT.
+      choices:
+        "none": "none"
+        "up": "up"
+        "down": "down"
+        "left": "left"
+        "right": "right"
+        "y": "y"
+        "x": "x"
+        "b": "b"
+        "a": "a"
+        "l1": "pageup"
+        "r1": "pagedown"
+        "l2": "l2"
+        "r2": "r2"
+        "l3": "l3"
+        "r3": "r3"
+    hotkey_y:
+      order: 98
+      group: CONTROLS
+      submenu: HOTKEYS
+      prompt: SAVE STATE
+      description: Default hotkey + Y.
+      choices:
+        "none": "none"
+        "up": "up"
+        "down": "down"
+        "left": "left"
+        "right": "right"
+        "y": "y"
+        "x": "x"
+        "b": "b"
+        "a": "a"
+        "l1": "pageup"
+        "r1": "pagedown"
+        "l2": "l2"
+        "r2": "r2"
+        "l3": "l3"
+        "r3": "r3"
+    hotkey_x:
+      order: 98
+      group: CONTROLS
+      submenu: HOTKEYS
+      prompt: LOAD STATE
+      description: Default hotkey + X.
+      choices:
+        "none": "none"
+        "up": "up"
+        "down": "down"
+        "left": "left"
+        "right": "right"
+        "y": "y"
+        "x": "x"
+        "b": "b"
+        "a": "a"
+        "l1": "pageup"
+        "r1": "pagedown"
+        "l2": "l2"
+        "r2": "r2"
+        "l3": "l3"
+        "r3": "r3"
+    hotkey_b:
+      order: 98
+      group: CONTROLS
+      submenu: HOTKEYS
+      prompt: RETROARCH MENU
+      description: Default hotkey + B.
+      choices:
+        "none": "none"
+        "up": "up"
+        "down": "down"
+        "left": "left"
+        "right": "right"
+        "y": "y"
+        "x": "x"
+        "b": "b"
+        "a": "a"
+        "l1": "pageup"
+        "r1": "pagedown"
+        "l2": "l2"
+        "r2": "r2"
+        "l3": "l3"
+        "r3": "r3"
+    hotkey_a:
+      order: 98
+      group: CONTROLS
+      submenu: HOTKEYS
+      prompt: RESET EMULATOR
+      description: Default hotkey + A.
+      choices:
+        "none": "none"
+        "up": "up"
+        "down": "down"
+        "left": "left"
+        "right": "right"
+        "y": "y"
+        "x": "x"
+        "b": "b"
+        "a": "a"
+        "l1": "pageup"
+        "r1": "pagedown"
+        "l2": "l2"
+        "r2": "r2"
+        "l3": "l3"
+        "r3": "r3"
+    hotkey_l1:
+      order: 98
+      group: CONTROLS
+      submenu: HOTKEYS
+      prompt: SCREENSHOT
+      description: Default hotkey + L1.
+      choices:
+        "none": "none"
+        "up": "up"
+        "down": "down"
+        "left": "left"
+        "right": "right"
+        "y": "y"
+        "x": "x"
+        "b": "b"
+        "a": "a"
+        "l1": "pageup"
+        "r1": "pagedown"
+        "l2": "l2"
+        "r2": "r2"
+        "l3": "l3"
+        "r3": "r3"
+    hotkey_r1:
+      order: 98
+      group: CONTROLS
+      submenu: HOTKEYS
+      prompt: AUTO TRANSLATE
+      description: Default hotkey + R1.
+      choices:
+        "none": "none"
+        "up": "up"
+        "down": "down"
+        "left": "left"
+        "right": "right"
+        "y": "y"
+        "x": "x"
+        "b": "b"
+        "a": "a"
+        "l1": "pageup"
+        "r1": "pagedown"
+        "l2": "l2"
+        "r2": "r2"
+        "l3": "l3"
+        "r3": "r3"
+    hotkey_l2:
+      order: 98
+      group: CONTROLS
+      submenu: HOTKEYS
+      prompt: PREVIOUS SHADER
+      description: Default hotkey + L2.
+      choices:
+        "none": "none"
+        "up": "up"
+        "down": "down"
+        "left": "left"
+        "right": "right"
+        "y": "y"
+        "x": "x"
+        "b": "b"
+        "a": "a"
+        "l1": "pageup"
+        "r1": "pagedown"
+        "l2": "l2"
+        "r2": "r2"
+        "l3": "l3"
+        "r3": "r3"
+    hotkey_r2:
+      order: 98
+      group: CONTROLS
+      submenu: HOTKEYS
+      prompt: NEXT SHADER
+      description: Default hotkey + R2.
+      choices:
+        "none": "none"
+        "up": "up"
+        "down": "down"
+        "left": "left"
+        "right": "right"
+        "y": "y"
+        "x": "x"
+        "b": "b"
+        "a": "a"
+        "l1": "pageup"
+        "r1": "pagedown"
+        "l2": "l2"
+        "r2": "r2"
+        "l3": "l3"
+        "r3": "r3"
 global:
-  shared: [powermode, batterymode, tdp, videomode, ratio, shaderset, smooth, integerscale, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo, ai_service_enabled, ai_target_lang, ai_service_url, ai_service_pause, rewind, runahead, secondinstance, video_frame_delay_auto, vrr_runloop_enable, video_threaded, rumble_gain]
+  shared: [powermode, batterymode, tdp, videomode, ratio, shaderset, smooth, integerscale, integeroverscale, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo, ai_service_enabled, ai_target_lang, ai_service_url, ai_service_pause, rewind, toggle_fast_forward, runahead, secondinstance, video_frame_delay_auto, vrr_runloop_enable, video_threaded, rumble_gain]
 
 libretro:
-  shared: [powermode, tdp, videomode, ratio, shaderset, smooth, integerscale, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo, ai_service_enabled, ai_target_lang, ai_service_url, ai_service_pause, toggle_fast_forward, runahead, preemptiveframes, secondinstance, video_frame_delay_auto, vrr_runloop_enable, video_threaded, rumble_gain, audio_volume, bordersmode]
+  shared: [powermode, tdp, videomode, ratio, shaderset, smooth, integerscale, integeroverscale, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo, ai_service_enabled, ai_target_lang, ai_service_url, ai_service_pause, toggle_fast_forward, runahead, preemptiveframes, secondinstance, video_frame_delay_auto, vrr_runloop_enable, video_threaded, rumble_gain, audio_volume, hotkey_up, hotkey_down, hotkey_left, hotkey_right, hotkey_y, hotkey_x, hotkey_b, hotkey_a, hotkey_l1, hotkey_r1, hotkey_l2, hotkey_r2]
   cfeatures:
     gfxbackend:
       archs_include: [x86, x86_64, bcm2711, bcm2712, a3gen2]
@@ -471,17 +664,11 @@ libretro:
                         choices:
                             "Off":     disabled
                             "On":      enabled
+
     beetle-saturn:
       features: [netplay, cheevos]
-      shared: [autosave, use_guns, use_wheels, wheel_rotation, wheel_deadzone, wheel_midzone]
+      shared: [autosave]
       cfeatures:
-          beetle-saturn_crosshair:
-                group: LIGHT GUN
-                prompt:      LIGHT GUN CROSSHAIR
-                choices:
-                    "Cross": "Cross"
-                    "Dot": "Dot"
-                    "Disabled": "Off"
           beetle-saturn-autowidescreen:
                 prompt:      AUTO WIDESCREEN
                 description: Automatically sets aspect ratio to 16/9 for games that natively support it. 2D elements like HUD/UI may be stretched.
@@ -524,7 +711,7 @@ libretro:
                     "On":  ON
     bsnes:
       features: [netplay, cheevos]
-      shared: [rewind, autosave, use_guns]
+      shared: [rewind, autosave]
       cfeatures:
             bsnes_video_filter:
                 prompt: VIDEO FILTERS
@@ -573,7 +760,7 @@ libretro:
 
     mesen-s:
       features: [netplay, padtokeyboard]
-      shared: [rewind, autosave, use_guns]
+      shared: [rewind, autosave]
       cfeatures:
             mesen-s_ntsc_filter:
                 group: ADVANCED OPTIONS
@@ -1079,7 +1266,7 @@ libretro:
                     "Disabled": "disabled"
                     "Enabled":  "enabled"
     dolphin:
-      shared: [autosave, use_wheels, wheel_rotation, wheel_deadzone, wheel_midzone]
+      shared: [autosave]
       cfeatures:
                     wii_resolution:
                         prompt: RENDERING RESOLUTION
@@ -1415,7 +1602,7 @@ libretro:
                     "Off":                              "disabled"
     swanstation:
       features: [cheevos]
-      shared: [autosave, use_guns, use_wheels, wheel_rotation, wheel_deadzone, wheel_midzone]
+      shared: [autosave]
       cfeatures:
             swanstation_PatchFastBoot:
                 prompt:      SHOW BIOS BOOTLOGO
@@ -1509,16 +1696,9 @@ libretro:
                     "NeGcon":                        773
                     "Namco GunCon":                  260
                     "PlayStation Mouse":             258
-            swanstation_Controller_ShowCrosshair:
-                group:       LIGHT GUN
-                prompt:      SHOW LIGHT GUN CROSSHAIRS
-                description:
-                choices:
-                    "Off":     "false"
-                    "On":      "true"
     duckstation:
       features: [cheevos]
-      shared: [autosave, use_wheels, wheel_rotation, wheel_deadzone, wheel_midzone]
+      shared: [autosave]
       cfeatures:
             swanstation_PatchFastBoot:
                 prompt:      SHOW BIOS BOOTLOGO
@@ -1608,7 +1788,7 @@ libretro:
     #easyrpg:
     fbneo:
       features: [netplay, cheevos]
-      shared: [rewind, autosave, use_guns, use_wheels, wheel_rotation, wheel_deadzone, wheel_midzone]
+      shared: [rewind, autosave]
       cfeatures:
             fbneo-cpu-speed-adjust:
                 group: ADVANCED OPTIONS
@@ -1648,12 +1828,6 @@ libretro:
                 choices:
                     "Off":    "False"
                     "On":     "True"
-            fbneo-lightgun-hide-crosshair:
-                group: LIGHT GUN
-                prompt:      SHOW LIGHT GUN CROSSHAIRS
-                choices:
-                    "Off":                                disabled
-                    "On":                                 enabled
       systems:
             neogeo:
                 cfeatures:
@@ -1675,14 +1849,8 @@ libretro:
                             "Per-game":                           per-game
     fceumm:
       features: [netplay, cheevos]
-      shared: [rewind, autosave, use_guns]
+      shared: [rewind, autosave]
       cfeatures:
-            fceumm_show_crosshair:
-                group: LIGHT GUN
-                prompt:      SHOW LIGHT GUN CROSSHAIRS
-                choices:
-                    "Off":        disabled
-                    "On":         enabled
             fceumm_nospritelimit:
                 prompt:      REDUCE SPRITE FLICKERING
                 description: Enhancement. Remove the eight sprites per line limit.
@@ -1762,7 +1930,7 @@ libretro:
                     "Arkanoid paddle":      514
     flycast:
       features: [cheevos]
-      shared: [autosave, use_guns, use_wheels, wheel_rotation, wheel_deadzone, wheel_midzone]
+      shared: [autosave]
       cfeatures:
             reicast_synchronous_rendering:
                 group: ADVANCED OPTIONS
@@ -1792,42 +1960,164 @@ libretro:
                     "10x (6400x4800)":   6400x4800
                     "11x (7040x5280)":   7040x5280
                     "12x (7680x5760)":   7680x5760
-            reicast_lightgun1_crosshair:
-                group: LIGHT GUN
-                prompt:      PLAYER 1 CROSSHAIR COLOR
+            reicast_mipmapping:
+                group: ADVANCED OPTIONS
+                prompt:      TEXTURE MIP-MAPPING (BLUR)
+                description: Smooth textures on distant 3D objects based on angle.
                 choices:
-                    Red: Red
-                    Blue: Blue
-                    Green: Green
-                    White: White
-                    Disabled: disabled
-            reicast_lightgun2_crosshair:
-                group: LIGHT GUN
-                prompt:      PLAYER 2 CROSSHAIR COLOR
+                    "Off": disabled
+                    "On":  enabled
+            reicast_anisotropic_filtering:
+                group: ADVANCED OPTIONS
+                prompt:      ANISOTROPIC FILTERING
+                description: Improves clarity of distant textures when mip-mapping is enabled.
                 choices:
-                    Red: Red
-                    Blue: Blue
-                    Green: Green
-                    White: White
-                    Disabled: disabled
-            reicast_lightgun3_crosshair:
-                group: LIGHT GUN
-                prompt:      PLAYER 3 CROSSHAIR COLOR
+                    "Off": off
+                    "2x":  2
+                    "4x":  4
+                    "8x":  8
+                    "16x": 16
+            reicast_texupscale:
+                group: ADVANCED OPTIONS
+                prompt:      TEXTURE UPSCALING (XBRZ)
+                description: Enhancement. Upscales screen textures (2D games only).
                 choices:
-                    Red: Red
-                    Blue: Blue
-                    Green: Green
-                    White: White
-                    Disabled: disabled
-            reicast_lightgun4_crosshair:
-                group: LIGHT GUN
-                prompt:      PLAYER 4 CROSSHAIR COLOR
+                    "Off": 1
+                    "2x":  2
+                    "4x":  4
+                    "6x":  6
+            reicast_frame_skipping:
+                prompt:      FRAMESKIP
+                description: Skip frames to improve performance, at the cost of choppy motion.
                 choices:
-                    Red: Red
-                    Blue: Blue
-                    Green: Green
-                    White: White
-                    Disabled: disabled
+                    "Off": disabled
+                    "1":   1
+                    "2":   2
+                    "3":   3
+                    "4":   4
+                    "5":   5
+                    "6":   6
+            reicast_region:
+                prompt: CONSOLE REGION
+                description: Choose the Dreamcast console region.
+                choices:
+                    "USA":      Usa
+                    "Europe":   Europe
+                    "Japan":    Japan
+                    "Default":  Default
+            reicast_language:
+                prompt: BIOS LANGUAGE
+                description: Dreamcast BIOS's language setting. Can change the language of some games. Some games default to Japanese.
+                choices:
+                    "English":   English
+                    "German":    German
+                    "French":    French
+                    "Spanish":   Spanish
+                    "Italian":   Italian
+                    "Japanese":  Japanese
+                    "Default":   Default
+            reicast_force_wince:
+                group: ADVANCED OPTIONS
+                prompt:      FORCE WINDOWS CE MODE
+                description: Required for some games.
+                choices:
+                    "Off": disabled
+                    "On":  enabled
+            flycast-autowidescreen:
+                prompt:      AUTO WIDESCREEN
+                description: Automatically sets aspect ratio to 16/9 for games that natively support it. 2D elements like HUD/UI may be stretched.
+                choices:
+                    "Off":       "False"
+                    "On":        "True"
+            reicast_widescreen_cheats:
+                prompt:      WIDESCREEN CHEAT (PRIORITY)
+                description: Enhancement. Only works with a 16/9 ratio and bezels disabled.
+                choices:
+                    "Off": disabled
+                    "On":  enabled
+            reicast_widescreen_hack:
+                prompt:      WIDESCREEN HACK (GLITCHY)
+                description: Enhancement. Only works with a 16/9 ratio and bezels disabled.
+                choices:
+                    "Off": disabled
+                    "On":  enabled
+            controller1_dc:
+                prompt:      CONTROLLER 1 TYPE
+                choices:
+                    "Gamepad":   1
+                    "Keyboard":  3
+                    "Mouse":     2
+                    "Light Gun": 4
+            controller2_dc:
+                prompt:      CONTROLLER 2 TYPE
+                choices:
+                    "Gamepad":   1
+                    "Keyboard":  3
+                    "Mouse":     2
+                    "Light Gun": 4
+            controller3_dc:
+                prompt:      CONTROLLER 3 TYPE
+                choices:
+                    "Gamepad":   1
+                    "Keyboard":  3
+                    "Mouse":     2
+                    "Light Gun": 4
+            controller4_dc:
+                prompt:      CONTROLLER 4 TYPE
+                choices:
+                    "Gamepad":   1
+                    "Keyboard":  3
+                    "Mouse":     2
+                    "Light Gun": 4
+      systems:
+            atomiswave:
+                cfeatures:
+                    screen_rotation_atomiswave:
+                        prompt:      SCREEN ORIENTATION
+                        description: Useful for certain arcade games.
+                        choices:
+                            "Horizontal": horizontal
+                            "Vertical":   vertical
+            naomi:
+                cfeatures:
+                    screen_rotation_naomi:
+                        prompt:      SCREEN ORIENTATION
+                        description: Useful for certain arcade games.
+                        choices:
+                            "Horizontal": horizontal
+                            "Vertical":   vertical
+    flycastvl:
+      features: [cheevos]
+      shared: [autosave]
+      cfeatures:
+            reicast_synchronous_rendering:
+                group: ADVANCED OPTIONS
+                prompt:      SYNCHRONOUS RENDERING
+                description: Can avoid flashing screen issues. Significant performance cost.
+                choices:
+                    "Off": disabled
+                    "On":  enabled
+            reicast_internal_resolution:
+                prompt:      RENDERING RESOLUTION
+                description: Enhancement. Increase the rendering resolution. Makes 3D objects clearer.
+                choices:
+                    "1x (640x480)":      640x480
+                    "1.25x (800x600)":   800x600
+                    "1.5x (960x720)":    960x720
+                    "1.6x (1024x768)":   1024x768
+                    "2x (1280x960)":     1280x960
+                    "2.25x (1440x1080)": 1440x1080
+                    "2.5x (1600x1200)":  1600x1200
+                    "3x (1920x1440)":    1920x1440
+                    "4x (2560x1920)":    2560x1920
+                    "5x (3200x2400)":    3200x2400
+                    "6x (3840x2880)":    3840x2880
+                    "7x (4480x3360)":    4480x3360
+                    "8x (5120x3840)":    5120x3840
+                    "9x (5760x4320)":    5760x4320
+                    "10x (6400x4800)":   6400x4800
+                    "11x (7040x5280)":   7040x5280
+                    "12x (7680x5760)":   7680x5760
             reicast_mipmapping:
                 group: ADVANCED OPTIONS
                 prompt:      TEXTURE MIP-MAPPING (BLUR)
@@ -2161,7 +2451,6 @@ libretro:
 
       systems:
             megadrive:
-                shared: [use_guns]
                 cfeatures:
                     gpgx_blargg_filter_md:
                         group: ADVANCED OPTIONS
@@ -2172,12 +2461,6 @@ libretro:
                             "Composite (color bleeding + artifacts)": composite
                             "SVideo (color bleeding only)":           svideo
                             "RGB (crisp image)":                      rgb
-                    gun_cursor_md:
-                        group: LIGHT GUN
-                        prompt:      SHOW LIGHT GUN CROSSHAIRS
-                        choices:
-                            "Off":        disabled
-                            "On":         enabled
                     controller1_md:
                         submenu:     CONTROLLERS
                         prompt:      CONTROLLER 1 TYPE
@@ -2276,7 +2559,6 @@ libretro:
                             "10":     10
                             "0":      0
             mastersystem:
-                shared: [use_guns]
                 cfeatures:
                     gpgx_blargg_filter_ms:
                         group: ADVANCED OPTIONS
@@ -2295,12 +2577,6 @@ libretro:
                             "Autodetect":  automatic
                             "Off":         disabled
                             "On (forced)": enabled
-                    gun_cursor_ms:
-                        group: LIGHT GUN
-                        prompt:      SHOW LIGHT GUN CROSSHAIRS
-                        choices:
-                            "Off":        disabled
-                            "On":         enabled
                     controller1_ms:
                         prompt:      CONTROLLER 1 TYPE
                         choices:
@@ -2637,13 +2913,6 @@ libretro:
                 group: ADVANCED OPTIONS
                 prompt:      CUSTOM CONFIG
                 description: Use a custom MAME config, do not overwrite config on launch.
-                choices:
-                    "On":            1
-                    "Off (Default)": 0
-            offscreenreload:
-                group: LIGHT GUN
-                prompt:      OFF-SCREEN RELOAD BUTTON
-                description: Set gun button 2 to reload.
                 choices:
                     "On":            1
                     "Off (Default)": 0
@@ -3743,13 +4012,9 @@ libretro:
                       choices:
                           "On":  1
                           "Off": 0
-
-    mame0139:
-      shared: [use_guns]
-
     mame078plus:
       features: [netplay]
-      shared: [rewind, autosave, use_guns]
+      shared: [rewind, autosave]
       cfeatures:
             mame2003-plus_analog:
                 prompt:      CONTROL MAPPING
@@ -3780,6 +4045,12 @@ libretro:
                 choices:
                     "Off":        disabled
                     "On":         enabled
+            mame078plus-hhtate:
+                prompt: HANDHELD TATE MODE
+                description: Rotates the display and remaps inputs for device to be used sideways.
+                choices:
+                    "Off":    "False"
+                    "On":     "True"                    
             mame2003-plus_neogeo_bios:
                 prompt:      NEO GEO BIOS
                 choices:
@@ -3789,60 +4060,6 @@ libretro:
                     "Arcade MVS Japan":                    japan
                     "Arcade Universe BIOS 4.0 (Cheats)":   unibios40
                     "Arcade Universe BIOS 3.3 (Cheats)":   unibios33
-            mame2003-plus_crosshair_enabled:
-                group: LIGHT GUN
-                prompt:      SHOW LIGHT GUN CROSSHAIRS
-                choices:
-                    "Off":        disabled
-                    "On":         enabled
-    mame2003_plus_dsno:
-      features: [netplay]
-      shared: [rewind, autosave, use_guns]
-      cfeatures:
-            mame2003-plus_analog:
-                prompt:      CONTROL MAPPING
-                choices:
-                    "Analog":       analog
-                    "Digital":      digital
-            mame2003-plus_frameskip:
-                prompt:      FRAMESKIP
-                description: Skip frames to improve performance, at the cost of choppy motion.
-                choices:
-                    "Off":          0
-                    "1":            1
-                    "2":            2
-                    "3":            3
-                    "4":            4
-                    "5":            5
-            mame2003-plus_input_interface:
-                group: ADVANCED OPTIONS
-                prompt:      INPUT INTERFACE
-                description: Keyboard shortcuts unavailable if passing through the keyboard.
-                choices:
-                    "Retropad":             retropad
-                    "Keyboard passthrough": keyboard
-                    "Simultaneous":         simultaneous
-            mame2003-plus_tate_mode:
-                prompt:      VERTICAL ROTATION (TATE)
-                description: Rotates screen by 90 degrees. Intended for rotating displays.
-                choices:
-                    "Off":        disabled
-                    "On":         enabled
-            mame2003-plus_neogeo_bios:
-                prompt:      NEO GEO BIOS
-                choices:
-                    "Console AES World":                   asia-aes
-                    "Arcade MVS Europe":                   euro
-                    "Arcade MVS USA":                      us
-                    "Arcade MVS Japan":                    japan
-                    "Arcade Universe BIOS 4.0 (Cheats)":   unibios40
-                    "Arcade Universe BIOS 3.3 (Cheats)":   unibios33
-            mame2003-plus_crosshair_enabled:
-                group: LIGHT GUN
-                prompt:      SHOW LIGHT GUN CROSSHAIRS
-                choices:
-                    "Off":        disabled
-                    "On":         enabled
     mednafen_lynx:
       features: [netplay, cheevos]
       shared: [rewind, autosave]
@@ -3851,7 +4068,7 @@ libretro:
       shared: [rewind, autosave]
     mednafen_psx:
       features: [cheevos]
-      shared: [autosave, use_guns, use_wheels, wheel_rotation, wheel_deadzone, wheel_midzone]
+      shared: [autosave]
       cfeatures:
             beetle_psx_hw_skip_bios:
                 prompt:      SHOW BIOS BOOTLOGO
@@ -4072,7 +4289,7 @@ libretro:
                     "Skynet": Skynet
     mupen64plus-next:
       features: [cheevos]
-      shared: [autosave, use_wheels, wheel_rotation, wheel_deadzone, wheel_midzone]
+      shared: [autosave]
       cfeatures:
             mupen64plus-43screensize:
                 prompt:      4:3 RENDERING RESOLUTION
@@ -4322,14 +4539,8 @@ libretro:
                     "On":           On
     nestopia:
       features: [netplay]
-      shared: [rewind, autosave, use_guns]
+      shared: [rewind, autosave]
       cfeatures:
-            nestopia_show_crosshair:
-                group: LIGHT GUN
-                prompt:      SHOW LIGHT GUN CROSSHAIRS
-                choices:
-                    "Off":        disabled
-                    "On":         enabled
             nestopia_nospritelimit:
                 prompt:      REDUCE SPRITE FLICKERING
                 description: Enhancement. Remove the eight sprites per line limit.
@@ -4620,7 +4831,7 @@ libretro:
                     "244fps":          244fps
     opera:
       features: [netplay, cheevos]
-      shared: [rewind, autosave, use_guns]
+      shared: [rewind, autosave]
       cfeatures:
             high_resolution:
                 prompt:      RENDERING RESOLUTION
@@ -4670,7 +4881,7 @@ libretro:
                     "Per Game": per game
     parallel_n64:
       features: [cheevos]
-      shared: [autosave, use_wheels, wheel_rotation, wheel_deadzone, wheel_midzone]
+      shared: [autosave]
       cfeatures:
             parallel-n64-gfxplugin:
                 prompt: GRAPHICS PLUGIN
@@ -4864,7 +5075,6 @@ libretro:
                     "Off":        disabled
                     "On":         enabled
     pcsx2:
-      shared: [use_wheels, wheel_rotation, wheel_deadzone, wheel_midzone]
       cfeatures:
             lr_pcsx2_fast_boot:
                 prompt: BIOS FAST BOOT
@@ -4874,7 +5084,7 @@ libretro:
                     "Enabled":  enabled
     pcsx_rearmed:
       features: [cheevos]
-      shared: [autosave, use_guns, use_wheels, wheel_rotation, wheel_deadzone, wheel_midzone]
+      shared: [autosave]
       cfeatures:
             show_bios_bootlogo:
                 prompt:      SHOW BIOS BOOTLOGO
@@ -4942,24 +5152,6 @@ libretro:
                     "Hyper Blaster/Justifier":       516
                     "NeGcon":                        773
                     "PlayStation Mouse":             258
-            pcsx_rearmed_crosshair1:
-                group:       LIGHT GUN
-                prompt:      PLAYER 1 CROSSHAIR COLOR
-                choices:
-                    Red:        red
-                    Blue:       blue
-                    Green:      green
-                    White:      white
-                    Disabled:   disabled
-            pcsx_rearmed_crosshair2:
-                group:       LIGHT GUN
-                prompt:      PLAYER 2 CROSSHAIR COLOR
-                choices:
-                    Red:        red
-                    Blue:       blue
-                    Green:      green
-                    White:      white
-                    Disabled:   disabled
     picodrive:
       features: [netplay, cheevos]
       shared: [autosave]
@@ -5768,7 +5960,7 @@ libretro:
                     "On":         enabled
     snes9x:
       features: [netplay, cheevos]
-      shared: [rewind, autosave, use_guns]
+      shared: [rewind, autosave]
       cfeatures:
             reduce_sprite_flicker:
                 group: ADVANCED OPTIONS
@@ -5834,12 +6026,6 @@ libretro:
                 choices:
                     "SNES Gamepad":          1
                     "Konami Justifier (P2)": 772
-            superscope_crosshair:
-                group: LIGHT GUN
-                prompt:      SHOW LIGHT GUN CROSSHAIRS
-                choices:
-                    "Off":                                disabled
-                    "On":                                 enabled
             snes9x_blargg_filter:
                 prompt: BLARGG NTSC FILTER
                 description: Apply a video filter to mimic various NTSC TV signals.
@@ -5853,7 +6039,7 @@ libretro:
 
     snes9x_next:
       features: [netplay, cheevos]
-      shared: [rewind, autosave, use_guns]
+      shared: [rewind, autosave]
       cfeatures:
             2010_reduce_sprite_flicker:
                 prompt:      REDUCE SPRITE FLICKERING
@@ -5902,12 +6088,6 @@ libretro:
                     "Super Scope":            260
                     "Konami Justifier":       516
                     "Dual Konami Justifiers": 772
-            superscope_crosshair:
-                group: LIGHT GUN
-                prompt:      SHOW LIGHT GUN CROSSHAIRS
-                choices:
-                    "Off":                                disabled
-                    "On":                                 enabled
             snes9x_2010_blargg_filter:
                 prompt: BLARGG NTSC FILTER
                 description: Apply a video filter to mimic various NTSC TV signals.
@@ -5921,7 +6101,7 @@ libretro:
 
     stella:
       features: [netplay, cheevos]
-      shared: [rewind, autosave, use_guns]
+      shared: [rewind, autosave]
     tgbdual:
       features: [netplay]
       shared: [rewind, autosave]
@@ -6890,6 +7070,7 @@ libretro:
       shared: [rewind, autosave]
 
     uzem:
+      features: [cheevos]
       shared: [rewind, autosave]
 
     #play:
@@ -6949,7 +7130,7 @@ cannonball:
                 "On":  1
 
 cemu:
-  shared: [powermode, tdp, videomode, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo, use_wheels, wheel_rotation, wheel_deadzone, wheel_midzone]
+  shared: [powermode, tdp, videomode, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo]
   cfeatures:
         cemu_gfxbackend:
             prompt:      GRAPHICS API
@@ -7157,7 +7338,7 @@ citra:
 
 hypseus-singe:
   features: [padtokeyboard]
-  shared: [powermode, tdp, videomode, use_guns]
+  shared: [powermode, tdp, videomode]
   cfeatures:
         hypseus_api:
             archs_include: [x86, x86_64, bcm2711, bcm2712, a3gen2]
@@ -7182,10 +7363,10 @@ hypseus-singe:
         hypseus_bezels:
             prompt: BEZELS
             description: Enable or disable bezels being added when content is a 4:3 aspect with a widescreen display.
-            preset: switchon
+            preset: switchauto
         hypseus_filter:
             prompt: SMOOTH GAMES (BILINEAR FILTERING)
-            preset: switchoff
+            preset: switchauto
         hypseus_scanlines:
             archs_include: [x86, x86_64]
             group: ADVANCED OPTIONS
@@ -7204,17 +7385,17 @@ hypseus-singe:
         hypseus_axis:
             prompt: INVERT AXIS
             description: Invert the vertical joystick axis on flight games.
-            preset: switchoff
+            preset: switchauto
         hypseus_texturestream:
             group: ADVANCED OPTIONS
             prompt: SDL TEXTURE ACCESS STREAMING
             description: Can improve video performance. Do not use with ActionMax games or scanlines.
-            preset: switchoff
+            preset: switchauto
         hypseus_joy:
             group: ADVANCED OPTIONS
             prompt: CUSTOM CONTROLLER
             description: Use controller settings manually defined in custom.ini.
-            preset: switchoff
+            preset: switchauto
   systems:
     singe:
       cfeatures:
@@ -7233,13 +7414,6 @@ hypseus-singe:
             "10": 10
             "15": 15
             "20": 20
-        singe_crosshair:
-          group: LIGHT GUN
-          prompt: HIDE LIGHT GUN CROSSHAIRS
-          description: Hide crosshairs in supported games e.g. ActionMax, Maddog II.
-          choices:
-            "Hide": 1
-            "Show": 0
         singe_abs:
             group: ADVANCED OPTIONS
             prompt: ABSOLUTE MOUSE INPUT
@@ -7255,7 +7429,7 @@ devilutionx:
 dolphin:
   cores:
     'dolphin':
-        shared: [powermode, tdp, videomode, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo, use_wheels, wheel_rotation, wheel_deadzone, wheel_midzone]
+        shared: [powermode, tdp, videomode, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo]
         features: [cheevos]
         cfeatures:
                 dolphin_aspect_ratio:
@@ -7270,7 +7444,7 @@ dolphin:
                     submenu: DISPLAY
                     prompt: VSYNC
                     description: Fix screen tearing. CPU heavy.
-                    preset: switchon
+                    preset: switchauto
                 gfxbackend:
                     archs_include: [x86, x86_64, bcm2711, bcm2712, a3gen2]
                     submenu: RENDERING
@@ -7305,7 +7479,7 @@ dolphin:
                     submenu: RENDERING
                     prompt: PRE-CACHE SHADERS
                     description: Compile shaders on next launch of game (one time). Reduces micro-freezes. Vulkan only.
-                    preset: switchoff
+                    preset: switchauto
                 anisotropic_filtering:
                     submenu: RENDERING
                     prompt: ANISOTROPIC FILTERING
@@ -7329,61 +7503,61 @@ dolphin:
                     submenu: RENDERING
                     prompt: ANTI-ALIASING MODE
                     description: Use SSAA instead of MSAA for anti-aliasing. SSAA may look better but has a higher performance cost.
-                    preset: switchoff
+                    preset: switchauto
                 hires_textures:
                     submenu: RENDERING
                     prompt: LOAD CUSTOM TEXTURES
-                    preset: switchoff
+                    preset: switchauto
                 manual_texture_sampling:
                     submenu: RENDERING
                     prompt: MANUAL TEXTURE SAMPLING
                     description: Enabling will allow for correct emulation of texture wrapping. This comes at a cost of potential worse performance.
-                    preset: switchoff
+                    preset: switchauto
                 dual_core:
                     submenu: EMULATION
                     prompt: DUAL CORE MODE
                     description: Usually not much faster than single core mode.
-                    preset: switchoff
+                    preset: switchauto
                 gpu_sync:
                     submenu: EMULATION
                     prompt: GPU SYNC
                     description: Speed hack for dual core mode to fix some glitches.
-                    preset: switchoff
+                    preset: switchauto
                 perf_hacks:
                     submenu: EMULATION
                     prompt: PERFORMANCE HACKS
                     description: Increase emulator performance, at the cost of accuracy/stability.
-                    preset: switchoff
+                    preset: switchauto
                 enable_cheats:
                     submenu: EMULATION
                     prompt: ENABLE CHEATS
                     description: To use game cheats or 16/9 Aspect Ratio Fix codes.
-                    preset: switchoff
+                    preset: switchauto
                 enable_mmu:
                     submenu: EMULATION
                     prompt: MEMORY MANAGEMENT UNIT
                     description: Required by some games.
-                    preset: switchoff
+                    preset: switchauto
                 enable_fastdisc:
                     submenu: EMULATION
                     prompt: FAST DISK TRANSFER RATE
                     description: Enhancement. Removes disc loading.
-                    preset: switchoff
+                    preset: switchauto
                 vbi_hack:
                     submenu: EMULATION
                     prompt: VBI SKIP
                     description: Skips Vertical Blank Interrupts when lag is detected, allowing for smooth audio playback when emulation speed is not 100%.
-                    preset: switchoff
+                    preset: switchauto
                 use_pad_profiles:
                     group: CONTROLS
                     prompt: USE PAD PROFILES
                     description: Search for custom configured joystick profiles.
-                    preset: switchoff
+                    preset: switchauto
                 rumble:
                     group: CONTROLS
                     prompt: RUMBLE
                     description: Enable controller rumble capabilities if supported by the controller.
-                    preset: switchoff
+                    preset: switchauto
                 dolphin_port_1_type:
                     group: CONTROLS
                     submenu: GAMECUBE CONTROLLER 1
@@ -7449,25 +7623,25 @@ dolphin:
                     submenu: GAMECUBE CONTROLLER 1
                     prompt: ROTATE FACE BUTTONS
                     description: Moves South to West, West to North, etc. Standard controller type only.
-                    preset: switchoff
+                    preset: switchauto
                 alt_mappings_2:
                     group: CONTROLS
                     submenu: GAMECUBE CONTROLLER 2
                     prompt: ROTATE FACE BUTTONS
                     description: Moves South to West, West to North, etc. Standard controller type only.
-                    preset: switchoff
+                    preset: switchauto
                 alt_mappings_3:
                     group: CONTROLS
                     submenu: GAMECUBE CONTROLLER 3
                     prompt: ROTATE FACE BUTTONS
                     description: Moves South to West, West to North, etc. Standard controller type only.
-                    preset: switchoff
+                    preset: switchauto
                 alt_mappings_4:
                     group: CONTROLS
                     submenu: GAMECUBE CONTROLLER 4
                     prompt: ROTATE FACE BUTTONS
                     description: Moves South to West, West to North, etc. Standard controller type only.
-                    preset: switchoff
+                    preset: switchauto
                 deadzone_1:
                     group: CONTROLS
                     submenu: GAMECUBE CONTROLLER 1
@@ -7560,12 +7734,12 @@ dolphin:
                     group: AUDIO
                     prompt: DOLBY PRO LOGIC II
                     description: Enables Dolby Pro Logic II for surround sound. May impact performance.
-                    preset: switchoff
+                    preset: switchauto
                 ShowDpMsg:
                     submenu: DISPLAY
                     prompt: SHOW ON-SCREEN DISPLAY MESSAGES
                     description: Show on screen display messages (memory card saves..).
-                    preset: switchoff
+                    preset: switchauto
         systems:
             gamecube:
                 cfeatures:
@@ -7573,12 +7747,12 @@ dolphin:
                         submenu: DISPLAY
                         prompt: WIDESCREEN HACK (GLITCHY)
                         description: Enhancement. Only works with a 16/9 ratio and bezels disabled.
-                        preset: switchoff
+                        preset: switchauto
                     dolphin_SkipIPL:
                         submenu: EMULATION
                         prompt: ENABLE BOOT ANIMATION
                         description: Enable Gamecube boot animation and BIOS access (requires IPL.bin BIOS in appropriate user directory).
-                        preset: switchoff
+                        preset: switchauto
                     gamecube_language:
                         submenu: EMULATION
                         prompt: GAMECUBE LANGUAGE
@@ -7591,7 +7765,6 @@ dolphin:
                             "Italian":              4
                             "Dutch":                5
             wii:
-                shared: [use_guns]
                 cfeatures:
                     tv_mode:
                         submenu: DISPLAY
@@ -7605,7 +7778,7 @@ dolphin:
                         submenu: WII CONTROLLERS
                         prompt: EMULATE WIIMOTE
                         description: Map your controller to an emulated Wiimote.
-                        preset: switchoff
+                        preset: switchauto
                     controller_mode:
                         group: CONTROLS
                         submenu: WII CONTROLLERS
@@ -7632,20 +7805,13 @@ dolphin:
                         submenu: WII CONTROLLERS
                         prompt: DUALSHOCK MOTION CONTROL
                         description: Emulate the Wiimote pointer with a DS4's gyroscope.
-                        preset: switchoff
+                        preset: switchauto
                     mouseir:
                         group: CONTROLS
                         submenu: WII CONTROLLERS
                         prompt: MOUSE AS WIIMOTE POINTER
                         description: Emulate the Wiimote pointer with a mouse.
-                        preset: switchoff
-                    dolphin-lightgun-hide-crosshair:
-                        order: 99
-                        group: CONTROLS
-                        submenu: LIGHT GUNS
-                        prompt: SHOW LIGHT GUN CROSSHAIRS
-                        preset: switchoff
-
+                        preset: switchauto
 dolphin_triforce:
   shared: [powermode, tdp, videomode, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo]
   cfeatures:
@@ -7770,7 +7936,7 @@ dosbox-x:
   shared: [powermode, tdp, videomode, ratio, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo]
 
 duckstation:
-  shared: [powermode, tdp, videomode, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo, use_guns, use_wheels, wheel_rotation, wheel_deadzone, wheel_midzone]
+  shared: [powermode, tdp, videomode, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo]
   features: [cheevos]
   cfeatures:
         duckstation_clocking:
@@ -8069,16 +8235,8 @@ duckstation:
                 "8x SSAA":            "8-ssaa"
                 "16x SSAA":           "16-ssaa"
                 "32x SSAA":           "32-ssaa"
-        duckstation_crosshair:
-            group: LIGHT GUN
-            prompt: CROSSHAIR
-            description:
-            choices:
-                "Disabled (Default)": "0"
-                "Enabled":            "100"
-
 flycast:
-  shared: [powermode, tdp, videomode, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo, use_wheels, wheel_rotation, wheel_deadzone, wheel_midzone]
+  shared: [powermode, tdp, videomode, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo]
   features: [cheevos]
   cfeatures:
     flycast_ratio:
@@ -8128,49 +8286,6 @@ flycast:
         "Per Strip":              2
         "Per Triangle (Default)": 1
         "Per Pixel":              3
-    flycast_lightgun1_crosshair:
-        group: LIGHT GUN
-        prompt:      PLAYER 1 CROSSHAIR COLOR
-        choices:
-            "Red"       :   -1073741571
-            "Blue"      :   -1057153792
-            "Green"     :   -1073479933
-            "White"     :   -1056964609
-            "Disabled"  :   0
-    flycast_lightgun2_crosshair:
-        group: LIGHT GUN
-        prompt:      PLAYER 2 CROSSHAIR COLOR
-        choices:
-            "Red"       :   -1073741571
-            "Blue"      :   -1057153792
-            "Green"     :   -1073479933
-            "White"     :   -1056964609
-            "Disabled"  :   0
-    flycast_lightgun3_crosshair:
-        group: LIGHT GUN
-        prompt:      PLAYER 3 CROSSHAIR COLOR
-        choices:
-            "Red"       :   -1073741571
-            "Blue"      :   -1057153792
-            "Green"     :   -1073479933
-            "White"     :   -1056964609
-            "Disabled"  :   0
-    flycast_lightgun4_crosshair:
-        group: LIGHT GUN
-        prompt:      PLAYER 4 CROSSHAIR COLOR
-        choices:
-            "Red"       :   -1073741571
-            "Blue"      :   -1057153792
-            "Green"     :   -1073479933
-            "White"     :   -1056964609
-            "Disabled"  :   0
-    flycast_offscreen_reload:
-      group:       LIGHT GUN
-      prompt:      OFF-SCREEN RELOAD BUTTON
-      description: Set gun button 2 to reload.
-      choices:
-        "Off":     0
-        "On":      1
 
   systems:
     dreamcast:
@@ -8477,7 +8592,7 @@ moonlight:
                 "7.1": "7.1"
 
 mupen64plus:
-  shared: [powermode, tdp, videomode, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo, use_wheels, wheel_rotation, wheel_deadzone, wheel_midzone]
+  shared: [powermode, tdp, videomode, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo]
   cfeatures:
         mupen64plus_ratio:
             prompt:      GAME ASPECT RATIO
@@ -8768,7 +8883,7 @@ openbor:
 pcsx2:
   cores:
     'pcsx2':
-      shared: [powermode, tdp, videomode, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo, use_guns, use_wheels, wheel_rotation, wheel_deadzone, wheel_midzone]
+      shared: [powermode, tdp, videomode, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo]
       features: [cheevos]
       cfeatures:
         pcsx2_shaderset:
@@ -8996,23 +9111,6 @@ pcsx2:
             choices:
                 "Off": "false"
                 "On":  "true"
-        pcsx2_wheel_type:
-            group: WHEELS
-            prompt: WHEEL MODEL
-            description: Playstation 2 wheel type
-            choices:
-              "Driving Force":      DrivingForce
-              "Driving Force Pro":  DrivingForcePro
-              "GT Force":           GTForce
-              "Virtual":            Virtual
-        pcsx2_crosshairs:
-            group:       LIGHT GUN
-            prompt:      SHOW LIGHT GUN CROSSHAIRS
-            description:
-            choices:
-                "Off":     0
-                "On":      1
-
 ppsspp:
   shared: [powermode, tdp, videomode, ratio, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo, rewind]
   cfeatures:
@@ -9123,13 +9221,13 @@ ppsspp:
 
 pygame:
   features: [padtokeyboard]
-  shared: [powermode, tdp, videomode, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo, use_guns]
+  shared: [powermode, tdp, videomode, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo]
 
 reicast:
   shared: [powermode, tdp, videomode, ratio, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo]
 
 rpcs3:
-  shared: [powermode, tdp, videomode, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo, use_guns, use_wheels, wheel_rotation, wheel_deadzone, wheel_midzone]
+  shared: [powermode, tdp, videomode, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo]
   cfeatures:
         rpcs3_ppudecoder:
             submenu: CPU
@@ -9424,12 +9522,6 @@ rpcs3:
             choices:
                 "Off": 0
                 "On":  1
-        rpcs3_crosshairs:
-            group: LIGHT GUN
-            prompt: SHOW LIGHT GUN CROSSHAIRS
-            choices:
-                "Off": False
-                "On":  True
         rpcs3_controller1:
             submenu: CONTROLLERS
             prompt: PS3 CONTROLLER 1
@@ -9652,7 +9744,7 @@ superbroswar:
 
 supermodel:
   features: [padtokeyboard]
-  shared: [powermode, tdp, videomode, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo, use_wheels, wheel_rotation, wheel_deadzone, wheel_midzone]
+  shared: [powermode, tdp, videomode, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo]
   cfeatures:
         engine3D:
             group: ADVANCED OPTIONS
@@ -9674,15 +9766,6 @@ supermodel:
             choices:
                 "Off":      0
                 "On":       1
-        crosshairs:
-            group:       LIGHT GUN
-            prompt:      SHOW LIGHT GUN CROSSHAIRS
-            description: Enable crosshairs in shooting games for the selected players.
-            choices:
-                "None":     0
-                "P1 only":  1
-                "P2 only":  2
-                "P1 & P2":  3
         forceFeedback:
             prompt:      RUMBLE
             description: Only some games feature rumble. Not compatible with all controllers.
@@ -9800,7 +9883,7 @@ tsugaru:
 
 mame:
   features: [padtokeyboard]
-  shared: [powermode, tdp, videomode, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo, use_guns, use_wheels, wheel_rotation, wheel_deadzone, wheel_midzone]
+  shared: [powermode, tdp, videomode, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo]
   cfeatures:
         video:
             prompt:      VIDEO MODE
@@ -9882,21 +9965,6 @@ mame:
             choices:
                 "Enabled":            1
                 "Disabled (Default)": 0
-        offscreenreload:
-            group: LIGHT GUN
-            prompt:      OFF-SCREEN RELOAD BUTTON
-            description: Set gun button 2 to reload.
-            choices:
-                "On":            1
-                "Off (Default)": 0
-        mame_crosshair:
-            group: LIGHT GUN
-            prompt: CROSSHAIR
-            description:
-            choices:
-                "Disabled (Default)": "disabled"
-                "Enabled":            "enabled"
-                "When moving":        "onmove"
   systems:
        adam:
             cfeatures:
@@ -11244,6 +11312,13 @@ drastic:
             choices:
                 "Off": 0
                 "On":  1
+        drastic_scaling:
+            group: ADVANCED OPTIONS
+            prompt:      IMAGE SCALING
+            description: Switches between smooth (Bilinear) and sharp (Nearest Neighbor) image scaling.
+            choices:
+                "Bilinear": bilinear
+                "Nearest-neighbor":  nearest
         drastic_fix2d:
             group: ADVANCED OPTIONS
             prompt:      KEEP MAIN SCREEN ON TOP
@@ -11344,6 +11419,45 @@ xemu:
 lexaloffle:
   features: [padtokeyboard]
   shared: [powermode, tdp, videomode, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo]
+  systems:
+    pico8:
+        cfeatures:
+            pico8_showfps:
+                group: ADVANCED OPTIONS
+                prompt: SHOW FPS
+                description: Show current FPS during gameplay.
+                choices:
+                    "Off":  0
+                    "On":   1
+            pico8_pixelperfect:
+                group: ADVANCED OPTIONS
+                prompt: PIXEL PERFECT
+                description: Enables integer scaling for pixel-perfect image quality.
+                choices:
+                    "Off":  0
+                    "On":   1                    
+            pico8_splorefilter:
+                group: ADVANCED OPTIONS
+                prompt: SPLORE FILTER
+                description: Filters out games tagged mature in splore.
+                choices:
+                    "Off":  0
+                    "On":   1
+            pico8_framesleep:
+                group: ADVANCED OPTIONS
+                prompt: FRAME SLEEP DURATION
+                description: Set the number of milliseconds to wait each frame to reduce power usage.
+                choices:
+                    "1 (Default)":  1
+                    "2":            2
+                    "3":            3
+                    "4":            4
+                    "5":            5
+                    "6":            6
+                    "7":            7
+                    "8":            8
+                    "9":            9
+                    "10":           10
 
 ecwolf:
   features: [padtokeyboard]
@@ -11481,12 +11595,6 @@ model2emu:
             choices:
                 "Off": false
                 "On":  true
-        model2_crossHairs:
-            group: LIGHT GUN
-            prompt: SHOW LIGHT GUN CROSSHAIRS
-            choices:
-                "Off": 0
-                "On":  1
         model2_fakeGouraud:
             group: ADVANCED OPTIONS
             prompt:      FAKE GOURAUD
@@ -11563,7 +11671,7 @@ gsplus:
 
 play:
   features: [padtokeyboard]
-  shared: [powermode, tdp, videomode, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo, use_wheels, wheel_rotation, wheel_deadzone, wheel_midzone]
+  shared: [powermode, tdp, videomode, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo]
   cfeatures:
       play_api:
           prompt: GRAPHICS API
@@ -11964,7 +12072,7 @@ openmsx:
                 "Hard Disk Image":   "hda"
 
 demul:
-  shared: [powermode, tdp, videomode, use_wheels, wheel_rotation, wheel_deadzone, wheel_midzone]
+  shared: [powermode, tdp, videomode]
   cfeatures:
         demulRatio:
             prompt:      GAME ASPECT RATIO
@@ -12401,19 +12509,19 @@ vita3k:
     vita3k_surface:
       prompt: DISABLE SURFACE SYNC
       description: Speed hack, enable to disable surface syncing between CPU and GPU. Surface syncing is needed by a few games.
-      preset: switchoff
+      preset: switchauto
     vita3k_linear:
       prompt: LINEAR FILTERING
       description: The image will be softer which could help with aliasing.
-      preset: switchoff
+      preset: switchauto
     vita3k_fxaa:
       prompt: FXAA
       description: Anti-aliasing is a technique for smoothing out jagged edges.
-      preset: switchoff
+      preset: switchauto
     vita3k_vsync:
       prompt: VSYNC
       description: Fix screen tearing.
-      preset: switchon
+      preset: switchauto
     vita3k_anisotropic:
       prompt:      ANISOTROPIC FILTERING
       description: Improves clarity of distant textures.
@@ -12426,7 +12534,7 @@ vita3k:
     vita3k_show_pointer:
       prompt: SHOW POINTER
       description: You can hide the pointer on touchscreen devices.
-      preset: switchon
+      preset: switchauto
 
 bigpemu:
   shared: [powermode, tdp, videomode, bezel, bezel_stretch, hud, hud_corner, bezel.tattoo, bezel.tattoo_corner, bezel.tattoo_file, bezel.resize_tattoo]
@@ -12489,7 +12597,7 @@ vpinball:
       group: EXPERT SETTINGS
       prompt: PER TABLE FOLDER
       description: Per Table Folder requires all files to be in the associated rom table folder. If disabled, consult the Wiki for further details.
-      preset: switchon
+      preset: switchauto
     vpinball_balltrail:
       group: DISPLAY
       prompt: BALL TRAIL STRENGTH
@@ -12543,7 +12651,7 @@ vpinball:
       group: DISPLAY
       prompt: ALTCOLOR
       description: Alternative Coloured Dot Matrix Display (needs additional file).
-      preset: switchon
+      preset: switchauto
     vpinball_playfield:
       group: WINDOWS POSITIONS
       prompt: PLAYFIELD
@@ -12598,12 +12706,12 @@ vpinball:
       group: WINDOWS POSITIONS
       prompt: DISPLAY BACKGLASS DMD
       description: When the Backglass is activated, display the small additional part with the scores.
-      preset: switchon
+      preset: switchauto
     vpinball_b2sgrill:
       group: WINDOWS POSITIONS
       prompt: DISPLAY BACKGLASS GRILL
       description: When the Backglass is activated, display the grill.
-      preset: switchon
+      preset: switchauto
     vpinball_dmdsize:
       group: WINDOWS POSITIONS
       prompt: DMD SIZE
@@ -12632,7 +12740,7 @@ vpinball:
       group: DISPLAY PHYSICAL SETUP
       prompt: ENABLE CUSTOM DISPLAY PHYSICAL SETUP
       description: Enable the custom values below.
-      preset: switch
+      preset: switchauto
     vpinball_screenwidth:
       group: DISPLAY PHYSICAL SETUP
       prompt: SCREEN WIDTH
@@ -12701,12 +12809,12 @@ vpinball:
       group: AUDIO
       prompt: ALTERNATIVE SOUND
       description: Alternative sounds for the table (needs additional files).
-      preset: switchon
+      preset: switchauto
     vpinball_pad_add_credit:
       prompt: USE JOYPAD SOUTH BUTTON TO ADD CREDIT
       group: EXPERT SETTINGS
       description: This should not be necessary, unless you are not using the default pad2key mapping.
-      preset: switch
+      preset: switchauto
 
 theforceengine:
   features: [padtokeyboard]
@@ -13108,8 +13216,7 @@ sonic-mania:
         "Traditional Chinese": "8"
 
 fba2x:
-  shared: [videomode, use_wheels, wheel_rotation, wheel_deadzone, wheel_midzone]
+  shared: [videomode]
 
 advmame:
   shared: []
-  
