@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Final
 
 from ... import Command
-from ...batoceraPaths import BIOS, HOME, ROMS, SCREENSHOTS, ensure_parents_and_open
+from ...batoceraPaths import BIOS, HOME, ROMS, SAVES, SCREENSHOTS, ensure_parents_and_open
 from ...controller import generate_sdl_game_controller_config
 from ..Generator import Generator
 
@@ -19,6 +19,7 @@ PICO8_BIN_PATH: Final = BIOS / "pico-8" / "pico8"
 PICO8_ROOT_PATH: Final = ROMS / "pico8"
 PICO8_CONTROLLERS: Final = HOME / ".lexaloffle" / "pico-8" / "sdl_controllers.txt"
 PICO8_CONFIG_PATH=HOME / ".lexaloffle" / "pico-8" / "config.txt"
+PICO8_SAVES_PATH: Final = SAVES / "pico8"
 VOX_BIN_PATH: Final = BIOS / "voxatron" / "vox"
 VOX_ROOT_PATH: Final = ROMS / "voxatron"
 VOX_CONTROLLERS: Final = HOME / ".lexaloffle" / "Voxatron" / "sdl_controllers.txt"
@@ -140,6 +141,8 @@ class LexaloffleGenerator(Generator):
             commandArray.extend(["-splore"])
         else:
             commandArray.extend(["-run", rom])
+
+        commandArray.extend(["-cdata_path", PICO8_SAVES_PATH])
 
         # Pixel perfect / integer scaling
         if system.isOptSet("pico8_pixelperfect") and system.config['pico8_pixelperfect'] == '1':
