@@ -131,6 +131,15 @@ config BR2_PACKAGE_BATOCERA_MUSIC_SUPPORT
 	help
 	  Music support packages (MIDI, MOD, S3M, XM, ....)
 
+config BR2_PACKAGE_KNULLI_POWERVR_GE8300_VULKAN
+	bool "knulli Vulkan support for PVR GE8300"
+        select BR2_PACKAGE_VULKAN_TOOLS
+        select BR2_PACKAGE_SPIRV_TOOLS
+        select BR2_PACKAGE_SHADERC
+
+        help
+          Vulkan support for PowerVR GE8300
+
 config BR2_PACKAGE_BATOCERA_VULKAN
 	bool "batocera.linux Vulkan support"
 
@@ -363,6 +372,8 @@ config BR2_PACKAGE_BATOCERA_SYSTEM
 						    BR2_PACKAGE_BATOCERA_TARGET_BCM2712	|| \
 						    BR2_PACKAGE_BATOCERA_TARGET_SM8250	|| \
 						    BR2_PACKAGE_BATOCERA_TARGET_RISCV
+
+	select BR2_PACKAGE_KNULLI_POWERVR_GE8300_VULKAN if BR2_PACKAGE_BATOCERA_TARGET_A133 
 
 	# wireless drivers
 	# use the morrownr RTL8812au & RTL8821au drivers
