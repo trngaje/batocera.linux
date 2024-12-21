@@ -63,7 +63,7 @@ initialize_settings() {
     AGGRESSIVE="$(/usr/bin/batocera-settings-get system.batterysaver.aggressive)"
     if [[ -z "$AGGRESSIVE" || ! "$AGGRESSIVE" =~ ^(1|0)$ ]]; then
         AGGRESSIVE="0" # default
-        /usr/bin/batocera-settings-set system.batterysaver.aggressive "$EXTENDED_TIMER"
+        /usr/bin/batocera-settings-set system.batterysaver.aggressive "$AGGRESSIVE"
     fi
 }
 
