@@ -147,4 +147,13 @@ define LIBRETRO_MUPEN64PLUS_NEXT_INSTALL_TARGET_CMDS
 		$(TARGET_DIR)/usr/lib/libretro/mupen64plus-next_libretro.so
 endef
 
+define LIBRETRO_MUPEN64PLUS_NEXT_PRE_CONFIGURE
+	cat  $(BR2_EXTERNAL_BATOCERA_PATH)/package/batocera/emulators/retroarch/libretro/libretro-mupen64plus-next/mupen64plus.ini \
+		>> $(@D)/mupen64plus-core/data/mupen64plus.ini
+
+	cd $(@D) && ./generate-ini-headers.sh
+endef
+
+LIBRETRO_MUPEN64PLUS_NEXT_PRE_CONFIGURE_HOOKS += LIBRETRO_MUPEN64PLUS_NEXT_PRE_CONFIGURE 
+
 $(eval $(generic-package))

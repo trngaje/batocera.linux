@@ -145,6 +145,10 @@ define BATOCERA_EMULATIONSTATION_RESOURCES
 	# hooks
 	cp $(BATOCERA_EMULATIONSTATION_SOURCE_PATH)/batocera-preupdate-gamelists-hook \
 	    $(TARGET_DIR)/usr/bin/
+
+	# fix to edit wrong korean 'ga'
+	cp $(BATOCERA_EMULATIONSTATION_SOURCE_PATH)/DroidSansFallbackFull_edited.ttf \
+		$(TARGET_DIR)/usr/share/emulationstation/resources/DroidSansFallbackFull.ttf
 endef
 
 ### S31emulationstation

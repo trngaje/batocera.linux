@@ -27,34 +27,28 @@ class Advanced_DrasticGenerator(Generator):
 
     def generate(self, system, rom, playersControllers, metadata, guns, wheels, gameResolution):
 
-        drastic_steward_root = "/userdata/system/drastic"
-        drastic_steward_bin = "/userdata/system/drastic/launch.sh"
-        drastic_steward_conf = "/userdata/system/drastic/config/drastic.cfg"
+        advanced_drastic_root = "/userdata/system/advanced_drastic"
+        advanced_drastic_bin = "/userdata/system/advanced_drastic/launch.sh"
+        advanced_drastic_conf = "/userdata/system/advanced_drastic/config/drastic.cfg"
 
         board = os.popen("cat /boot/boot/batocera.board").read()
         board=board.rstrip("\n\r ")
 
-        if os.path.isfile(drastic_steward_root + "/batocera.board"):
-            board_installed = os.popen("cat " + drastic_steward_root + "/batocera.board").read()
+        if os.path.isfile(advanced_drastic_root + "/batocera.board"):
+            board_installed = os.popen("cat " + advanced_drastic_root + "/batocera.board").read()
             board_installed = board_installed.rstrip("\n\r ")
         else:
             board_installed = ""
-            
-        if (not os.path.exists(drastic_steward_root)) or (board != board_installed):
-            os.makedirs(drastic_steward_root, exist_ok = True)
-            os.system("cp -rv /usr/share/drastic_steward/* /userdata/system/drastic")
-            if os.path.exists("/usr/share/drastic_steward/devices/" + board ):
-                os.system("cp -rv /usr/share/drastic_steward/devices/" + board + "/* /userdata/system/drastic")
-            os.system("cp /boot/boot/batocera.board /userdata/system/drastic")
 
-        if not os.path.exists("/userdata/saves/nds/drastic/backup"):
-            os.makedirs("/userdata/saves/nds/drastic/backup", exist_ok = True)
+        if (not os.path.exists(advanced_drastic_root)) or (board != board_installed):
+            os.makedirs(advanced_drastic_root, exist_ok = True)
+            os.system("cp -rv /usr/share/advanced_drastic/* /userdata/system/advanced_drastic")
+            if os.path.exists("/usr/share/advanced_drastic/devices/" + board ):
+                os.system("cp -rv /usr/share/advanced_drastic/devices/" + board + "/* /userdata/system/advanced_drastic")
+            os.system("cp /boot/boot/batocera.board /userdata/system/advanced_drastic")
 
-        if not os.path.exists("/userdata/saves/nds/drastic/savestates"):
-            os.makedirs("/userdata/saves/nds/drastic/savestates", exist_ok = True)
-
-        os.chdir(drastic_steward_root)
-        commandArray = [drastic_steward_bin, rom]
+        os.chdir(advanced_drastic_root)
+        commandArray = [advanced_drastic_bin, rom]
         return Command.Command(
             array=commandArray,
             env={
