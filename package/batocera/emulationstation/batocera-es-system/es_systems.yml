@@ -369,7 +369,7 @@ nds:
     drastic_steward:
       drastic_steward: { requireAnyOf: [BR2_PACKAGE_DRASTIC_STEWARD], incompatible_extensions: [7z] }
     advanced_drastic:
-      advanced_drastic: { requireAnyOf: [], incompatible_extensions: [7z] }
+      advanced_drastic: { requireAnyOf: [BR2_PACKAGE_ADVANCED_DRASTIC], incompatible_extensions: [7z] }
 
 fds:
   name:       Family Computer Disk System
